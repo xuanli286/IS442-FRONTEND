@@ -5,28 +5,17 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx,vue}"],
   darkMode: false,
   theme: {
-    colors: {
-      black: {
-        DEFAULT: "#27272D",
-        50: "#404249",
-        25: "#495053",
+    extend: {
+      colors: {
+        navy: '#192E47',
+        graybrown: '#7C7370'
+
       },
-      blue: "#41A3D3",
-      white: "#F2F3F5",
-    },
-    fontFamily: {
+      fontFamily: {
         mono: ["Consolas"],
-    },
-    fontWeight: {
-      thin: '100',
-      extralight: '200',
-      light: '300',
-      normal: '400',
-      medium: '500',
-      semibold: '600',
-      bold: '700',
-      extrabold: '800',
-      black: '900',
+        inter: ['Inter', 'sans-serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+      },
     }
   },
   variants: {
