@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
-    <div class="grid grid-cols-4 gap-y-10 gap-x-7 w-[190px]">
-      <img src="../assets/gs-logo.svg" class="col-span-4 md:w-[160px] w-[140px]" />
+    <div class="grid grid-cols-4 gap-y-10 gap-x-7 md:w-[180px] w-[190px]">
+      <img src="../assets/gs-logo.svg" class="col-span-4 md:w-[150px] w-[140px]" />
       <img class="hidden md:block" src="../assets/icons/instagram.svg" />
       <img class="hidden md:block" src="../assets/icons/linkedin.svg" />
       <img class="hidden md:block" src="../assets/icons/google.svg" />
@@ -29,6 +29,7 @@
       <img src="../assets/icons/linkedin.svg" />
       <img src="../assets/icons/google.svg" />
     </div>
+    <div class="text-xs text-graybrown md:hidden">© 2023 IS442 G1T5</div>
   </div>
 </template>
 
