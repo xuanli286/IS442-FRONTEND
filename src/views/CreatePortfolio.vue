@@ -47,7 +47,7 @@
             <td v-if="stock.action=='BUY'" class="green-action">{{ stock.action }}</td>
             <td v-else class="red-action">{{ stock.action }}</td>
             
-            <td><i class="bi bi-trash-fill" @click="deleteRow(idx)"></i></td>
+            <td><i class="bi bi-trash-fill cursor-pointer" @click="deleteRow(idx)"></i></td>
           </tr>
 
         </table>
