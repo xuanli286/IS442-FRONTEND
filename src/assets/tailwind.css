@@ -7,3 +7,120 @@
 * {
     font-family: inter, sans-serif;
 }
+
+/* the white card in every page */
+.white-card {
+    @apply
+    bg-white
+    rounded-md
+    p-8
+}
+
+/* grey input classes */
+input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-grey {
+    @apply
+    bg-gray-300
+    rounded-xl
+    border-2
+    border-navy-950
+    p-3
+    text-navy-950
+}
+
+input[type="number"].input-grey {
+    @apply
+    bg-gray-300
+    rounded-xl
+    border-2
+    border-navy-950
+    py-3
+    pl-14
+    text-navy-950
+}
+
+input[type="text"]::placeholder.input-grey, textarea::placeholder.input-grey, input[type="number"]::placeholder.input-grey {
+    @apply
+    text-navy-800
+}
+
+/* navy button */
+.btn-navy {
+    @apply
+    bg-navy-950
+    text-white
+    font-bold
+    p-3
+    rounded-xl
+    text-center
+}
+.btn-navy-dense {
+    @apply
+    bg-navy-950
+    text-white
+    font-bold
+    px-3
+    py-2
+    rounded-xl
+    text-center
+}
+
+/* grey button */
+.btn-grey {
+    @apply
+    bg-gray-400
+    text-white
+    font-bold
+    p-3
+    rounded-xl
+    text-center
+}
+
+/* stock table classes */
+table.navy {
+    border-collapse: separate;
+    @apply
+    rounded-xl
+    text-center 
+}
+table.navy tr:first-child th:first-child {
+    @apply
+    rounded-tl-xl
+}
+table.navy tr:last-child td:first-child {
+    @apply
+    rounded-bl-xl
+}
+table.navy tr:first-child th:nth-last-child(2) {
+    @apply
+    rounded-tr-xl
+}
+table.navy tr:last-child td:nth-last-child(2) {
+    @apply
+    rounded-br-xl
+}
+
+table.navy td:last-child {
+    @apply
+    bg-transparent
+    text-red-500
+}
+table.navy th:last-child {
+    @apply
+    bg-transparent
+}
+
+table.navy th {
+    @apply
+    bg-navy-1000
+    text-white
+    font-semibold
+    px-5
+    py-2
+}
+table.navy td {
+    @apply
+    bg-gray-300
+    text-navy-950
+    px-5
+    py-2
+}

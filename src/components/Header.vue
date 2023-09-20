@@ -10,7 +10,7 @@
         <div class="text-xs text-graybrown">Investment Advisor</div>
       </div>
       <img src="../assets/pfp.png"/>
-      <img class="transition" :class="{ 'chevDown': isActive }" src="../assets/icons/chevron-down-s.svg"/>
+      <i class="bi bi-chevron-down transition" :class="{ 'chevDown': isActive }"></i>
     </div>
   </div>
   <ul class="dropdown" :class="{ 'active': isActive }">

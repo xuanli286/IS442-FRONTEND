@@ -1,18 +1,18 @@
 <template>
   <div class="footer">
-    <div class="grid grid-cols-4 md:gap-y-10 gap-x-5 md:w-[160px] w-[190px]">
+    <div class="grid grid-cols-4 md:gap-y-10 gap-x-5 md:w-[160px] w-[190px] text-2xl">
       <img src="../assets/gs-logo.svg" class="col-span-4 md:w-[150px] w-[140px]" />
       <a href="https://www.linkedin.com/company/goldman-sachs/" target="_blank">
-        <img class="hidden md:block socials" src="../assets/icons/linkedin.svg" />
+        <i class="bi bi-linkedin hidden md:block socials"></i>
       </a>
       <a href="https://www.instagram.com/goldmansachs/" target="_blank">
-        <img class="hidden md:block socials" src="../assets/icons/instagram.svg" />
+        <i class="bi bi-instagram hidden md:block socials"></i>
       </a>
       <a href="https://twitter.com/goldmansachs" target="_blank">
-        <img class="hidden md:block socials" src="../assets/icons/twitter.svg" />
+        <i class="bi bi-twitter hidden md:block socials"></i>
       </a>
       <a href="https://www.youtube.com/user/GoldmanSachs" target="_blank">
-        <img class="hidden md:block socials" src="../assets/icons/youtube.svg" />
+        <i class="bi bi-youtube hidden md:block socials"></i>
       </a>
     </div>
     <div class="text-sm">
@@ -33,18 +33,18 @@
       <img src="../assets/gs-logo.svg" class="md:w-[160px] w-[140px] opacity-0" />
       <div class="text-xs text-graybrown justify-self-end">© 2023 IS442 G1T5</div>
     </div>
-    <div class="flex w-[170px] gap-4 md:hidden">
+    <div class="flex w-[170px] gap-4 md:hidden text-3xl">
       <a href="https://www.linkedin.com/company/goldman-sachs/" target="_blank">
-        <img class="socials" src="../assets/icons/linkedin.svg" />
+        <i class="bi bi-linkedin socials"></i>
       </a>
       <a href="https://www.instagram.com/goldmansachs/" target="_blank">
-        <img class="socials" src="../assets/icons/instagram.svg" />
+        <i class="bi bi-instagram socials"></i>
       </a>
       <a href="https://twitter.com/goldmansachs" target="_blank">
-        <img class="socials" src="../assets/icons/twitter.svg" />
+        <i class="bi bi-twitter socials"></i>
       </a>
       <a href="https://www.youtube.com/user/GoldmanSachs" target="_blank">
-        <img class="socials" src="../assets/icons/youtube.svg" />
+        <i class="bi bi-youtube socials"></i>
       </a>
     </div>
     <div class="text-xs text-graybrown md:hidden">© 2023 IS442 G1T5</div>

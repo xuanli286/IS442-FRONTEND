@@ -1,6 +1,6 @@
 <template>
   <div class="text-white">
-    Test
+    <RouterLink to="/create" class="underline">Create Portfolio</RouterLink>
   </div>
 </template>
 
