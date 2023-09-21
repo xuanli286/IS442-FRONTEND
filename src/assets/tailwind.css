@@ -103,7 +103,7 @@ table.navy th:last-child {
 
 table.navy th {
     @apply
-    bg-navy-1000
+    bg-navy-950
     text-white
     font-semibold
     px-5
@@ -123,7 +123,7 @@ table.navy tr {
 /* first column */
 table.navy-1 th {
     @apply
-    bg-navy-1000
+    bg-navy-950
     text-white
     font-semibold
     px-5

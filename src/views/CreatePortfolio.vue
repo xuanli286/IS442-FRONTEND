@@ -14,20 +14,23 @@
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
       
       <!-- Table -->
-      <div class="grid grid-cols-[auto,1fr]">
-        <table class="navy-1 mb-[16.75px] -mr-[1px]">
-          <tr>
-            <th>Stock</th>
-          </tr>
-          <tr v-if="stocks.length == 0">
-            <td>–</td>
-          </tr>
-          <tr v-for="(stock, idx) of stocks" :key="stock.id">
-            <td style="padding:5px!important" class="relative">
-              <DataList :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" :model-value="stock.name" @update:model-value="newValue => stock.name = newValue" @input="newStock(stock.name, idx)" />
-            </td>
-          </tr>
-        </table>
+      <div class="grid grid-cols-[120px,1fr] sm:grid-cols-[150px,1fr]">
+        <div class="grid grid-rows-[1fr,auto]" :class="{spacing: stocks.length == 0, '-mr-[2px]': stocks.length != 0}">
+          <table class="navy-1 w-full flex-grow">
+            <tr>
+              <th :class="{'spacing-inside': stocks.length == 0}">Stock</th>
+            </tr>
+            <tr v-if="stocks.length == 0">
+              <td></td>
+            </tr>
+            <tr v-for="(stock, idx) of stocks" :key="stock.id">
+              <td style="padding:5px!important" class="relative">
+                <DataList :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" :model-value="stock.name" @update:model-value="newValue => stock.name = newValue" @input="newStock(stock.name, idx)" />
+              </td>
+            </tr>
+          </table>
+          <div class="overflow-x-scroll h-fit"></div>
+        </div>
         <div class="overflow-x-scroll">
           <table class="navy w-full">
             <tr>
@@ -39,7 +42,9 @@
               <th :class='{hidden: stocks.length == 0}'></th>
             </tr>
             <tr v-if="stocks.length == 0">
-              <td colspan="5">No stocks added.</td>
+              <td colspan="5">
+                <div class="margin-auto -translate-x-[60px] sm:-translate-x-[75px]">No stocks added.</div>
+              </td>
               <td class="hidden"></td>
             </tr>
 
@@ -159,5 +164,15 @@ export default {
     @apply
     text-red-500
     font-semibold
+  }
+  .spacing {
+    @apply
+    -mr-[4px]
+  }
+  .spacing-inside {
+    padding-right: calc(1.25rem + 1px);
+    @apply
+    border-r-2
+    border-white
   }
 </style>

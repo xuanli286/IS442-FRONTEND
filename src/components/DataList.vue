@@ -72,7 +72,7 @@ export default {
     top: calc(50% - 12px);
     @apply
     absolute
-    right-5
+    right-3
     cursor-pointer
   }
   .chevDown {
