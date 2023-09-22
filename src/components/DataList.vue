@@ -114,7 +114,7 @@ export default {
     overflow-y-auto;
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.2s ease-in-out, min-height 0.2s ease-in-out, padding 0.2s ease-in-out, border 0.2s ease-in-out;
+    transition: max-height 0.3s ease-in-out, min-height 0.3s ease-in-out, padding 0.3s ease-in-out, border 0.3s ease-in-out;
   }
   .divider {
     @apply
