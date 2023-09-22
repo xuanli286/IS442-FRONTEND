@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <div class="flex-left curr"><i class="bi bi-currency-dollar curr"></i></div>
-    <input type="number" placeholder="Enter amount" class="flex-right input-grey w-4/5 sm:w-2/5" @input="updateValue">
+    <input type="number" placeholder="Enter amount" class="flex-right input-grey w-full mobile:w-[200px]" @input="updateValue">
   </div>
 </template>
 
@@ -39,6 +39,8 @@ export default {
   .curr {
     @apply
     flex
+    justify-center
+    items-center
     rounded-s-xl
     bg-navy-950
     text-white

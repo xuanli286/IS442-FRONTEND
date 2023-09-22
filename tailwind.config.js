@@ -6,6 +6,9 @@ module.exports = {
   darkMode: false,
   theme: {
     extend: {
+      screens: {
+        'mobile': '480px',
+      },
       colors: {
         navy: {
           '50': '#f5f7fa',
