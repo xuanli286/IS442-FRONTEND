@@ -6,8 +6,9 @@
             <tr>
               <th :class="{'border-effect': stocks.length == 0}">Stock</th>
             </tr>
-            <tr v-if="stocks.length == 0">
-              <td></td>
+            <tr v-if="stocks.length == 0" class="relative">
+              <td class="rounded-bl-xl"></td>
+              <div class="absolute left-0 top-0 w-[150px]" style="top:calc(50% - 12px); left:calc(50vw - 159px);">No stocks added.</div>
             </tr>
             <tr v-for="(stock, idx) of stocks" :key="stock.id">
               <td style="padding:5px!important" class="relative">
@@ -29,7 +30,7 @@
             </tr>
             <tr v-if="stocks.length == 0">
               <td colspan="5">
-                <div class="margin-auto -translate-x-[60px] sm:-translate-x-[75px]">No stocks added.</div>
+                <div class="margin-auto -translate-x-[60px] sm:-translate-x-[75px]"></div>
               </td>
               <td class="hidden"></td>
             </tr>
