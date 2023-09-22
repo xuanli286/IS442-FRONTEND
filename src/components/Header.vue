@@ -13,7 +13,7 @@
       <i class="bi bi-chevron-down transition" :class="{ 'chevDown': isActive }"></i>
     </div>
   </div>
-  <ul class="dropdown" :class="{ 'active': isActive }">
+  <ul class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
     <li class="option">
       <i class="bi bi-person-circle pr-2"></i>
       My Profile
@@ -40,7 +40,7 @@ export default {
   },
   mounted() {
     document.addEventListener('click', (event) => {
-      if (this.$refs.profile && !this.$refs.profile.contains(event.target)) {
+      if (this.$refs.profile && !this.$refs.profile.contains(event.target) && !this.$refs.dropdown.contains(event.target)) {
         this.isActive = false;
       }
     });
