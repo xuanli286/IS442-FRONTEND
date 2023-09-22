@@ -13,12 +13,12 @@
       
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
       
-      <!-- Table -->
+      <!-- Tables -->
       <div class="grid grid-cols-[120px,1fr] sm:grid-cols-[150px,1fr]">
-        <div class="grid grid-rows-[1fr,auto]" :class="{spacing: stocks.length == 0, '-mr-[2px]': stocks.length != 0}">
+        <div class="grid grid-rows-[1fr,auto] relative z-20" style="linear-gradient(to bottom, white 50%, gray 50%);" :class="{'bg-white': stocks.length != 0}">
           <table class="navy-1 w-full flex-grow">
             <tr>
-              <th :class="{'spacing-inside': stocks.length == 0}">Stock</th>
+              <th :class="{'border-effect': stocks.length == 0}">Stock</th>
             </tr>
             <tr v-if="stocks.length == 0">
               <td></td>
@@ -31,7 +31,7 @@
           </table>
           <div class="overflow-x-scroll h-fit"></div>
         </div>
-        <div class="overflow-x-scroll">
+        <div class="overflow-x-scroll relative z-10 -ml-2">
           <table class="navy w-full">
             <tr>
               <th>Price (SGD)</th>
@@ -164,15 +164,5 @@ export default {
     @apply
     text-red-500
     font-semibold
-  }
-  .spacing {
-    @apply
-    -mr-[4px]
-  }
-  .spacing-inside {
-    padding-right: calc(1.25rem + 1px);
-    @apply
-    border-r-2
-    border-white
   }
 </style>

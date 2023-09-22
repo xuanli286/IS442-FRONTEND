@@ -153,3 +153,9 @@ table.navy-1 tr:last-child td:last-child {
     @apply
     rounded-bl-xl
 }
+table.navy-1 .border-effect {
+    padding-left: calc(1.25rem + 2px);
+    @apply
+    border-r-2
+    border-white
+}
