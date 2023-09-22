@@ -114,10 +114,14 @@ export default {
     
   },
   mounted() {
-    this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
+    if (this.$refs.t2) {
+      this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
+    }
 
     window.addEventListener('resize', () => {
-      this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
+      if (this.$refs.t2) {
+        this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
+      }
     });
   },
   watch: {
