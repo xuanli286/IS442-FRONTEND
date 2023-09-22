@@ -40,7 +40,7 @@ export default {
   },
   mounted() {
     document.addEventListener('click', (event) => {
-      if (this.$refs.profile && !this.$refs.profile.contains(event.target) && !this.$refs.dropdown.contains(event.target)) {
+      if (this.$refs.profile && this.$refs.dropdown && !this.$refs.profile.contains(event.target) && !this.$refs.dropdown.contains(event.target)) {
         this.isActive = false;
       }
     });
