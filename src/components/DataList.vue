@@ -2,7 +2,7 @@
   <div class="relative">
     <i v-if="modelValue && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" @click="clear"></i>
     <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
-    <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" placeholder="Symbol" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" ref="inputField">
+    <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleActive" placeholder="Symbol" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" ref="inputField">
     <ul class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
       <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(modelValue.toLowerCase()))" :key="item.id">
         <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
@@ -47,6 +47,11 @@ export default {
     },
   },
   methods: {
+    handleActive() {
+      setTimeout(() => {
+        this.isActive = false;
+      }, 100);
+    },
     clear() {
       setTimeout(() => {
         this.$emit('update:modelValue', '');
@@ -111,6 +116,8 @@ export default {
     z-50
     border-x-2
     border-transparent
+    rounded-bl-xl
+    rounded-br-xl
     overflow-y-auto;
     overflow: hidden;
     max-height: 0;
@@ -152,11 +159,21 @@ export default {
   }
   ::-webkit-scrollbar-thumb {
     @apply
+    bg-gray-300
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply
+    bg-[#dbdee4]
+  }
+  /*
+  ::-webkit-scrollbar-thumb {
+    @apply
     bg-navy-300
     rounded-xl
   }
   ::-webkit-scrollbar-thumb:hover {
     @apply
     bg-navy-200
-}
+  }
+  */
 </style>
