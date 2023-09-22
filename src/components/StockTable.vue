@@ -38,14 +38,22 @@
               <td>{{ stock.price }}</td>
 
               <td>
-                <i class="bi bi-plus float-left cursor-pointer" @click="stock.qty+=1"></i>
+                <button class="float-left" @click="stock.qty+=1">
+                  <i class="bi bi-plus"></i>
+                </button>
                 {{ stock.qty }}
-                <i class="bi bi-dash float-right cursor-pointer" @click="stock.qty-=1"></i>
+                <button v-if="stock.qty>1" class="float-right" @click="stock.qty-=1">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <button v-else class="float-right text-gray-400" disabled>
+                  <i class="bi bi-dash"></i>
+                </button>
               </td>
 
               <td>{{ stock.total }}</td>
 
-              <td>{{ Math.round( (stock.total/budget*100)  * 100) / 100 }}</td>
+              <td v-if="budget && budget>0">{{ Math.round( (stock.total/budget*100)  * 100) / 100 }}</td>
+              <td v-else>-</td>
 
               <td v-if="stock.action=='BUY'" class="green-action">{{ stock.action }}</td>
               <td v-else class="red-action">{{ stock.action }}</td>
@@ -130,7 +138,7 @@ export default {
         id: newStockId,
         name: "",
         price: 0,
-        qty: 0,
+        qty: 1,
         get total() {
           return this.price * this.qty;
         },
