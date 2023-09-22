@@ -15,9 +15,10 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-  defineProps(['items', 'modelValue'])
-  defineEmits(['update:modelValue'])
+/* eslint-disable */
+defineProps(['items', 'modelValue'])
+defineEmits(['update:modelValue'])
+/* eslint-enable */
 </script>
 
 <script>

@@ -1,8 +1,7 @@
 <template>
-  <div class="relative">
-    <div class="sep"></div>
-    <i class="bi bi-currency-dollar curr"></i>
-    <input type="number" placeholder="Enter amount" class="input-grey" @input="updateValue">
+  <div class="flex">
+    <div class="flex-left curr"><i class="bi bi-currency-dollar curr"></i></div>
+    <input type="number" placeholder="Enter amount" class="flex-right input-grey w-4/5 sm:w-2/5" @input="updateValue">
   </div>
 </template>
 
@@ -11,45 +10,38 @@ export default {
   name: 'CapitalInput',
   props: {
     modelValue: {
-      type: String
+      type: Number
     },
   },
   setup(props, context) {
     const updateValue = (event) => {
-      context.emit('update:modelValue', event.target.value);
+      context.emit('update:modelValue', Number(event.target.value));
     }
 
     return { updateValue }
   },
   data(){
     return {
-      isActive: false,
-      inputTxt: "",
     }
-  },
-  methods: {
-    clear() {
-      this.inputTxt = "";
-    },
   },
 }
 </script>
 
 <style scoped>
-  .curr {
-    top: calc(50% - 12px);
+  input[type="number"] {
     @apply
-    absolute
-    left-[12px]
-    text-white
+    rounded-s-none !important
   }
-  .sep {
+  input[type="number"]:focus {
     @apply
-    absolute
+    outline-none !important
+  }
+  .curr {
+    @apply
+    flex
     rounded-s-xl
-    left-0
-    w-[40px]
-    h-full
     bg-navy-950
+    text-white
+    p-2
   }
 </style>

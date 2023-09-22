@@ -33,8 +33,7 @@ input[type="number"].input-grey {
     rounded-xl
     border-2
     border-navy-950
-    py-3
-    pl-14
+    p-3
     text-navy-950
 }
 

@@ -83,7 +83,7 @@
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
 
       <!-- Create/cancel buttons -->
-      <div class="grid grid-cols-3 gap-12">
+      <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
         <button class="btn-grey">Cancel</button>
         <button class="btn-navy col-span-2">Create Porfolio</button>
       </div>
