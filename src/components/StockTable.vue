@@ -15,9 +15,9 @@
               </td>
             </tr>
           </table>
-          <div class="overflow-x-scroll h-fit"></div>
+          <div class="h-fit" :class="{'overflow-x-scroll': scrollbarVisible}"></div>
         </div>
-        <div class="overflow-x-scroll relative z-10 -ml-2">
+        <div class="overflow-x-auto relative z-10 -ml-2" ref="t2">
           <table class="navy w-full">
             <tr>
               <th>Price (SGD)</th>
@@ -96,18 +96,29 @@ export default {
       stocks: [],
       stockNames: [],
       nextStockId: 1,
+      scrollbarVisible: false,
     }
   },
   created() {
     if (this.initStocks) {
       this.stocks = this.initStocks;
-      console.log(this.initStocks)
     }
+    
+  },
+  mounted() {
+    this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
+
+    window.addEventListener('resize', () => {
+      this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
+    });
   },
   watch: {
     stocks: {
       handler() {
         this.$emit('update:stockValue', this.stocks);
+        setTimeout(() => {
+          this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
+        }, 0.1);
       },
       deep: true,
     },
