@@ -12,11 +12,11 @@ const app = createApp(App)
     .use(router)
     .use(pinia)
     .use(createAuth0({
-        domain: process.env.VUE_APP_AUTH0_DOMAIN,
-        clientId: process.env.VUE_APP_AUTH0_CLIENT_ID,
+        domain: "dev-4pxn4zbtcuoww57l.us.auth0.com",
+        clientId: "vO8XnhCHlQMt0tgztXf16ODRMqm5on7F",
         authorizationParams: {
           redirect_uri: "http://localhost:8080/",
-          audience: process.env.VUE_APP_AUTH0_AUDIENCE,
+          audience: "https://dev-4pxn4zbtcuoww57l.us.auth0.com/api/v2/",
         }
     }))
 app.mount('#app')

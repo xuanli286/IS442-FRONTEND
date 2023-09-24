@@ -24,7 +24,11 @@ module.exports = {
           '950': '#192e47', //bg and txt color
           '1000': '#1d2a3a',
         },
-        graybrown: '#7C7370'
+        graybrown: '#7C7370',
+        black: {
+          DEFAULT: colors.black,
+          50: "#373737",
+        }
 
       },
       fontFamily: {
