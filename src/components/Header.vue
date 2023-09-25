@@ -10,7 +10,10 @@
     <div v-else class="profile" @click="displayProfileMenu" ref="profile">
       <img class="rounded-full w-12" :src="user.picture"/>
       <div>
-        <div class="text-lg font-semibold text-graybrown">{{ user.nickname}}</div>
+        <div class="text-lg font-semibold text-graybrown">
+          <p v-if="user.given_name || user.family_name">{{ user.name}}</p>
+          <p v-else>{{ user.nickname }}</p>
+        </div>
         <div class="text-xs text-graybrown">Investment Advisor</div>
       </div>
       <i class="bi bi-chevron-down transition" :class="{ 'chevDown': isActive }"></i>
@@ -53,6 +56,8 @@ const handleLogout = () => {
     }
   })
 }
+
+console.log(user)
 </script>
 
 <script>

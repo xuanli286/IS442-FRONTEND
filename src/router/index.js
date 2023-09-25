@@ -1,8 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
+
+import CreatePortfolio from "../views/CreatePortfolio.vue";
 import HomePage from "../views/Home.vue";
 import LandingPage from "@/views/Landing.vue";
-import CreatePortfolio from "../views/CreatePortfolio.vue";
 import Profile from "@/views/Profile.vue";
+import VerifyEmail from "@/views/VerifyEmail.vue";
 
 const routes = [
   {
@@ -14,6 +16,11 @@ const routes = [
     path: '/home',
     name: HomePage,
     component: HomePage
+  },
+  {
+    path: '/verify',
+    name: VerifyEmail,
+    component: VerifyEmail
   },
   {
     path: '/create',
