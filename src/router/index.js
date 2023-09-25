@@ -5,6 +5,8 @@ import HomePage from "../views/Home.vue";
 import LandingPage from "@/views/Landing.vue";
 import Profile from "@/views/Profile.vue";
 import VerifyEmail from "@/views/VerifyEmail.vue";
+import Stock from "@/views/Stock.vue";
+import Portfolio from "@/views/Portfolio.vue";
 
 const routes = [
   {
@@ -31,6 +33,16 @@ const routes = [
     path: '/profile',
     name: Profile,
     component: Profile
+  },
+  {
+    path: '/stock',
+    name: Stock,
+    component: Stock
+  },
+  {
+    path: '/portfolio',
+    name: Portfolio,
+    component: Portfolio
   }
 ]
 
