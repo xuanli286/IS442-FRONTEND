@@ -1,9 +1,9 @@
 <template>
   <div class="relative">
-    <i v-if="inputTxt && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" @click="clear"></i>
+    <i tabindex="0" v-if="inputTxt && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
     <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
-    <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleActive" placeholder="Symbol" v-model="inputTxt" ref="inputField">
-    <ul class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
+    <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" v-model="inputTxt" ref="inputField">
+    <ul tabindex="0" class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
       <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(inputTxt.toLowerCase()))" :key="item.id">
         <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
           {{ item }}
@@ -42,33 +42,38 @@ export default {
     isActive() {
       if (!this.isActive) {
         this.display = false;
-        if (!this.items.includes(this.inputTxt)) {
-          this.inputTxt = "";
-        }
       } else {
         this.display = true;
       }
     },
   },
   methods: {
-    handleActive() {
-      setTimeout(() => {
+    handleBlur(event) {
+      if (this.$refs.dropdown && !this.$refs.dropdown.contains(event.relatedTarget)) {
         this.isActive = false;
-      }, 100);
+        // console.log(event.relatedTarget)
+
+        if (this.$refs.close && this.$refs.close.contains(event.relatedTarget)) {
+          this.clear();
+        }
+        
+        if (!this.items.includes(this.inputTxt)) {
+          this.inputTxt = "";
+        } else {
+          this.$emit('update:modelValue', this.inputTxt);
+          this.$emit('change', this.inputTxt);
+        }
+      }
     },
     clear() {
-      setTimeout(() => {
-        this.inputTxt = "";
-        this.$emit('update:modelValue', '');
-        this.$emit('change', '');
-      }, 200);
+      this.inputTxt = "";
+      this.$emit('update:modelValue', '');
+      this.$emit('change', '');
     },
     selectOption(item) {
-      setTimeout(() => {
-        this.inputTxt = item;
-        this.$emit('update:modelValue', item);
-        this.$emit('change', item);
-      }, 100);
+      this.inputTxt = item;
+      this.$emit('update:modelValue', item);
+      this.$emit('change', item);
     }
   },
 }
@@ -125,7 +130,7 @@ export default {
     overflow-y-auto;
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.3s ease-in-out, min-height 0.3s ease-in-out, padding 0.3s ease-in-out, border 0.3s ease-in-out;
+    /*transition: max-height 0.3s ease-in-out, min-height 0.3s ease-in-out, padding 0.3s ease-in-out, border 0.3s ease-in-out;*/
   }
   .divider {
     @apply
