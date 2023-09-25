@@ -7,33 +7,45 @@
     <div v-if="!isAuthenticated">
       <button class="text-graybrown font-semibold hover:text-navy-950" @click="handleLogin">Client Login</button>
     </div>
-    <div v-else class="profile" @click="displayProfileMenu" ref="profile">
-      <img class="rounded-full w-12" :src="user.picture"/>
-      <div>
-        <div class="text-lg font-semibold text-graybrown">
-          <p v-if="user.given_name || user.family_name">{{ user.name}}</p>
-          <p v-else>{{ user.nickname }}</p>
+    <div v-else class="relative -m-5">
+      <div class="profile" @click="displayProfileMenu" ref="profile">
+        <img class="rounded-full w-10 md:w-12" :src="user.picture"/>
+        <div class="hidden sm:block">
+          <div class="text-md md:text-lg font-semibold text-graybrown">
+            <p v-if="user.given_name || user.family_name">{{ user.name}}</p>
+            <p v-else>{{ user.nickname }}</p>
+          </div>
+          <div class="text-xs text-graybrown">Investment Advisor</div>
         </div>
-        <div class="text-xs text-graybrown">Investment Advisor</div>
+        <i class="bi bi-chevron-down transition" :class="{ 'chevDown': isActive }"></i>
       </div>
-      <i class="bi bi-chevron-down transition" :class="{ 'chevDown': isActive }"></i>
+
+      <ul class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
+        <li class="sm:hidden grid grid-cols-[auto,1fr] gap-3 p-4">
+          <img class="rounded-full w-10 md:w-12" :src="user.picture"/>
+          <div class="text-graybrown">
+            <p v-if="user.given_name || user.family_name">{{ user.name}}</p>
+            <p v-else>{{ user.nickname }}</p>
+            <div class="text-xs text-graybrown">Investment Advisor</div>
+          </div>
+        <hr/>
+        </li>
+        <li class="option">
+          <i class="bi bi-person-circle pr-2"></i>
+          My Profile
+        </li>
+        <li class="option">
+          <i class="bi bi-briefcase-fill pr-2"></i>
+          My Portfolios
+        </li>
+        <hr/>
+        <li class="option" @click="handleLogout">
+          <i class="bi bi-box-arrow-right pr-2"></i>
+          Log out
+        </li>
+      </ul>
     </div>
   </div>
-  <ul class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
-    <li class="option">
-      <i class="bi bi-person-circle pr-2"></i>
-      My Profile
-    </li>
-    <li class="option">
-      <i class="bi bi-briefcase-fill pr-2"></i>
-      My Portfolios
-    </li>
-    <hr/>
-    <li class="option" @click="handleLogout">
-      <i class="bi bi-box-arrow-right pr-2"></i>
-      Log out
-    </li>
-  </ul>
 </template>
 
 <script setup>
@@ -100,32 +112,36 @@ export default {
     gap-3
     items-center
     hover:bg-gray-50
-    -m-5
     p-5
     rounded-lg
     cursor-pointer
-    relative
   }
   .chevDown {
     @apply
     rotate-180
   }
   .dropdown {
+    width: calc(100vw - 3.5rem);
     @apply
     absolute
     px-4
-    md:top-[108.938px]
-    top-[101px]
+    /*md:top-[108.938px]
+    top-[101px]*/
+    top-full
+    sm:left-0
     right-0
-    w-[265px]
-    bg-white;
-    overflow: hidden;
-    max-height: 0;
+    sm:w-auto
+    mobile:w-[60vw]
+    bg-white
+    rounded-lg
+    shadow-lg
+    overflow-hidden
+    max-h-0;
     transition: max-height 0.2s ease-in-out, padding 0.2s ease-in-out, border 0.2s ease-in-out;
   }
   .dropdown.active {
-    max-height: 200px;
     @apply
+    max-h-[100vh]
     py-4
     border
     border-gray-200;
