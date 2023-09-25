@@ -56,8 +56,6 @@ const handleLogout = () => {
     }
   })
 }
-
-console.log(user)
 </script>
 
 <script>
