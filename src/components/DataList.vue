@@ -6,7 +6,7 @@
     <div class="relative">
       <i tabindex="0" v-if="inputTxt && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
       <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
-      <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" v-model="inputTxt" ref="inputField">
+      <input type="text" :class="{'placeholder:text-red-500': empty, 'placeholder:text-navy-950': !empty}" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" v-model="inputTxt" ref="inputField">
       <ul tabindex="0" class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
         <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(inputTxt.toLowerCase()))" :key="item.id">
           <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
@@ -114,11 +114,12 @@ export default {
     outline-navy-950
     -outline-offset-2
     rounded-b-none
+    placeholder:text-navy-950
   }
-  .input-datalist::placeholder {
+  /*.input-datalist::placeholder {
     @apply
     text-navy-800
-  }
+  }*/
   .dropdown {
     @apply
     absolute

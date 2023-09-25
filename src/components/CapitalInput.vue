@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
-    <div class="flex-left curr"><i class="bi bi-currency-dollar curr"></i></div>
-    <input type="number" placeholder="Enter amount" class="flex-right input-grey w-full mobile:w-[200px]" :value="modelValue" @input="updateValue">
+    <div class="flex-left curr">$</div>
+    <input type="number" placeholder="Enter amount" class="flex-right input-grey w-full mobile:w-[200px]" :class="{'invalid': !valid}" :value="modelValue" @input="updateValue">
   </div>
 </template>
 
@@ -11,6 +11,9 @@ export default {
   props: {
     modelValue: {
       type: Number
+    },
+    valid: {
+      type: Boolean
     },
   },
   setup(props, context) {
@@ -44,6 +47,7 @@ export default {
     rounded-s-xl
     bg-navy-950
     text-white
-    p-2
+    px-5
+    py-2
   }
 </style>

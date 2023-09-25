@@ -6,11 +6,11 @@
       <h3 class="text-navy-950 mb-8 font-bold">Basic Information</h3>
 
       <h5 class="form-label required">Portfolio Name</h5>
-      <input type="text" placeholder="Enter a portfolio name" class="input-grey w-full" v-model="pName">
+      <input type="text" placeholder="Enter a portfolio name" class="input-grey w-full" :class="{'invalid': error.name}" v-model="pName">
       <div class="form-invalid" v-if="error.name">{{ error.name }}</div>
 
       <h5 class="mt-8 form-label">Portfolio Description</h5>
-      <textarea rows="5" placeholder="Write a short description or strategy about the portfolio." class="input-grey w-full" v-model="pDesc"></textarea>
+      <textarea rows="5" placeholder="Write a short description or strategy about the portfolio." class="input-grey w-full" :class="{'invalid': error.desc}" v-model="pDesc"></textarea>
       <div class="form-invalid" v-if="error.desc">{{ error.desc }}</div>
 
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
@@ -20,7 +20,7 @@
 
       <!-- Other Add Stocks -->
       <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
-      <CapitalInput :model-value="budget" @update:model-value="newValue => budget = newValue"/>
+      <CapitalInput :valid="!error.budget" :model-value="budget" @update:model-value="newValue => budget = newValue"/>
       <div class="form-invalid" v-if="error.budget">{{ error.budget }}</div>
 
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>

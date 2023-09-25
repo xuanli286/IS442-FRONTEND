@@ -164,6 +164,7 @@ export default {
       if (this.items.includes(stock.name)) {
         // update properties of stocks
         stock.price = 10;
+        stock.empty = false;
         console.log(stock)
       }
     },
@@ -207,7 +208,7 @@ table.navy th {
 }
 table.navy td {
     @apply
-    bg-gray-300
+    bg-gray-200
     text-navy-950
     px-5
     py-2
@@ -227,7 +228,7 @@ table.navy-1 th {
 }
 table.navy-1 td {
     @apply
-    bg-gray-300
+    bg-gray-200
     text-navy-950
     px-5
     py-2
