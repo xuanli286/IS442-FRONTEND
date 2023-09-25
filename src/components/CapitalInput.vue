@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <div class="flex-left curr"><i class="bi bi-currency-dollar curr"></i></div>
-    <input type="number" placeholder="Enter amount" class="flex-right input-grey w-full mobile:w-[200px]" @input="updateValue">
+    <input type="number" placeholder="Enter amount" class="flex-right input-grey w-full mobile:w-[200px]" :value="modelValue" @input="updateValue">
   </div>
 </template>
 

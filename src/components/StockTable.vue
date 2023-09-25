@@ -10,9 +10,9 @@
               <td class="rounded-bl-xl"></td>
               <div class="absolute left-0 top-0 w-[150px]" style="top:calc(50% - 12px); left:calc(50vw - 166px);">No stocks added.</div>
             </tr>
-            <tr v-for="(stock, idx) of stocks" :key="stock.id">
+            <tr v-for="(stock, idx) of stocks" :key="stock.id" class>
               <td style="padding:5px!important" class="relative">
-                <DataList :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" :model-value="stock.name" @update:model-value="newValue => stock.name = newValue" @change="newStock(stock.name, idx)" />
+                <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" :model-value="stock.name" @update:model-value="newValue => stock.name = newValue" @change="newStock(stock.name, idx)" />
               </td>
             </tr>
           </table>

@@ -1,22 +1,27 @@
 <template>
-  <div class="relative">
-    <i tabindex="0" v-if="inputTxt && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
-    <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
-    <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" v-model="inputTxt" ref="inputField">
-    <ul tabindex="0" class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
-      <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(inputTxt.toLowerCase()))" :key="item.id">
-        <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
-          {{ item }}
-        </li>
-        <div class="divider" v-if="idx != items.length-1"></div>
-      </div>
-    </ul>
+  <div class="grid grid-cols-[auto,1fr] items-center">
+    <div class="text-red-500 px-1" v-if="empty">
+      <i class="bi bi-exclamation-circle aspect-square"></i>
+    </div>
+    <div class="relative">
+      <i tabindex="0" v-if="inputTxt && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
+      <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
+      <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" v-model="inputTxt" ref="inputField">
+      <ul tabindex="0" class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
+        <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(inputTxt.toLowerCase()))" :key="item.id">
+          <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
+            {{ item }}
+          </li>
+          <div class="divider" v-if="idx != items.length-1"></div>
+        </div>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
 /* eslint-disable */
-defineProps(['items', 'modelValue'])
+defineProps(['items', 'modelValue', 'empty'])
 defineEmits(['update:modelValue', 'change'])
 /* eslint-enable */
 </script>

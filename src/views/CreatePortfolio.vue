@@ -5,20 +5,23 @@
       <!-- Basic Information -->
       <h3 class="text-navy-950 mb-8 font-bold">Basic Information</h3>
 
-      <h5 class="text-navy-950 mb-2 font-bold">Portfolio Name</h5>
+      <h5 class="form-label required">Portfolio Name</h5>
       <input type="text" placeholder="Enter a portfolio name" class="input-grey w-full" v-model="pName">
+      <div class="form-invalid" v-if="error.name">{{ error.name }}</div>
 
-      <h5 class="text-navy-950 mt-8 mb-2 font-bold">Portfolio Description</h5>
+      <h5 class="mt-8 form-label">Portfolio Description</h5>
       <textarea rows="5" placeholder="Write a short description or strategy about the portfolio." class="input-grey w-full" v-model="pDesc"></textarea>
-      
+      <div class="form-invalid" v-if="error.desc">{{ error.desc }}</div>
+
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
       
       <!-- Table -->
       <StockTable :items="items" :budget="budget" :stock-value="stocks" @update:stock-value="newValue => stocks = newValue"/>
 
       <!-- Other Add Stocks -->
-      <h5 class="text-navy-950 mt-8 mb-2 font-bold">Amount of Capital (SGD)</h5>
-      <CapitalInput v-model="budget" class="mb-8"/>
+      <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
+      <CapitalInput :model-value="budget" @update:model-value="newValue => budget = newValue"/>
+      <div class="form-invalid" v-if="error.budget">{{ error.budget }}</div>
 
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
 
@@ -28,18 +31,28 @@
         <button class="btn-navy col-span-2" @click="validate">Create Porfolio</button>
       </div>
     </div>
+
+    <!-- Modal -->
+    <Modal :active="isModal" @update:active="newValue => isModal = newValue" width="50%" height="fit-content">
+      <div class="text-center">
+        <h3 class="text-navy-950 font-bold mb-5">Portfolio has been successfully created</h3>
+        <button class="btn-navy">Go to Overview</button>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
 import StockTable from '../components/StockTable.vue'
 import CapitalInput from '../components/CapitalInput.vue'
+import Modal from '../components/Modal.vue'
 
 export default {
   name: 'CreatePortfolio',
   components: {
     StockTable,
     CapitalInput,
+    Modal,
   },
   data(){
     return {
@@ -48,7 +61,8 @@ export default {
       stocks: [],
       items: ["APPL", "AOS", "TSCO", "DDW"],
       budget: null,
-      error: {}
+      error: {},
+      isModal: false,
     }
   },
   computed: {
@@ -73,7 +87,7 @@ export default {
       }
 
       if (this.pDesc && this.pDesc.length > 250) {
-        this.error["desc"] = "Please enter a shorter description"
+        this.error["desc"] = "Description is too long"
       }
 
       if (!this.budget) {
@@ -100,10 +114,10 @@ export default {
     stockValidation() {
       for (var stock of this.stocks) {
         if (stock.name == "") {
-          stock.empty = false;
+          stock.empty = true;
           return false;
         } else {
-          stock.empty = true;
+          stock.empty = false;
         }
       }
       return true;
@@ -121,6 +135,12 @@ export default {
       }
       
       console.log(newPF);
+      this.isModal = true;
+
+      this.pName = null;
+      this.pDesc = null;
+      this.stocks.splice(0);
+      this.budget = null;
     },
   },
 }

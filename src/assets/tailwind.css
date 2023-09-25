@@ -42,6 +42,28 @@ input[type="text"]::placeholder.input-grey, textarea::placeholder.input-grey, in
     text-navy-800
 }
 
+/* form labels */
+.form-label {
+    @apply
+    text-navy-950
+    mb-2
+    font-bold
+}
+
+.form-label.required {
+    @apply
+    after:content-['*']
+    after:text-red-500
+}
+
+/* form validation */
+.form-invalid {
+    @apply
+    text-sm
+    text-red-500
+    mt-2
+}
+
 /* navy button */
 .btn-navy {
     @apply
@@ -52,6 +74,7 @@ input[type="text"]::placeholder.input-grey, textarea::placeholder.input-grey, in
     rounded-xl
     text-center
 }
+
 .btn-navy-dense {
     @apply
     bg-navy-950
