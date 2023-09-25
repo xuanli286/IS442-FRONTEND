@@ -1,10 +1,10 @@
 <template>
   <div class="relative">
-    <i v-if="modelValue && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" @click="clear"></i>
+    <i v-if="inputTxt && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" @click="clear"></i>
     <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
-    <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleActive" placeholder="Symbol" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" ref="inputField">
+    <input type="text" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleActive" placeholder="Symbol" v-model="inputTxt" ref="inputField">
     <ul class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
-      <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(modelValue.toLowerCase()))" :key="item.id">
+      <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(inputTxt.toLowerCase()))" :key="item.id">
         <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
           {{ item }}
         </li>
@@ -17,7 +17,7 @@
 <script setup>
 /* eslint-disable */
 defineProps(['items', 'modelValue'])
-defineEmits(['update:modelValue'])
+defineEmits(['update:modelValue', 'change'])
 /* eslint-enable */
 </script>
 
@@ -28,6 +28,7 @@ export default {
     return {
       isActive: false,
       display: false,
+      inputTxt: "",
     }
   },
   mounted() {
@@ -41,6 +42,9 @@ export default {
     isActive() {
       if (!this.isActive) {
         this.display = false;
+        if (!this.items.includes(this.inputTxt)) {
+          this.inputTxt = "";
+        }
       } else {
         this.display = true;
       }
@@ -54,16 +58,16 @@ export default {
     },
     clear() {
       setTimeout(() => {
+        this.inputTxt = "";
         this.$emit('update:modelValue', '');
-        this.$refs.inputField.value = '';
-        this.$refs.inputField.dispatchEvent(new Event('input', { bubbles: true }));
+        this.$emit('change', '');
       }, 200);
     },
     selectOption(item) {
       setTimeout(() => {
-        this.$emit('update:modelValue', item)
-        this.$refs.inputField.value = item;
-        this.$refs.inputField.dispatchEvent(new Event('input', { bubbles: true }));
+        this.inputTxt = item;
+        this.$emit('update:modelValue', item);
+        this.$emit('change', item);
       }, 100);
     }
   },

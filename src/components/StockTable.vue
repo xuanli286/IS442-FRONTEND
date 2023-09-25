@@ -12,7 +12,7 @@
             </tr>
             <tr v-for="(stock, idx) of stocks" :key="stock.id">
               <td style="padding:5px!important" class="relative">
-                <DataList :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" :model-value="stock.name" @update:model-value="newValue => stock.name = newValue" @input="newStock(stock.name, idx)" />
+                <DataList :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" :model-value="stock.name" @update:model-value="newValue => stock.name = newValue" @change="newStock(stock.name, idx)" />
               </td>
             </tr>
           </table>
@@ -147,7 +147,8 @@ export default {
         get total() {
           return this.price * this.qty;
         },
-        action: "BUY"
+        action: "BUY",
+        empty: false,
       });
       this.stockNames.push("");
     },
