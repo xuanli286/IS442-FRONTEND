@@ -16,8 +16,8 @@
     </div>
     <div class="px-8 sm:px-12 py-11 mt-32 text-white font-medium">
       <p class="z-40 mb-8 text-sm">Features</p>
-      <div class="grid grid-cols-2 text-base">
-        <div>
+      <div class="flex justify-center">
+        <div class="mr-40">
           <img src="@/assets/chart.png" alt="">
           <p class="mt-5">Interactive Charts and <br> Dashboard for the best risk <br> insights.</p>
         </div>
