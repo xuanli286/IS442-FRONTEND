@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="px-8 sm:px-12 py-11">
     <h3 class="text-white mb-8">Create Portfolio</h3>
     <div class="white-card">
       <!-- Basic Information -->

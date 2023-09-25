@@ -1,15 +1,18 @@
 <template>
-  <div class="header">
+  <div class="header font-inter">
     <RouterLink to="/">
       <img src="../assets/gs-logo.svg" class="md:w-[120px] w-[100px]" />
     </RouterLink>
     <div class="col"></div>
-    <div class="profile" @click="displayProfileMenu" ref="profile">
+    <div v-if="!isAuthenticated">
+      <button class="text-graybrown font-semibold hover:text-navy-950" @click="handleLogin">Client Login</button>
+    </div>
+    <div v-else class="profile" @click="displayProfileMenu" ref="profile">
+      <img class="rounded-full w-12" :src="user.picture"/>
       <div>
-        <div class="text-lg font-semibold text-graybrown">Tan Yi Peng</div>
+        <div class="text-lg font-semibold text-graybrown">{{ user.nickname}}</div>
         <div class="text-xs text-graybrown">Investment Advisor</div>
       </div>
-      <img src="../assets/pfp.png"/>
       <i class="bi bi-chevron-down transition" :class="{ 'chevDown': isActive }"></i>
     </div>
   </div>
@@ -23,12 +26,34 @@
       My Portfolios
     </li>
     <hr/>
-    <li class="option">
+    <li class="option" @click="handleLogout">
       <i class="bi bi-box-arrow-right pr-2"></i>
       Log out
     </li>
   </ul>
 </template>
+
+<script setup>
+import { useAuth0 } from '@auth0/auth0-vue';
+
+const { user, loginWithRedirect, isAuthenticated, logout } = useAuth0();
+
+const handleLogin = () => {
+  loginWithRedirect({
+    appState: {
+      target: '/home',
+    }
+  })
+}
+
+const handleLogout = () => {
+  logout({
+    logoutParams: {
+      returnTo: window.location.origin,
+    }
+  })
+}
+</script>
 
 <script>
 export default {
