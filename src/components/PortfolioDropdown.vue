@@ -4,7 +4,7 @@
     class="p-3 bg-white hover:bg-gray-100 rounded w-56 font-semibold flex items-center"
     >
     <span class="flex-grow">{{ selectedPortfolio }}</span>
-    <i class="bi bi-chevron-down ml-auto"></i>
+    <i class="bi bi-chevron-down transition ml-auto" :class="{ 'chevDown': isOpen }"></i>
     </button>
 
     <div v-if="isOpen" class="absolute top-12 mt-2 p-2 w-56 bg-white border border-gray-300 shadow-lg rounded-lg z-10">
@@ -64,5 +64,8 @@ export default {
     cursor-pointer
     rounded-md
   }
-
+  .chevDown {
+    @apply
+    rotate-180
+  }
 </style>

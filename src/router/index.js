@@ -6,7 +6,6 @@ import LandingPage from "@/views/Landing.vue";
 import Profile from "@/views/Profile.vue";
 import VerifyEmail from "@/views/VerifyEmail.vue";
 import Stock from "@/views/Stock.vue";
-import Portfolio from "@/views/Portfolio.vue";
 
 const routes = [
   {
@@ -39,11 +38,6 @@ const routes = [
     name: Stock,
     component: Stock
   },
-  {
-    path: '/portfolio',
-    name: Portfolio,
-    component: Portfolio
-  }
 ]
 
 const router = createRouter({
