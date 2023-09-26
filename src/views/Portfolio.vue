@@ -1,14 +1,10 @@
 <template>
-    <div class="px-8 sm:px-12 py-11">
+    <div class="px-8 sm:px-12 py-11 font-inter">
         <div class="relative flex justify-between mb-5">
-            <div>
-                <PortfolioDropdown/>
-            </div>
-            <div>
-                <button class="p-2 bg-red-600 text-white rounded w-48 font-semibold">Delete Portfolio</button>
-            </div>
+            <PortfolioDropdown @isSelect="handleSelect"/>
+            <CustomButton :isDelete="isDelete"/>
         </div>
-        <SummarizedValue />
+        <SummarizedValue :isOverview="!isDelete"/>
 
         <div class="white-card mb-5">
             <h4 class="font-semibold">My Porftolio</h4>
@@ -26,18 +22,19 @@
 
 </template>
 
-
 <script>
-import DonutChart from '../components/charts/DonutChart.vue'
-import PortfolioDropdown from '../components/PortfolioDropdown.vue'
-import SummarizedValue from '../components/SummarizedValue.vue'
+import DonutChart from '../components/charts/DonutChart.vue';
+import PortfolioDropdown from '../components/PortfolioDropdown.vue';
+import SummarizedValue from '../components/SummarizedValue.vue';
+import CustomButton from "@/components/CustomButton.vue";
 
 export default {
     name: 'IndividualStock',
     components: {
         DonutChart,
         PortfolioDropdown,
-        SummarizedValue
+        SummarizedValue,
+        CustomButton,
     },
     data(){
         return {
@@ -57,14 +54,25 @@ export default {
                     currency: "JPY"
                 }
             ],
-            isOpen: false
+            isOpen: false,
+            portfolio: "",
         }
     },
     computed: {
-
+        isDelete() {
+            if (this.portfolio !== "Overview") {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
     },
     methods: {
-
+        handleSelect(portfolio) {
+            this.portfolio = portfolio;
+            console.log(this.portfolio)
+        },
     },
     created() {
 
@@ -82,5 +90,4 @@ export default {
     @apply
     text-2xl
   }
-
 </style>

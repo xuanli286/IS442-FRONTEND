@@ -1,13 +1,13 @@
 <template>
     <button
     @click="toggleDropdown"
-    class="p-2 bg-white hover:bg-gray-100 rounded w-56 font-semibold"
+    class="p-3 bg-white hover:bg-gray-100 rounded w-56 font-semibold flex items-center"
     >
-    {{ selectedPortfolio }}
-    <i class="bi bi-chevron-down"></i>
+    <span class="flex-grow">{{ selectedPortfolio }}</span>
+    <i class="bi bi-chevron-down ml-auto"></i>
     </button>
 
-    <div v-if="isOpen" class="absolute mt-2 p-2 w-48 bg-white border border-gray-300 shadow-lg rounded-lg z-10">
+    <div v-if="isOpen" class="absolute top-12 mt-2 p-2 w-56 bg-white border border-gray-300 shadow-lg rounded-lg z-10">
         <ul>
             <li @click="selectPortfolio(portfolioName)" class="option" v-for="portfolioName in portfolios" :key="portfolioName">
                 <a>{{ portfolioName }}</a>
@@ -17,14 +17,13 @@
 </template>
 
 <script>
-
 export default {
-
+    emits: ['isSelect'],
     data(){
         return {
-            portfolios: ["portfolio 1", "portfolio 2" ],
+            portfolios: ["Overview", "portfolio 1", "portfolio 2" ],
             isOpen: false,
-            selectedPortfolio: null,
+            selectedPortfolio: "Overview",
         }
     },
     computed: {
@@ -36,12 +35,14 @@ export default {
         },
         selectPortfolio(portfolio) {
             this.selectedPortfolio = portfolio;
+            this.$emit("isSelect", this.selectedPortfolio);
             this.isOpen = false; // Close the dropdown
         },
 
     },
     created() {
         this.selectedPortfolio = this.portfolios[0] // take first portfolio by default
+        this.$emit("isSelect", this.selectedPortfolio);
     }
 
 }

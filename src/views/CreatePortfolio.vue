@@ -27,7 +27,7 @@
 
       <!-- Create/cancel buttons -->
       <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
-        <button class="btn-grey">Cancel</button>
+        <button class="btn-grey" @click="cancel">Cancel</button>
         <button class="btn-navy col-span-2" @click="validate">Create Porfolio</button>
       </div>
     </div>
@@ -71,6 +71,9 @@ export default {
     }
   },
   methods: {
+    cancel() {
+      window.history.back();
+    },
     validate() {
       this.error = {};
       const allowedCharactersPattern = /^[a-zA-Z0-9\s\-_]+$/;
