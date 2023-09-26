@@ -9,23 +9,24 @@
     ChartJS.register(ArcElement, Tooltip, Legend)
     
     export default {
-        name: 'App',
+        name: 'DonutChart',
         components: {
         Doughnut
         },
         data() {
             return {
                 chartData: {
-                    labels: ['Healthcare', 'Technology', 'Financials', 'Information Technology'],
+                    labels: ['Healthcare', 'Energy', 'Financials', 'Information Technology', 'Industrials'],
                     datasets: [
                         {
-                        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                        data: [40, 20, 80, 10]
+                        backgroundColor: ["#2d455c", '#7a9cb8', '#314F76', '#3F6392', "#587e9d"],
+                        data: [40, 20, 80, 10, 30]
                         }
                     ]
                 },
                 chartOptions: {
-                    responsive: true
+                    responsive: true,
+                    maintainaspectratio: true,
                 }
             }
         }

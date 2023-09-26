@@ -9,7 +9,7 @@
   ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement)
   
   export default {
-    name: 'BarChart',
+    name: 'LineChart',
     components: { Line },
     data() {
       return {

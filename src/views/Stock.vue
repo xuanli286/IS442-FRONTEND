@@ -4,13 +4,12 @@
         <p class="text-white text-sm">Market Closed {{currentDate()}}</p>
         <div class="m-3"></div>
 
-        <BarChart />
-
         <!-- <h4 class="text-white mt-10 mb-5">Company Overview</h4>
 
         <p class="text-white">{{description}}</p> -->
+        <BarChart />
 
-        <TabComponent/>
+        <TabComponent/>      
         
 
 
@@ -29,7 +28,7 @@ export default {
     components: {
         BarChart,
         LineChart,
-        TabComponent,
+        TabComponent
     },
     data(){
         return {
