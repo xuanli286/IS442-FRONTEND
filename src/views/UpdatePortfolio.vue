@@ -1,6 +1,6 @@
 <template>
   <div class="px-8 sm:px-12 py-11">
-    <h3 class="text-white mb-8">Create Portfolio</h3>
+    <h3 class="text-white mb-8">Update Portfolio</h3>
     <div class="white-card">
       <!-- Basic Information -->
       <h3 class="text-navy-950 mb-8 font-bold">Basic Information</h3>
@@ -16,7 +16,7 @@
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
       
       <!-- Table -->
-      <StockTable :data="testData" :items="items" :budget="budget" :stock-value="stocks" @update:stock-value="newValue => stocks = newValue"/>
+      <StockTable :stockData="testData.stocks" :items="items" :budget="budget" :stock-value="stocks" @update:stock-value="newValue => stocks = newValue"/>
 
       <!-- Other Add Stocks -->
       <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
@@ -28,14 +28,14 @@
       <!-- Create/cancel buttons -->
       <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
         <button class="btn-grey" @click="cancel">Cancel</button>
-        <button class="btn-navy col-span-2" @click="validate">Create Porfolio</button>
+        <button class="btn-navy col-span-2" @click="validate">Save Changes</button>
       </div>
     </div>
 
     <!-- Modal -->
     <Modal :active="isModal" @update:active="newValue => isModal = newValue" width="50%" height="fit-content">
       <div class="text-center">
-        <h3 class="text-navy-950 font-bold mb-5">Portfolio has been successfully created</h3>
+        <h3 class="text-navy-950 font-bold mb-5">Portfolio has been successfully updated</h3>
         <button class="btn-navy">Go to Overview</button>
       </div>
     </Modal>
@@ -82,12 +82,20 @@ export default {
       },
     }
   },
+  created() {
+    this.populate();
+  },
   computed: {
     portfolioTotal() {
       return this.stocks.reduce((total, stock) => total + stock.total, 0);
     }
   },
   methods: {
+    populate() {
+      this.pName = this.testData.pName;
+      this.pDesc = this.testData.pDesc;
+      this.budget = this.testData.budget;
+    },
     cancel() {
       window.history.back();
     },
@@ -126,7 +134,7 @@ export default {
       }
 
       if (Object.keys(this.error).length === 0) {
-        this.createPortfolio();
+        this.updatePortfolio();
       } else {
         console.log(this.error);
       }
@@ -142,25 +150,66 @@ export default {
       }
       return true;
     },
-    createPortfolio() {
-      var allStocks = [];
-      for (var stock of this.stocks) {
-        allStocks.push({"name": stock.name, "qty": stock.qty});
+   updatePortfolio() {
+      var stockBefore = {};
+      var stockAfter = {};
+      var allStockNames = [];
+      var stockResult = {};
+
+      for (var stock of this.testData.stocks) {
+        stockBefore[stock.name] = stock;
+        allStockNames.push(stock.name);
       }
-      const newPF = {
+      for (var stock of this.stocks) {
+        stockAfter[stock.name] = stock;
+        if (!allStockNames.includes(stock.name)) {
+          allStockNames.push(stock.name);
+        }
+      }
+
+      for (var stock of allStockNames) {
+        // add
+        if (!(stock in stockBefore) && (stock in stockAfter)) {
+          if ("add" in stockResult) {
+            stockResult["add"].push({name: stockAfter[stock].name, qty: stockAfter[stock].qty});
+          } else {
+            stockResult["add"] = [{name: stockAfter[stock].name, qty: stockAfter[stock].qty}];
+          }
+        }
+
+        // delete
+        if ((stock in stockBefore) && !(stock in stockAfter)) {
+          if ("delete" in stockResult) {
+            stockResult["delete"].push({name: stockBefore[stock].name, qty: stockBefore[stock].qty});
+          } else {
+            stockResult["delete"] = [{name: stockBefore[stock].name, qty: stockBefore[stock].qty}];
+          }
+        }
+
+        // update
+        if ((stock in stockBefore) && (stock in stockAfter)) {
+          if (stockBefore[stock].qty != stockAfter[stock].qty) {
+            if ("update" in stockResult) {
+              stockResult["update"].push({name: stockAfter[stock].name, qty: stockAfter[stock].qty});
+            } else {
+              stockResult["update"] = [{name: stockAfter[stock].name, qty: stockAfter[stock].qty}];
+            }
+          }
+        }
+      }
+
+      var newPF = {
         pName: this.pName,
         pDesc: this.pDesc,
-        stocks: allStocks,
         capital: this.budget,
       }
-      
-      console.log(newPF);
-      this.isModal = true;
+      if (Object.keys(stockResult).length != 0) {
+        newPF["stocks"] = stockResult;
+      }
 
-      this.pName = null;
-      this.pDesc = null;
-      this.stocks.splice(0);
-      this.budget = null;
+      console.log(newPF);
+      this.testData.stocks = this.stocks;
+      this.isModal = true;
     },
   },
 }

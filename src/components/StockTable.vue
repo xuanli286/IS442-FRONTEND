@@ -87,8 +87,8 @@ export default {
     DataList,
   },
   props: {
-    data: {
-      type: Object,
+    stockData: {
+      type: Array,
     },
     items: {
       type: Array,
@@ -109,7 +109,7 @@ export default {
     }
   },
   created() {
-    if (this.data) {
+    if (this.stockData) {
       this.populate();
     }
     
@@ -138,7 +138,7 @@ export default {
   },
   methods: {
     populate() {
-      for (var stock of this.data.stocks) {
+      for (var stock of this.stockData) {
         var newStockId = this.nextStockId++;
         this.stocks.push({
           id: newStockId,
