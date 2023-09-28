@@ -208,7 +208,8 @@ export default {
       }
 
       console.log(newPF);
-      this.testData.stocks = this.stocks;
+      this.testData.stocks = JSON.parse(JSON.stringify(this.stocks));
+
       this.isModal = true;
     },
   },
