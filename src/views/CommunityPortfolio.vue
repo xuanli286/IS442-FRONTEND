@@ -1,5 +1,6 @@
 <template>
   <div class="px-8 sm:px-12 py-11">
+    <h3 class="text-white mb-8">Community</h3>
     <!-- Search & Filter -->
     <div class="pb-10 grid grid-cols-[1fr,auto] md:grid-cols-[60%,auto,1fr] lg:grid-cols-[45%,auto,1fr] gap-8">
       <SearchInput v-model="query"/>
@@ -15,6 +16,7 @@
     <!-- Pagination -->
     <Pagination class="mb-10 float-right" :maxPage="Math.ceil(filteredData.length/5)" v-model="page"/>
 
+    <!-- Modal -->
     <Modal v-model="isModal" width="50%" height="fit-content">
       <h3 class="text-navy-950 mb-8">Sort By</h3>
       <div v-for="(condition, ppty, idx) in conditions" class="mb-2">
