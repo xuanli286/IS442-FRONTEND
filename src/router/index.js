@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import CreatePortfolio from "../views/CreatePortfolio.vue";
 import UpdatePortfolio from "../views/UpdatePortfolio.vue";
+import CommunityPortfolio from "../views/CommunityPortfolio.vue";
 import HomePage from "../views/Home.vue";
 import LandingPage from "@/views/Landing.vue";
 import Profile from "@/views/Profile.vue";
@@ -33,6 +34,11 @@ const routes = [
     path: '/update',
     name: UpdatePortfolio,
     component: UpdatePortfolio
+  },
+  {
+    path: '/community',
+    name: CommunityPortfolio,
+    component: CommunityPortfolio
   },
   {
     path: '/profile',
