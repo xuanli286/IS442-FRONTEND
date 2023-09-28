@@ -1,6 +1,6 @@
 <template>
   <div class="px-8 sm:px-12 py-11">
-    <h3 class="text-white mb-8">Community</h3>
+    <h3 class="text-white mb-8">Community Porfolios</h3>
     <!-- Search & Filter -->
     <div class="pb-10 grid grid-cols-[1fr,auto] md:grid-cols-[60%,auto,1fr] lg:grid-cols-[45%,auto,1fr] gap-8">
       <SearchInput v-model="query"/>

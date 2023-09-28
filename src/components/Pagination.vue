@@ -8,8 +8,8 @@
     </button>
     <input type="number" class="input-search" min="1" :max="maxPage" :value="modelValue" @blur="registerValue" @keydown.enter="registerValue" ref="inputField">
     <div class="flex items-center">of {{ maxPage }}</div>
-    <button class="btn-white">
-      <i class="bi bi-chevron-right" @click="increment"></i>
+    <button class="btn-white" @click="increment">
+      <i class="bi bi-chevron-right"></i>
     </button>
     <button class="btn-white" @click="end">
       <i class="bi bi-chevron-bar-right"></i>
