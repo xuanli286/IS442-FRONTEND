@@ -107,6 +107,15 @@ input[type="text"]::placeholder.input-grey, textarea::placeholder.input-grey, in
     text-center
 }
 
+.btn-white {
+    @apply
+    bg-white
+    px-3
+    py-2
+    rounded-xl
+    text-center
+}
+
 /* grey button */
 .btn-grey {
     @apply

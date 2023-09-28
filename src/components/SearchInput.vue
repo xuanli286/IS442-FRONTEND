@@ -1,13 +1,15 @@
 <template>
   <div class="flex">
-    <input type="text" class="input-search flex-left" placeholder="Search" :value="modelValue" ref="inputField">
-    <button class="btn-search">
-        <i class="bi bi-search"></i>
+    <input type="text" class="input-search flex-left" placeholder="Search" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" ref="inputField">
+    <button class="btn-search cursor-default">
+      <i class="bi bi-search"></i>
     </button>
   </div>
 </template>
 
 <script setup>
+defineProps(['modelValue'])
+defineEmits(['update:modelValue'])
 </script>
 
 <script>
@@ -45,7 +47,8 @@ export default {
     @apply
     -ml-[1px]
     bg-white
-    p-5
+    px-4
+    py-3
     rounded-e-xl
   }
 </style>
