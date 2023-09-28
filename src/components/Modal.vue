@@ -1,8 +1,8 @@
 <template>
   <Transition name="modal-fade">
-    <div class="overlay" v-if="active">
+    <div class="overlay" v-if="modelValue">
         <div class="modal-card" ref="modal" :style="{'width': width, 'height': height}">
-            <button class="absolute right-4 top-4 hover:text-gray-400" @click="$emit('update:active', false)">
+            <button class="absolute right-4 top-4 hover:text-gray-400" @click="$emit('update:modelValue', false)">
                 <i class="bi bi-x-lg"></i>
             </button>
             <slot></slot>
@@ -15,7 +15,7 @@
 export default {
   name: 'Modal',
   props: {
-    active: {
+    modelValue: {
         type: Boolean,
     },
     width: {
@@ -30,8 +30,8 @@ export default {
     }
   },
   watch: {
-    active() {
-        if (this.active) {
+    modelValue() {
+        if (this.modelValue) {
             setTimeout(() => {
                 document.addEventListener('click', this.checkClick);
             },100);
@@ -43,7 +43,7 @@ export default {
   methods: {
     checkClick(event) {
         if (this.$refs.modal && !this.$refs.modal.contains(event.target) ) {
-            this.$emit('update:active', false);
+            this.$emit('update:modelValue', false);
         }
     },
   },

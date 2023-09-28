@@ -16,11 +16,11 @@
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
       
       <!-- Table -->
-      <StockTable :items="items" :budget="budget" :stock-value="stocks" @update:stock-value="newValue => stocks = newValue"/>
+      <StockTable :items="items" :budget="budget" v-model="stocks"/>
 
       <!-- Other Add Stocks -->
       <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
-      <CapitalInput :valid="!error.budget" :model-value="budget" @update:model-value="newValue => budget = newValue"/>
+      <CapitalInput :valid="!error.budget" v-model="budget"/>
       <div class="form-invalid" v-if="error.budget">{{ error.budget }}</div>
 
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Modal -->
-    <Modal :active="isModal" @update:active="newValue => isModal = newValue" width="50%" height="fit-content">
+    <Modal v-model="isModal" width="50%" height="fit-content">
       <div class="text-center">
         <h3 class="text-navy-950 font-bold mb-5">Portfolio has been successfully created</h3>
         <button class="btn-navy">Go to Overview</button>

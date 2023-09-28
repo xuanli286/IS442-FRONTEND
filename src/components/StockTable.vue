@@ -12,7 +12,7 @@
             </tr>
             <tr v-for="(stock, idx) of stocks" :key="stock.id" class>
               <td style="padding:5px!important" class="relative">
-                <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" :model-value="stock.name" @update:model-value="newValue => stock.name = newValue" @change="newStock(stock.name, idx)" />
+                <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" v-model="stock.name" @change="newStock(stock.name, idx)" />
               </td>
             </tr>
           </table>
@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-defineEmits(['update:stockValue'])
+defineEmits(['update:modelValue'])
 </script>
 
 <script>
@@ -95,7 +95,7 @@ export default {
     budget: {
       type: Number,
     },
-    stockValue: {
+    modelValue: {
       type: Array,
     },
   },
@@ -127,7 +127,7 @@ export default {
   watch: {
     stocks: {
       handler() {
-        this.$emit('update:stockValue', this.stocks);
+        this.$emit('update:modelValue', this.stocks);
         setTimeout(() => {
           this.scrollbarVisible = this.$refs.t2.scrollWidth > this.$refs.t2.clientWidth;
         }, 0.1);
