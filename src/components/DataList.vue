@@ -20,10 +20,8 @@
 </template>
 
 <script setup>
-/* eslint-disable */
 defineProps(['items', 'modelValue', 'empty'])
 defineEmits(['update:modelValue', 'change'])
-/* eslint-enable */
 </script>
 
 <script>

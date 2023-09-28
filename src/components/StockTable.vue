@@ -74,8 +74,7 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue'
-  defineEmits(['update:stockValue'])
+defineEmits(['update:stockValue'])
 </script>
 
 <script>
