@@ -115,15 +115,16 @@ export default {
       }
     },
     stockValidation() {
+      var valid = true;
       for (var stock of this.stocks) {
         if (stock.name == "") {
           stock.empty = true;
-          return false;
+          valid = false;
         } else {
           stock.empty = false;
         }
       }
-      return true;
+      return valid;
     },
     createPortfolio() {
       var allStocks = [];
