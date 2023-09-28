@@ -65,7 +65,7 @@
           </table>
         </div>
       </div>
-
+      
       <!-- [ + ] -->
       <div class="w-full text-center mt-4">
         <button class="btn-navy-dense" @click="addRow()">+</button>
@@ -87,8 +87,8 @@ export default {
     DataList,
   },
   props: {
-    initStocks: {
-      type: Array,
+    data: {
+      type: Object,
     },
     items: {
       type: Array,
@@ -109,8 +109,8 @@ export default {
     }
   },
   created() {
-    if (this.initStocks) {
-      this.stocks = this.initStocks;
+    if (this.data) {
+      this.populate();
     }
     
   },
@@ -137,6 +137,23 @@ export default {
     },
   },
   methods: {
+    populate() {
+      for (var stock of this.data.stocks) {
+        var newStockId = this.nextStockId++;
+        this.stocks.push({
+          id: newStockId,
+          name: stock.name,
+          price: stock.price,
+          qty: stock.qty,
+          get total() {
+            return this.price * this.qty;
+          },
+          action: "BUY",
+          empty: false,
+        });
+        this.stockNames.push(stock.name);    
+      }
+    },
     addRow() {
       const newStockId = this.nextStockId++;
       this.stocks.push({
@@ -165,8 +182,8 @@ export default {
         // update properties of stocks
         stock.price = 10;
         stock.empty = false;
-        console.log(stock)
       }
+      console.log(this.stocks);
     },
   },
 }

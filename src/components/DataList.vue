@@ -4,11 +4,11 @@
       <i class="bi bi-exclamation-circle aspect-square"></i>
     </div>
     <div class="relative">
-      <i tabindex="0" v-if="inputTxt && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
+      <i tabindex="0" v-if="modelValue && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
       <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
-      <input type="text" :class="{'placeholder:text-red-500': empty, 'placeholder:text-navy-950': !empty}" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" v-model="inputTxt" ref="inputField">
+      <input type="text" :class="{'placeholder:text-red-500': empty, 'placeholder:text-navy-950': !empty}" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" :value="modelValue" ref="inputField">
       <ul tabindex="0" class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
-        <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(inputTxt.toLowerCase()))" :key="item.id">
+        <div v-for="(item, idx) of items.filter(item => item.toLowerCase().includes(modelValue.toLowerCase()))" :key="item.id">
           <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
             {{ item }}
           </li>
@@ -33,7 +33,6 @@ export default {
     return {
       isActive: false,
       display: false,
-      inputTxt: "",
     }
   },
   mounted() {
@@ -62,21 +61,23 @@ export default {
           this.clear();
         }
         
-        if (!this.items.includes(this.inputTxt)) {
-          this.inputTxt = "";
-        } else {
-          this.$emit('update:modelValue', this.inputTxt);
-          this.$emit('change', this.inputTxt);
+        if (this.$refs.inputField) {
+          if (!this.items.includes(this.$refs.inputField.value)) {
+            this.$emit('update:modelValue', '');
+          } else {
+            if (this.$refs.inputField.value != this.modelValue) {
+              this.$emit('update:modelValue', this.$refs.inputField.value);
+              this.$emit('change', this.$refs.inputField.value);
+            }
+          }
         }
       }
     },
     clear() {
-      this.inputTxt = "";
       this.$emit('update:modelValue', '');
       this.$emit('change', '');
     },
     selectOption(item) {
-      this.inputTxt = item;
       this.$emit('update:modelValue', item);
       this.$emit('change', item);
     }

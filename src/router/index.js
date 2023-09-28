@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import CreatePortfolio from "../views/CreatePortfolio.vue";
+import UpdatePortfolio from "../views/UpdatePortfolio.vue";
 import HomePage from "../views/Home.vue";
 import LandingPage from "@/views/Landing.vue";
 import Profile from "@/views/Profile.vue";
@@ -27,6 +28,11 @@ const routes = [
     path: '/create',
     name: CreatePortfolio,
     component: CreatePortfolio
+  },
+  {
+    path: '/update',
+    name: UpdatePortfolio,
+    component: UpdatePortfolio
   },
   {
     path: '/profile',
