@@ -3,26 +3,38 @@
     <h3 class="text-white pb-11">User Logs <i class="bi bi-file-earmark-text"></i></h3>
     <div class="white-card">
         <div class="text-gray-400 pb-2">Select date range</div>
-        <div class="mb-8">
-            <input type="date" class="mr-3" v-model="start"> – <input type="date" class="ml-3" v-model="end"> <button class="btn-navy ml-3" @click="start=''; end='';">Clear</button>
-        </div>
+        <div class="mb-8 grid gap-y-5 sm:block">
+          <label>
+            <span class="inline sm:hidden text-gray-400">From: </span><input type="date" class="w-fit sm:mr-3" v-model="start">
+          </label>
 
-        <table class="w-full">
-            <tr>
-                <th>Date & Time</th>
-                <th>Action</th>
-                <th>Status</th>
-            </tr>
-            <tr v-for="log of filteredData">
-                <td>{{ log.dateTime }}</td>
-                <td>{{ log.action }}</td>
-                <td>
-                    <div class="badge" :class="{'bg-[#28C191]': log.status, 'bg-[#FE4D35]': !log.status}">
-                        {{ log.status ? "Success" : "Failure" }}
-                    </div>
-                </td>
-            </tr>
-        </table>
+          <span class="hidden sm:inline"> – </span>
+
+          <label>
+            <span class="inline mr-5 sm:hidden text-gray-400">To: </span><input type="date" class="sm:ml-3" v-model="end">
+          </label>
+
+          <button class="btn-navy sm:ml-3 w-fit" @click="start=''; end='';">Clear</button>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full">
+              <tr>
+                  <th>Date & Time</th>
+                  <th>Action</th>
+                  <th>Status</th>
+              </tr>
+              <tr v-for="log of filteredData">
+                  <td>{{ log.dateTime }}</td>
+                  <td>{{ log.action }}</td>
+                  <td>
+                      <div class="badge" :class="{'bg-[#28C191]': log.status, 'bg-[#FE4D35]': !log.status}">
+                          {{ log.status ? "Success" : "Failure" }}
+                      </div>
+                  </td>
+              </tr>
+          </table>
+        </div>
     </div>
   </div>
 </template>

@@ -34,10 +34,12 @@
           <i class="bi bi-person-circle pr-2"></i>
           My Profile
         </li>
+        <RouterLink to="/home">
         <li class="option">
           <i class="bi bi-briefcase-fill pr-2"></i>
           My Portfolios
         </li>
+        </RouterLink>
         <hr/>
         <li class="option" @click="handleLogout">
           <i class="bi bi-box-arrow-right pr-2"></i>
