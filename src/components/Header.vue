@@ -7,7 +7,7 @@
     <div v-if="!isAuthenticated">
       <button class="text-graybrown font-semibold hover:text-navy-950" @click="handleLogin">Client Login</button>
     </div>
-    <div v-else class="relative -m-5">
+    <div v-else class="relative -m-5 z-50">
       <div class="profile" @click="displayProfileMenu" ref="profile">
         <img class="rounded-full w-10 md:w-12" :src="user.picture"/>
         <div class="hidden sm:block">
