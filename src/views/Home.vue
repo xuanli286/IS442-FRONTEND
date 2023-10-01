@@ -18,6 +18,13 @@ import PortfolioDropdown from '@/components/PortfolioDropdown.vue';
 import SummarizedValue from '@/components/SummarizedValue.vue';
 import CustomButton from "@/components/CustomButton.vue";
 import Portfolio from "@/views/Portfolio.vue";
+import { useUserStore } from "@/stores/useUserStore";
+import { storeToRefs } from "pinia";
+
+const store = useUserStore();
+const {
+    loginUser,
+} = storeToRefs(store);
 
 const isOpen = ref(false);
 const selectedPortfolio = ref("");
@@ -59,15 +66,22 @@ if (isAuthenticated) {
       email: user.value.email,
       id: user.value.sub.replace('|', '_'),
       picture: user.value.picture,
-      updatedAt: user.value['updated_at']
-    }
-    // console.log(data)
-    axios.post(`http://localhost:5000/customer/`, data)
+      updatedAt: user.value['updated_at'],
+    };
+    axios.get(`http://localhost:5000/customer/${data.id}`)
       .then((response) => {
-        console.log(response.data);
+        loginUser.value = response.data;
       })
       .catch((error) => {
-        console.log(error.message);
+        if (error.message.includes('404')) {
+          axios.post(`http://localhost:5000/customer/`, data)
+            .then((response) => {
+              loginUser.value = data;
+            })
+            .catch((error) => {
+              console.log(error.message);
+            })
+        }
       })
   });
 }

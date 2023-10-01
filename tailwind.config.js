@@ -28,8 +28,7 @@ module.exports = {
         black: {
           DEFAULT: colors.black,
           50: "#373737",
-        }
-
+        },
       },
       fontFamily: {
         mono: ["Consolas"],

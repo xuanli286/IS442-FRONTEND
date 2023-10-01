@@ -20,7 +20,7 @@
         <i class="bi bi-chevron-down transition" :class="{ 'chevDown': isActive }"></i>
       </div>
 
-      <ul class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
+      <ul class="dropdown z-50" :class="{ 'active': isActive }" ref="dropdown">
         <li class="sm:hidden grid grid-cols-[auto,1fr] gap-3 p-4">
           <img class="rounded-full w-10 md:w-12" :src="user.picture"/>
           <div class="text-graybrown">
@@ -30,7 +30,7 @@
           </div>
         <hr/>
         </li>
-        <li class="option">
+        <li class="option" @click="handleProfile">
           <i class="bi bi-person-circle pr-2"></i>
           My Profile
         </li>
@@ -52,8 +52,10 @@
 
 <script setup>
 import { useAuth0 } from '@auth0/auth0-vue';
+import { useRouter  } from "vue-router";
 
 const { user, loginWithRedirect, isAuthenticated, logout } = useAuth0();
+const router = useRouter();
 
 const handleLogin = () => {
   loginWithRedirect({
@@ -69,6 +71,10 @@ const handleLogout = () => {
       returnTo: window.location.origin,
     }
   })
+}
+
+const handleProfile = () => {
+  router.push({path: '/profile'});
 }
 </script>
 

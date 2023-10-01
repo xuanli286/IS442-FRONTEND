@@ -6,7 +6,7 @@ import CommunityPortfolio from "../views/CommunityPortfolio.vue";
 import UserLogs from "../views/UserLogs.vue";
 import HomePage from "../views/Home.vue";
 import LandingPage from "@/views/Landing.vue";
-import Profile from "@/views/Profile.vue";
+import MyProfile from "@/views/MyProfile.vue";
 import VerifyEmail from "@/views/VerifyEmail.vue";
 import Stock from "@/views/Stock.vue";
 
@@ -48,8 +48,8 @@ const routes = [
   },
   {
     path: '/profile',
-    name: Profile,
-    component: Profile
+    name: MyProfile,
+    component: MyProfile
   },
   {
     path: '/stock',

@@ -1,5 +1,6 @@
 <template>
     <button
+    ref="toggle"
     @click="toggleDropdown"
     class="p-3 bg-white hover:bg-gray-100 rounded w-56 font-semibold flex items-center"
     >
@@ -8,7 +9,7 @@
     </button>
 
     <div v-if="isOpen" class="absolute top-12 mt-2 p-2 w-56 bg-white border border-gray-300 shadow-lg rounded-lg z-10">
-        <ul>
+        <ul ref="dropdown">
             <li @click="selectPortfolio(portfolioName)" class="option" v-for="portfolioName in portfolios" :key="portfolioName">
                 <a>{{ portfolioName }}</a>
             </li>
@@ -28,6 +29,13 @@ export default {
     },
     computed: {
 
+    },
+    mounted() {
+        document.addEventListener('click', (event) => {
+            if (this.$refs.toggle && this.$refs.dropdown && !this.$refs.toggle.contains(event.target) && !this.$refs.dropdown.contains(event.target)) {
+                this.isOpen = false;
+            }
+        });
     },
     methods: {
         toggleDropdown() {
