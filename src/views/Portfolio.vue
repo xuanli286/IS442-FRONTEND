@@ -1,9 +1,12 @@
 <template>
     <div>
-        <PortfolioBreakdown :portfolio="portfolioId" :portfolioName="portfolioName"/>
-        <div class="h-1/3 w-1/3 white-card">
-            <DonutChart />
+        <PortfolioBreakdown :portfolioId="portfolioId" :portfolioName="portfolioName"/>
+        <div class="grid grid-cols-3 gap-2">
+            <!-- <div class="white-card"> -->
+            <DonutChart :isOverview="false" :portfolioId="portfolioId"/>
+
         </div>
+        
     </div>
 </template>
 
@@ -19,7 +22,7 @@ export default {
     },
     data(){
         return {
-            portfolioId: "someId",
+            portfolioId: "06lcHYp5MKVnsIvH12QJ",
             portfolioName: "High Risk Portfolio"
         }
     },
