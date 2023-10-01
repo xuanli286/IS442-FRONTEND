@@ -67,6 +67,7 @@ if (isAuthenticated) {
       id: user.value.sub.replace('|', '_'),
       picture: user.value.picture,
       updatedAt: user.value['updated_at'],
+      totalCapitalAvailable: 10000,
     };
     axios.get(`http://localhost:5000/customer/${data.id}`)
       .then((response) => {
