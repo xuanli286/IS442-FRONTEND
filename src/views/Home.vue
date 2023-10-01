@@ -59,7 +59,7 @@ function handleSelect(portfolio) {
   selectedPortfolio.value = portfolio;
 }
 
-if (isAuthenticated) {
+if (isAuthenticated.value) {
   onMounted(async () => {
     const data = {
       name: user.value.given_name || user.value.family_name ? user.value.name : user.value.nickname,

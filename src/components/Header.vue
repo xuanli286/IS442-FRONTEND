@@ -1,8 +1,6 @@
 <template>
   <div class="header font-inter">
-    <RouterLink to="/">
-      <img src="../assets/gs-logo.svg" class="md:w-[120px] w-[100px]" />
-    </RouterLink>
+    <img src="../assets/gs-logo.svg" class="md:w-[120px] w-[100px]" @click="handleLogo"/>
     <div class="col"></div>
     <div v-if="!isAuthenticated">
       <button class="text-graybrown font-semibold hover:text-navy-950" @click="handleLogin">Client Login</button>
@@ -75,6 +73,15 @@ const handleLogout = () => {
 
 const handleProfile = () => {
   router.push({path: '/profile'});
+}
+
+const handleLogo = () => {
+  if (isAuthenticated.value) {
+    router.push({path: '/home'});
+  }
+  else {
+    router.push({path: '/'});
+  }
 }
 </script>
 
