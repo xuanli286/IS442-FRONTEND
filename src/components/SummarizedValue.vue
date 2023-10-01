@@ -1,42 +1,37 @@
 <template>
-    <div class="white-card grid grid-rows-2 grid-cols-5 gap-[5%] text-center mb-5">
-        <div class="col-span-5 flex">
+    <div class="white-card grid grid-rows-2 grid-cols-4 gap-[5%] text-center mb-5">
+        <div class="flex justify-between col-span-4 ">
             <p v-if="isOverview" class="font-semibold text-blue-950">Portfolio Overview</p>
-            <p class="ml-auto"><span class="font-semibold">Currency:</span> SGD</p>
+            <p><span class="font-semibold">Currency:</span> SGD</p>
         </div>
-        <div class="flex justify-around items-center">
-            <div><i class="fa-solid fa-chart-pie fa-xl"></i></div>
+        <div class="flex justify-between col-span-4">
+            <div class="flex items-center">
+            <div><i class="fa-solid fa-chart-pie fa-xl mr-5"></i></div>
             <div>
                 <p class="text-graybrown">Portfolio Value</p>
                 <p class="font-bold text-navy-950">{{Math.abs(portfolioValue).toFixed(2)}}</p>
             </div>
-        </div>
-        <div class="flex justify-around items-center ">
-            <div><i class="fa-solid fa-scale-unbalanced-flip fa-xl"></i></div>
-            <div>
-                <p class="text-graybrown">Unrealised P&L</p>
-                <p class="font-bold" :class="unrealisedPnL < 0 ? 'text-red-500' : 'text-green-500'">{{Math.abs(unrealisedPnL).toFixed(2)}}</p>
             </div>
-        </div>
-        <div class="flex justify-around items-center">
-            <div><i class="fa-solid fa-receipt fa-xl"></i></div>
-            <div>
-                <p class="text-graybrown">Realised P&L</p>
-                <p class="font-bold" :class="realisedPnL < 0 ? 'text-red-500' : 'text-green-500'">{{Math.abs(realisedPnL).toFixed(2)}}</p>
+            <div class="flex items-center ">
+                <div><i class="fa-solid fa-scale-unbalanced-flip fa-xl mr-5"></i></div>
+                <div>
+                    <p class="text-graybrown">Unrealised P&L</p>
+                    <p class="font-bold" :class="unrealisedPnL < 0 ? 'text-red-500' : 'text-green-500'">{{Math.abs(unrealisedPnL).toFixed(2)}}</p>
+                </div>
             </div>
-        </div>
-        <div class="flex justify-around items-center">
-            <div><i class="fa-solid fa-piggy-bank fa-xl"></i></div>
-            <div>
-                <p class="text-graybrown">Buying Power</p>
-                <p class="font-bold">{{Math.abs(buyingpower).toFixed(2)}}</p>
+            <div class="flex items-center">
+                <div><i class="fa-solid fa-piggy-bank fa-xl mr-5"></i></div>
+                <div>
+                    <p class="text-graybrown">Buying Power</p>
+                    <p class="font-bold">{{Math.abs(buyingpower).toFixed(2)}}</p>
+                </div>
             </div>
-        </div>
-        <div class="flex justify-around items-center">
-            <div><i class="fa-solid fa-calendar-check fa-xl"></i></div>
-            <div>
-                <p class="text-graybrown">Daily P&L</p>
-                <p class="font-bold" :class="dailyPnL < 0 ? 'text-red-500' : 'text-green-500'">{{Math.abs(dailyPnL).toFixed(2)}}</p>
+            <div class="flex items-center">
+                <div><i class="fa-solid fa-calendar-check fa-xl mr-5"></i></div>
+                <div>
+                    <p class="text-graybrown">Daily P&L</p>
+                    <p class="font-bold" :class="dailyPnL < 0 ? 'text-red-500' : 'text-green-500'">{{Math.abs(dailyPnL).toFixed(2)}}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -63,7 +58,6 @@ export default {
             portfolioName: "Portfolio 1",
             portfolioValue: 8888.88,
             unrealisedPnL: 10.00,
-            realisedPnL: 10.00,
             buyingpower: 1000.00,
             dailyPnL: -1.23,
         }
