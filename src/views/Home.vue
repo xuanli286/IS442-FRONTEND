@@ -5,7 +5,8 @@
             <CustomButton :isDelete="isDelete"/>
         </div>
         <SummarizedValue :isOverview="!isDelete"/>
-        <Portfolio/>
+        <Portfolio v-if="isDelete"/>
+        <Overview :top3Portfolios="top3Portfolios" v-else/>
     </div>
 </template>
 
@@ -18,13 +19,21 @@ import PortfolioDropdown from '@/components/PortfolioDropdown.vue';
 import SummarizedValue from '@/components/SummarizedValue.vue';
 import CustomButton from "@/components/CustomButton.vue";
 import Portfolio from "@/views/Portfolio.vue";
+import Overview from "@/views/Overview.vue";
 import { useUserStore } from "@/stores/useUserStore";
+import { usePortfolioStore } from "@/stores/usePortfolioStore";
 import { storeToRefs } from "pinia";
 
 const store = useUserStore();
 const {
     loginUser,
 } = storeToRefs(store);
+
+const portfolioStore = usePortfolioStore();
+const {
+    portfolios,
+    top3Portfolios,
+} = storeToRefs(portfolioStore);
 
 const isOpen = ref(false);
 const selectedPortfolio = ref("");
@@ -37,23 +46,6 @@ const isDelete = computed(() => {
       return false;
   }
 });
-
-const portfolios = [
-  {
-      portfolioId: "someID",
-      portfolioName: "Portfolio 1",
-      portfolioValue: 88888888.88,
-      unrealisedPnL: 0,
-      currency: "SGD"
-  },
-  {
-      portfolioId: "someID2",
-      portfolioName: "Portfolio 2",
-      portfolioValue: 176.00,
-      unrealisedPnL: 0,
-      currency: "JPY"
-  }
-];
 
 function handleSelect(portfolio) {
   selectedPortfolio.value = portfolio;
@@ -83,6 +75,26 @@ if (isAuthenticated.value) {
               console.log(error.message);
             })
         }
+      })
+    axios.get(`http://localhost:5000/portfolio/getportfolios/${data.id}`)
+      .then((response) => {
+        response.data.sort((a, b) => b.portfolioValue - a.portfolioValue);
+        portfolios.value = response.data;
+        const performingPortfolios = portfolios.value.slice(0,3);
+        for (let i of performingPortfolios) {
+          let key = `${i.portfolioName} [${i.portfolioId}]`;
+          top3Portfolios.value[key] = {
+            portfolioId: i.portfolioId,
+            portfolioName: i.portfolioName,
+            portfolioValue: i.portfolioValue,
+            unrealisedPnL: i.unrealisedPnL,
+            dateCreated: i.dateCreated,
+            capital: i.capital,
+          }
+        }
+      })
+      .catch((error) => {
+          console.log(error.message);
       })
   });
 }

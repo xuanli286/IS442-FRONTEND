@@ -16,7 +16,7 @@
         },
         portfolioId: {
             type: String,
-            required: true,
+            required: false,
         },
     })
 </script>
@@ -26,17 +26,25 @@
     import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
     import { Doughnut } from 'vue-chartjs'
     import axios from "axios";
+    import { useUserStore } from "@/stores/useUserStore";
     
     ChartJS.register(ArcElement, Tooltip, Legend)
     
     export default {
         name: 'DonutChart',
         components: {
-        Doughnut
+            Doughnut
+        },
+        computed: {
+            loginUser() {
+                const store = useUserStore();
+                return store.loginUser;
+            },
         },
         data() {
             return {
                 loaded: false,
+                userId: "",
                 chartData: {
                     labels: [],
                     datasets: [
@@ -107,6 +115,7 @@
             }
         },
         async created() {
+            this.userId = this.loginUser.id;
 
             this.loaded = false;
 

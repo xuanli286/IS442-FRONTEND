@@ -1,6 +1,6 @@
 <template>
   <div class="header font-inter">
-    <img src="../assets/gs-logo.svg" class="md:w-[120px] w-[100px]" @click="handleLogo"/>
+    <img src="../assets/gs-logo.svg" class="md:w-[120px] w-[100px] cursor-pointer" @click="handleLogo"/>
     <div class="col"></div>
     <div v-if="!isAuthenticated">
       <button class="text-graybrown font-semibold hover:text-navy-950" @click="handleLogin">Client Login</button>
