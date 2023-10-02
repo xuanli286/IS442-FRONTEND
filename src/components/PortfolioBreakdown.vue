@@ -29,11 +29,13 @@
                     <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker">
                         <tr class="border-b border-navy-950">
                             <td colspan="6" class="font-semibold text-left">
-                                {{stockTicker}}
-                                <span class="inline-flex items-center justify-center px-2 h-6 mx-2 bg-navy-150 rounded-lg text-xs lg:text-sm font-medium">
-                                    {{ stockInfo[stockTicker].symbol }}
-                                </span>
-                                <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
+                                <RouterLink :to="{name: 'Stock', params:{stockTicker}}">
+                                    {{stockTicker}}
+                                    <span class="inline-flex items-center justify-center px-2 h-6 mx-2 bg-navy-150 rounded-lg text-xs lg:text-sm font-medium">
+                                        {{ stockInfo[stockTicker].symbol }}
+                                    </span>
+                                    <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
+                                </RouterLink>
                             </td>
                         </tr>
                         <tr v-for="info in transactions">
@@ -92,7 +94,7 @@
                 stockInfo : {}
             };
         },
-        async mounted() {
+        created() {
             axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`)
             .then(response => {
                 // Handle the response data here

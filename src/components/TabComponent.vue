@@ -1,16 +1,16 @@
 <template>
     <div class="mt-10">
         <nav class="border-b text-sm flex justify-start grid grid-cols-4">
-            <button 
+            <button class="btn text-lg lg:text-2xl border-2 rounded-t-lg py-2"
                 :class="{
-                    'btn text-white text-2xl border-2 rounded-t-lg py-2': activeTab !== 'tab1',
-                    'btn bg-white text-2xl border-2 border-black rounded-t-lg py-2': activeTab === 'tab1',
+                    'text-white': activeTab !== 'tab1',
+                    'bg-white border-black': activeTab === 'tab1',
                 }"
                 @click="activeTab = 'tab1'">Company Overview</button>
-            <button 
+            <button class="btn text-lg lg:text-2xl border-2 py-2 rounded-t-lg"
                 :class="{
-                    'btn text-white text-2xl border-2 rounded-t-lg py-2': activeTab !== 'tab2',
-                    'btn bg-white text-black text-2xl border-2 border-black rounded-t-lg py-2': activeTab === 'tab2',
+                    'text-white': activeTab !== 'tab2',
+                    'bg-white border-black': activeTab === 'tab2',
                 }"
                 @click="activeTab = 'tab2'">Financials</button>
         </nav>
@@ -18,41 +18,57 @@
         <div class="py-2">
           <div v-show="activeTab === 'tab1'" class="my-5">
             <h4 class="text-white font-semibold">Description</h4>
-            <p class="my-5 text-white">{{description}}</p>
-            <p class="my-5 text-white"><span class="font-semibold">Country:</span> {{country}}</p>
-            <p class="my-5 text-white"><span class="font-semibold">Currency:</span> {{currency}}</p>
-            <p class="my-5 text-white"><span class="font-semibold">Industry:</span> {{industry}}</p>
-            <p class="my-5 text-white"><span class="font-semibold">Sector(s):</span> {{sector}}</p>
-            <h4 class="text-white mt-10">Market Sentiments</h4>
-            <!-- <div class="h-3/5 w-3/5 mx-auto">
-                <DonutChart />
-            </div> -->
+            <p class="my-4 text-white">{{stockInfo.description}}</p>
+            <p class="my-5 text-white"><span class="font-semibold">Country:</span> {{stockInfo.country}}</p>
+            <p class="my-5 text-white"><span class="font-semibold">Currency:</span> {{stockInfo.currency}}</p>
+            <p class="my-5 text-white"><span class="font-semibold">Industry:</span> {{stockInfo.industry}}</p>
+            <p class="my-5 text-white"><span class="font-semibold">Sector(s):</span> {{stockInfo.sector}}</p>
           </div>
           <div v-show="activeTab === 'tab2'">
-            <h4 class="text-white font-semibold">Income Statement</h4>
-            <h4 class="text-white font-semibold">Balance Sheet</h4>
+            <Financials :stock="stock"/>
           </div>
         </div>
     </div>
 </template>
+
+<script setup>
+    import { defineProps } from 'vue';
+    import axios from "axios";
+
+    const props = defineProps({
+      stock: {
+        type: String,
+        required: true,
+      }
+    })
+
+</script>
   
 <script>
 import DonutChart from '../components/charts/DonutChart.vue'
+import Financials from '../components/Financials.vue'
     
     export default {
       components: {
-        DonutChart
+        DonutChart,
+        Financials,
       },
       data() {
-          return {
-              activeTab: 'tab1',
-              description: "Apple Inc. is an American multinational technology company that specializes in consumer electronics, computer software, and online services. Apple is the world's largest technology company by revenue (totalling $274.5 billion in 2020) and, since January 2021, the world's most valuable company. As of 2021, Apple is the world's fourth-largest PC vendor by unit sales, and fourth-largest smartphone manufacturer. It is one of the Big Five American information technology companies, along with Amazon, Google, Microsoft, and Facebook.",
-              country: "USA",
-              currency: "USD",
-              industry: "Electronic Computers",
-              sector: "Technology",
-              stockTicker: "AAPL"
-          };
+        return {
+          activeTab: 'tab1',
+          stockInfo: {}
+        };
+      },
+      created() {
+
+        axios.get(`http://localhost:5000/stock/${this.stock}/companyOverview`)
+        .then(response => {
+          this.stockInfo = response.data
+        })
+        .catch(error => {
+            console.error(error)
+        });
+
       }
         
     }
