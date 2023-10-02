@@ -1,12 +1,12 @@
 <template>
     <div class="px-8 sm:px-12 py-11 font-inter">
         <div class="relative flex justify-between mb-5">
-            <PortfolioDropdown @isSelect="handleSelect"/>
+            <PortfolioDropdown @isSelect="handleSelect" :userId="'google-oauth2_113348502313853368765'"/>
             <CustomButton :isDelete="isDelete"/>
         </div>
         <SummarizedValue :isOverview="!isDelete"/>
-        <Portfolio v-if="isDelete"/>
-        <Overview :top3Portfolios="top3Portfolios" v-else/>
+        <Portfolio v-if="isDelete" :portfolio="selectedPortfolio"/>
+        <Overview v-else :top3Portfolios="top3Portfolios" />
     </div>
 </template>
 
@@ -14,7 +14,7 @@
 import { useAuth0 } from '@auth0/auth0-vue';
 const { user, isAuthenticated } = useAuth0();
 import axios from "axios";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, watch } from "vue";
 import PortfolioDropdown from '@/components/PortfolioDropdown.vue';
 import SummarizedValue from '@/components/SummarizedValue.vue';
 import CustomButton from "@/components/CustomButton.vue";
@@ -35,16 +35,12 @@ const {
     top3Portfolios,
 } = storeToRefs(portfolioStore);
 
-const isOpen = ref(false);
 const selectedPortfolio = ref("");
 
-const isDelete = computed(() => {
-  if (selectedPortfolio.value !== "Overview") {
-      return true;
-  }
-  else {
-      return false;
-  }
+const isDelete = ref(false)
+
+watch(() => selectedPortfolio.value.portfolioName, (newPortfolioName) => {
+  isDelete.value = newPortfolioName !== 'Overview';
 });
 
 function handleSelect(portfolio) {

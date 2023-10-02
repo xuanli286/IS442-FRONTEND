@@ -13,6 +13,7 @@ module.exports = {
         navy: {
           '50': '#f5f7fa',
           '100': '#ebeff4',
+          '150': "#CDDCF8",
           '200': '#d0dce7',
           '300': '#a8bed1',
           '400': '#7a9cb8',

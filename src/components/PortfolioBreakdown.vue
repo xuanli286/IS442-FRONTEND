@@ -8,8 +8,8 @@
         </div>
         <div class="border-2 border-black rounded-md p-4">
             <div class="mb-4">
-                <h5 class="text-xl font-semibold">{{ portfolioName }}</h5>
-                <p class="text-sm font-medium">Date Created: {{ dateCreated }}</p>
+                <h5 class="text-xl font-semibold">{{ portfolio.portfolioName }}</h5>
+                <p class="text-sm font-medium">Date Created: {{ formattedDate }}</p>
             </div>
             <table class="table-auto w-full text-center">
                 <thead>
@@ -24,9 +24,9 @@
                 </thead>
                 <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker">
                     <tr>
-                        <td class="col-span-6 flex items-center">
+                        <td class="col-span-6 flex items-center font-semibold">
                             {{stockTicker}} 
-                            <span class="inline-flex items-center justify-center px-2 h-6 ml-2 bg-navy-100 rounded-lg text-sm font-semibold">
+                            <span class="inline-flex items-center justify-center px-2 h-6 ml-2 bg-navy-150 rounded-lg text-sm font-medium">
                                 {{ stockInfo[stockTicker].symbol }}
                             </span>
                         </td>
@@ -51,15 +51,25 @@
     import axios from "axios";
 
     const props = defineProps({
-        portfolioId: {
-            type: String,
+        portfolio: {
+            type: Object,
             required: true,
-        },
-        portfolioName: {
-            type: String,
-            required: true
         }
     })
+
+    function formatDate(inputDate) {
+        const date = new Date(inputDate); // Parse the input date string
+        const day = date.getDate().toString().padStart(2, '0'); // Get the day and pad with leading zeros if necessary
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (months are zero-based) and pad with leading zeros if necessary
+        const year = date.getFullYear(); // Get the full year
+
+        return `${day}/${month}/${year}`;
+    }
+
+    // Format the date and store it in the formattedDate variable
+    const formattedDate = formatDate(props.portfolio.dateCreated);
+
+
 </script>
   
 
@@ -72,16 +82,15 @@
         },
         data() {
             return {
-                dateCreated: "8/8/23",
                 portfolioStocks: {},
                 stockInfo : {}
             };
         },
         async mounted() {
-            axios.get(`http://localhost:5000/portfolio/${this.portfolioId}`)
+            axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`)
             .then(response => {
                 // Handle the response data here
-                console.log(response.data.portStock);
+                // console.log(response.data.portStock);
                 this.portfolioStocks = response.data.portStock
 
                 let stocks = Object.keys(response.data.portStock)
