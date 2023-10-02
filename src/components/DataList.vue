@@ -5,7 +5,7 @@
     </div>
     <div class="relative">
       <i tabindex="0" v-if="modelValue && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
-      <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
+      <i class="bi bi-search input-icon transition z-[0]" v-else></i>
 
       <input type="text" :class="{'placeholder:text-red-500': empty, 'placeholder:text-navy-950': !empty, 'inputActive': isActive, 'dropdownEmpty': filteredData.length == 0 }" 
       class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Enter Symbol" :value="modelValue" @input="$emit('update:modelValue', $event.target.value);" ref="inputField">
