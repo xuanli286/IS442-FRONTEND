@@ -4,14 +4,14 @@
     @click="toggleDropdown"
     class="p-3 bg-white hover:bg-gray-100 rounded w-56 font-semibold flex items-center"
     >
-    <span class="flex-grow">{{ selectedPortfolio }}</span>
-    <i class="bi bi-chevron-down transition ml-auto" :class="{ 'chevDown': isOpen }"></i>
+    <span class="flex-grow text-navy-950">{{ selectedPortfolio }}</span>
+    <i class="bi bi-chevron-down transition ml-auto text-navy-950" :class="{ 'chevDown': isOpen }"></i>
     </button>
 
     <div v-if="isOpen" class="absolute top-12 mt-2 p-2 w-56 bg-white border border-gray-300 shadow-lg rounded-lg z-10">
         <ul ref="dropdown">
             <li @click="selectPortfolio(portfolio)" class="option" v-for="portfolio in portfolios" :key="portfolio">
-                <a>{{ portfolio.portfolioName }}</a>
+                <a class="text-navy-950">{{ portfolio.portfolioName }}</a>
             </li>
         </ul>
     </div>
