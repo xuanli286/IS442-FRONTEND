@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="grid grid-cols-[120px,1fr] sm:grid-cols-[150px,1fr]">
+    <div class="grid grid-cols-[120px,1fr] sm:grid-cols-[180px,1fr]">
         <div class="grid grid-rows-[1fr,auto] relative z-20" style="linear-gradient(to bottom, white 50%, gray 50%);" :class="{'bg-white': stocks.length != 0}">
           <table class="navy-1 w-full flex-grow">
             <tr>
@@ -11,8 +11,11 @@
               <div class="absolute left-0 top-0 w-[150px]" style="top:calc(50% - 12px); left:calc(50vw - 166px);">No stocks added.</div>
             </tr>
             <tr v-for="(stock, idx) of stocks" :key="stock.id" class>
-              <td style="padding:5px!important" class="relative">
+              <td style="padding:5px!important" class="relative" v-if="!stock.freeze">
                 <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" v-model="stock.name" @change="newStock(stock.name, idx)" />
+              </td>
+              <td style="padding-top:5px!important;padding-right:5px!important;padding-bottom:5px!important;padding-left:1.0625rem!important;" class="relative text-left" v-else>
+                {{ stock.name }}
               </td>
             </tr>
           </table>
@@ -79,6 +82,7 @@ defineEmits(['update:modelValue'])
 
 <script>
 import DataList from './DataList.vue'
+import axios from "axios";
 
 export default {
   name: 'HomePage',
@@ -145,12 +149,12 @@ export default {
           price: stock.price,
           qty: stock.qty,
           get total() {
-            return this.price * this.qty;
+            return Math.round(this.price * this.qty * 100) / 100;
           },
           action: "BUY",
           empty: false,
+          freeze: true,
         });
-        this.stockNames.push(stock.name);    
       }
     },
     addRow() {
@@ -177,10 +181,17 @@ export default {
       let stock = this.stocks[idx];
       this.stockNames[idx] = name;
       console.log(this.stockNames)
-      if (this.items.includes(stock.name)) {
+      if (stock.name && this.items.includes(stock.name)) {
         // update properties of stocks
-        stock.price = 10;
         stock.empty = false;
+
+        axios.get(`http://localhost:5000/stockprice/eodprice/${stock.name}`)
+        .then((response) => {
+          stock.price = response.data["4. close"];
+        })
+        .catch((error) => {
+          console.log(error.message);
+        })
       }
       console.log(this.stocks);
     },

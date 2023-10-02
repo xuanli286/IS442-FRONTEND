@@ -46,6 +46,7 @@
 import StockTable from '../components/StockTable.vue'
 import CapitalInput from '../components/CapitalInput.vue'
 import Modal from '../components/Modal.vue'
+import axios from "axios";
 
 export default {
   name: 'CreatePortfolio',
@@ -59,7 +60,7 @@ export default {
       pName: null,
       pDesc: null,
       stocks: [],
-      items: ["APPL", "AOS", "TSCO", "DDW"],
+      items: [],
       budget: null,
       error: {},
       isModal: false,
@@ -70,9 +71,24 @@ export default {
       return this.stocks.reduce((total, stock) => total + stock.total, 0);
     }
   },
+  created() {
+    this.retrieveStocks();
+  },
   methods: {
     cancel() {
       window.history.back();
+    },
+    retrieveStocks() {
+      axios.get(`http://localhost:8080/listing_status.csv`)
+      .then((response) => {
+        var stockRows = response.data.split("\r\n");
+        for (var i=1; i<stockRows.length; i++) {
+          this.items.push(stockRows[i].split(",")[0]);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      })
     },
     validate() {
       this.error = {};

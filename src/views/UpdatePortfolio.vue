@@ -46,6 +46,7 @@
 import StockTable from '../components/StockTable.vue'
 import CapitalInput from '../components/CapitalInput.vue'
 import Modal from '../components/Modal.vue'
+import axios from "axios";
 
 export default {
   name: 'UpdatePortfolio',
@@ -59,7 +60,7 @@ export default {
       pName: null,
       pDesc: null,
       stocks: [],
-      items: ["APPL", "AOS", "TSCO", "DDW"],
+      items: [],
       budget: null,
       error: {},
       isModal: false,
@@ -68,14 +69,14 @@ export default {
         pDesc: "this is a test",
         stocks: [
           {
-              "name": "AOS",
-              "price": 10,
-              "qty": 1
+            "name": "AAPL",
+            "price": 171.21,
+            "qty": 1
           },
           {
-              "name": "DDW",
-              "price": 10,
-              "qty": 3
+            "name": "BABA",
+            "price": 86.74,
+            "qty": 3
           }
         ],
         budget: 60,
@@ -84,6 +85,7 @@ export default {
   },
   created() {
     this.populate();
+    this.retrieveStocks();
   },
   computed: {
     portfolioTotal() {
@@ -91,13 +93,25 @@ export default {
     }
   },
   methods: {
+    cancel() {
+      window.history.back();
+    },
     populate() {
       this.pName = this.testData.pName;
       this.pDesc = this.testData.pDesc;
       this.budget = this.testData.budget;
     },
-    cancel() {
-      window.history.back();
+    retrieveStocks() {
+      axios.get(`http://localhost:8080/listing_status.csv`)
+      .then((response) => {
+        var stockRows = response.data.split("\r\n");
+        for (var i=1; i<stockRows.length; i++) {
+          this.items.push(stockRows[i].split(",")[0]);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      })
     },
     validate() {
       this.error = {};
@@ -140,15 +154,16 @@ export default {
       }
     },
     stockValidation() {
+      var valid = true;
       for (var stock of this.stocks) {
         if (stock.name == "") {
           stock.empty = true;
-          return false;
+          valid = false;
         } else {
           stock.empty = false;
         }
       }
-      return true;
+      return valid;
     },
    updatePortfolio() {
       var stockBefore = {};

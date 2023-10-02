@@ -6,15 +6,19 @@
     <div class="relative">
       <i tabindex="0" v-if="modelValue && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
       <i class="bi bi-chevron-down input-icon transition z-[0]" :class="{ 'chevDown': isActive }"></i>
-      <input type="text" :class="{'placeholder:text-red-500': empty, 'placeholder:text-navy-950': !empty}" class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Symbol" :value="modelValue" @input="$emit('update:modelValue', $event.target.value);" ref="inputField">
-      <ul tabindex="0" class="dropdown" :class="{ 'active': isActive }" ref="dropdown">
-        <div v-for="(item, idx) of items.filter(item => item.toUpperCase().includes(modelValue.toUpperCase()))" :key="item.id">
+
+      <input type="text" :class="{'placeholder:text-red-500': empty, 'placeholder:text-navy-950': !empty, 'inputActive': isActive, 'dropdownEmpty': filteredData.length == 0 }" 
+      class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Enter Symbol" :value="modelValue" @input="$emit('update:modelValue', $event.target.value);" ref="inputField">
+
+      <ul tabindex="0" class="dropdown" :class="{ 'active': isActive, 'hidden': filteredData.length == 0 }" ref="dropdown">
+        <div v-for="(item, idx) of filteredData" :key="item.id">
           <li class="stock-option" @click="isActive=!isActive;selectOption(item);">
             {{ item }}
           </li>
           <div class="divider" v-if="idx != items.length-1"></div>
         </div>
       </ul>
+      
     </div>
   </div>
 </template>
@@ -47,6 +51,11 @@ export default {
       } else {
         this.display = true;
       }
+    },
+  },
+  computed: {
+    filteredData() {
+      return this.modelValue ? this.items.filter(item => item.toUpperCase().startsWith(this.modelValue.toUpperCase())) : [];
     },
   },
   methods: {
@@ -105,7 +114,7 @@ export default {
     w-full
     text-navy-950
   }
-  .input-datalist:focus {
+  .inputActive {
     background-color: rgb(0, 0, 0, 0.1);
     outline: 2px solid;
     @apply
@@ -113,6 +122,10 @@ export default {
     -outline-offset-2
     rounded-b-none
     placeholder:text-navy-950
+  }
+  .dropdownEmpty {
+    @apply
+    rounded-b-xl
   }
   /*.input-datalist::placeholder {
     @apply
