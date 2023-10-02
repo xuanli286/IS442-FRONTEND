@@ -70,7 +70,12 @@ export default {
         stocks: [
           {
             "name": "AAPL",
-            "price": 171.21,
+            "price": 151.21,
+            "qty": 1
+          },
+          {
+            "name": "AAPL",
+            "price": 161.21,
             "qty": 1
           },
           {
@@ -79,7 +84,7 @@ export default {
             "qty": 3
           }
         ],
-        budget: 60,
+        budget: 600,
       },
     }
   },
@@ -139,7 +144,7 @@ export default {
           this.error["budget"] = "Please enter a number"; 
 
         } else if (this.budget < this.portfolioTotal) {
-          this.error["budget"] = `Capital allocated must be at least $${this.portfolioTotal}`; 
+          this.error["budget"] = `Capital allocated must be at least $${ Math.round(this.portfolioTotal * 100) / 100}`; 
         }
       }
 
@@ -171,14 +176,16 @@ export default {
       var allStockNames = [];
       var stockResult = {};
 
+      var stockUpdate = {};
+
       for (var stock of this.testData.stocks) {
-        stockBefore[stock.name] = stock;
-        allStockNames.push(stock.name);
+        stockBefore[`${stock.name}+${stock.price}`] = stock;
+        allStockNames.push(`${stock.name}+${stock.price}`);
       }
       for (var stock of this.stocks) {
-        stockAfter[stock.name] = stock;
-        if (!allStockNames.includes(stock.name)) {
-          allStockNames.push(stock.name);
+        stockAfter[`${stock.name}+${stock.price}`] = stock;
+        if (!allStockNames.includes(`${stock.name}+${stock.price}`)) {
+          allStockNames.push(`${stock.name}+${stock.price}`);
         }
       }
 
@@ -186,30 +193,35 @@ export default {
         // add
         if (!(stock in stockBefore) && (stock in stockAfter)) {
           if ("add" in stockResult) {
-            stockResult["add"].push({name: stockAfter[stock].name, qty: stockAfter[stock].qty});
+            stockResult["add"][stockAfter[stock].name] = {qty: stockAfter[stock].qty, price: stockAfter[stock].price};
           } else {
-            stockResult["add"] = [{name: stockAfter[stock].name, qty: stockAfter[stock].qty}];
+            stockResult["add"] = {};
+            stockResult["add"][stockAfter[stock].name] = {qty: stockAfter[stock].qty, price: stockAfter[stock].price};
           }
         }
 
         // delete
         if ((stock in stockBefore) && !(stock in stockAfter)) {
           if ("delete" in stockResult) {
-            stockResult["delete"].push({name: stockBefore[stock].name, qty: stockBefore[stock].qty});
+            stockResult["delete"][stockBefore[stock].name] = {qty: stockBefore[stock].qty, price: stockBefore[stock].price};
           } else {
-            stockResult["delete"] = [{name: stockBefore[stock].name, qty: stockBefore[stock].qty}];
+            stockResult["delete"] = {};
+            stockResult["delete"][stockBefore[stock].name] = {qty: stockBefore[stock].qty, price: stockBefore[stock].price};
           }
         }
 
         // update
         if ((stock in stockBefore) && (stock in stockAfter)) {
           if (stockBefore[stock].qty != stockAfter[stock].qty) {
-            if ("update" in stockResult) {
-              stockResult["update"].push({name: stockAfter[stock].name, qty: stockAfter[stock].qty});
+            if (stockAfter[stock].name in stockUpdate) {
+              stockUpdate[stockAfter[stock].name].push({qty: stockAfter[stock].qty, price: stockAfter[stock].price});
             } else {
-              stockResult["update"] = [{name: stockAfter[stock].name, qty: stockAfter[stock].qty}];
+              stockUpdate[stockAfter[stock].name] = [{qty: stockAfter[stock].qty, price: stockAfter[stock].price}];
             }
           }
+        }
+        if (Object.keys(stockUpdate).length != 0) {
+          stockResult["update"] = stockUpdate;
         }
       }
 
@@ -223,6 +235,10 @@ export default {
       }
 
       console.log(newPF);
+
+      for (stock of this.stocks) {
+        stock["freeze"] = true;
+      }
       this.testData.stocks = JSON.parse(JSON.stringify(this.stocks));
 
       this.isModal = true;

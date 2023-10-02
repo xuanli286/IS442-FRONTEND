@@ -70,7 +70,7 @@ export default {
         
         if (this.$refs.inputField) {
           if (!this.items.includes(this.$refs.inputField.value.toUpperCase())) {
-            this.$emit('update:modelValue', '');
+            this.clear();
           } else {
             this.$emit('update:modelValue', this.$refs.inputField.value.toUpperCase());
             this.$emit('change', this.$refs.inputField.value.toUpperCase());

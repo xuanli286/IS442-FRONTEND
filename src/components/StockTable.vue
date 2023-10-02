@@ -138,9 +138,18 @@ export default {
       },
       deep: true,
     },
+    stockData: {
+      handler() {
+        this.populate();
+      },
+      deep: true,
+    },
   },
   methods: {
     populate() {
+      this.stocks = [];
+      this.stockNames = [];
+
       for (var stock of this.stockData) {
         var newStockId = this.nextStockId++;
         this.stocks.push({
@@ -179,20 +188,33 @@ export default {
     },
     newStock(name, idx) {
       let stock = this.stocks[idx];
-      this.stockNames[idx] = name;
-      console.log(this.stockNames)
-      if (stock.name && this.items.includes(stock.name)) {
-        // update properties of stocks
-        stock.empty = false;
 
+      if (!stock.name) {
+        stock.price = 0;
+      }
+
+      if (stock.name && this.items.includes(stock.name) && this.stockNames[idx] != name) {
+        // update properties of stocks
         axios.get(`http://localhost:5000/stockprice/eodprice/${stock.name}`)
         .then((response) => {
-          stock.price = response.data["4. close"];
+          const isMatch = this.stocks.some(item => {
+            return item.name == stock.name && item.price == response.data["4. close"];
+          });
+          if (!isMatch) {
+            stock.price = response.data["4. close"];
+            stock.empty = false;
+          } else {
+            this.stocks[idx].name = "";
+            this.stockNames[idx] = "";
+          }
         })
         .catch((error) => {
           console.log(error.message);
         })
       }
+
+      this.stockNames[idx] = name;
+      console.log(this.stockNames);
       console.log(this.stocks);
     },
   },

@@ -116,7 +116,7 @@ export default {
           this.error["budget"] = "Please enter a number"; 
 
         } else if (this.budget < this.portfolioTotal) {
-          this.error["budget"] = `Capital allocated must be at least $${this.portfolioTotal}`; 
+          this.error["budget"] = `Capital allocated must be at least $${ Math.round(this.portfolioTotal * 100) / 100}`; 
         }
       }
 
