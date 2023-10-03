@@ -1,13 +1,10 @@
 <template>
-  <div class="grid grid-cols-[auto,1fr] items-center">
-    <div class="text-red-500 px-1" v-if="empty">
-      <i class="bi bi-exclamation-circle aspect-square"></i>
-    </div>
+  <div class="items-center">
     <div class="relative" ref="datalist">
       <i tabindex="0" v-if="modelValue && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
       <i class="bi bi-search input-icon transition z-[0]" v-else></i>
 
-      <input type="text" :class="{'placeholder:text-red-500': empty, 'placeholder:text-navy-950': !empty, 'inputActive': isActive, 'dropdownEmpty': filteredData.length == 0 }" 
+      <input type="text" :class="{'inputActive': isActive, 'dropdownEmpty': filteredData.length == 0 }" 
       class="input-datalist relative z-[1]" @focus="isActive = true" @blur="handleBlur" placeholder="Enter Symbol" :value="modelValue" @input="$emit('update:modelValue', $event.target.value);" ref="inputField">
 
       <ul tabindex="0" class="dropdown" :class="{ 'active': isActive, 'hidden': filteredData.length == 0 }" ref="dropdown">
@@ -18,7 +15,6 @@
           <div class="divider" v-if="idx != items.length-1"></div>
         </div>
       </ul>
-      
     </div>
   </div>
 </template>
@@ -113,6 +109,7 @@ export default {
     p-3
     w-full
     text-navy-950
+    placeholder:text-navy-800
   }
   .inputActive {
     background-color: rgb(0, 0, 0, 0.1);
@@ -121,7 +118,7 @@ export default {
     outline-navy-950
     -outline-offset-2
     rounded-b-none
-    placeholder:text-navy-950
+    placeholder:text-navy-800
   }
   .dropdownEmpty {
     @apply

@@ -1,16 +1,22 @@
 <template>
   <div>
-    <div class="grid grid-cols-[120px,1fr] sm:grid-cols-[180px,1fr]">
+    <div class="grid grid-cols-[120px,1fr] sm:grid-cols-[auto,1fr]">
         <div class="grid grid-rows-[1fr,auto] relative z-20" style="linear-gradient(to bottom, white 50%, gray 50%);" :class="{'bg-white': stocks.length != 0}">
           <table class="navy-1 w-full flex-grow">
             <tr>
-              <th :class="{'border-effect': stocks.length == 0}">Stock</th>
+              <th v-if="haveEmpty" style="background-color:transparent;"></th>
+              <th :class="{'border-effect': stocks.length == 0, 'rounded-tl-xl': haveEmpty}" class="w-[180px]">Stock</th>
             </tr>
             <tr v-if="stocks.length == 0" class="relative">
               <td class="rounded-bl-xl"></td>
               <div class="absolute left-0 top-0 w-[150px]" style="top:calc(50% - 12px); left:calc(50vw - 166px);">No stocks added.</div>
             </tr>
-            <tr v-for="(stock, idx) of stocks" :key="stock.id" class>
+            <tr v-for="(stock, idx) of stocks" :key="stock.id">
+              <td v-if="stock.empty" style="background-color:transparent;">
+                <i class="bi bi-exclamation-circle aspect-square text-red-500"></i>
+              </td>
+              <td v-else-if="haveEmpty" style="background-color:transparent;"></td>
+
               <td style="padding:5px!important" class="relative" v-if="!stock.freeze">
                 <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(`${item}.${stock.date}`) || stockNames[idx] == `${item}.${stock.date}`) )" v-model="stock.name" @change="newStock(idx)" />
               </td>
@@ -19,7 +25,7 @@
               </td>
             </tr>
           </table>
-          <div class="h-fit" :class="{'overflow-x-scroll': scrollbarVisible}"></div>
+          <div class="h-fit t1-scroll" :class="{'overflow-x-scroll': scrollbarVisible}"></div>
         </div>
         <div class="overflow-x-auto relative z-10 -ml-2" ref="t2">
           <table class="navy w-full">
@@ -40,8 +46,8 @@
             </tr>
 
             <tr v-for="(stock, idx) of stocks" :key="stock.id">
-              <td>
-                <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="stock.date" @change="newStock(idx)"/>
+              <td style="padding:5px 5px 5px 11px!important">
+                <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="stock.date" @change="newStock(idx)" class="input-month"/>
               </td>
 
               <td>{{ stock.price }}</td>
@@ -149,6 +155,11 @@ export default {
       deep: true,
     },
   },
+  computed: {
+    haveEmpty() {
+      return this.stocks.some(stock => stock.empty == true);
+    },
+  },
   methods: {
     populate() {
       this.stocks = [];
@@ -194,11 +205,6 @@ export default {
     newStock(idx) {
       let stock = this.stocks[idx];
 
-      // const matchIdx = this.stocks.findIndex(item => {
-      //   return item.name == stock.name && item.date == stock.date;
-      // });
-      // const isValid = matchIdx == idx ? true : false;
-
       if (!stock.name || !stock.date) {
         stock.price = 0;
       } else if (this.items.includes(stock.name) && !this.stockNames.includes(`${stock.name}.${stock.date}`)) {        
@@ -214,6 +220,7 @@ export default {
         this.stocks[idx].name = "";
         this.stocks[idx].date = "";
         this.stockNames[idx] = "";
+        stock.empty = true;
       }
 
       this.stockNames[idx] = `${stock.name}.${stock.date}`;
@@ -225,89 +232,113 @@ export default {
 </script>
 
 <style scoped>
+/* .t1-scroll {
+  @apply
+  opacity-0
+} */
+
+.input-month {
+  @apply
+  bg-transparent
+  rounded-xl
+  p-3
+  w-full
+  text-navy-950
+  placeholder:text-navy-800
+}
+.input-month:focus {
+  background-color: rgb(0, 0, 0, 0.1);
+  outline: 2px solid;
+  @apply
+  outline-navy-950
+  -outline-offset-2
+  placeholder:text-navy-800
+}
+
 table.navy {
-    border-collapse: separate;
-    @apply
-    text-center 
+  border-collapse: separate;
+  @apply
+  text-center 
 }
 
 table.navy tr:first-child th:nth-last-child(2) {
-    @apply
-    rounded-tr-xl
+  @apply
+  rounded-tr-xl
 }
 table.navy tr:last-child td:nth-last-child(2) {
-    @apply
-    rounded-br-xl
+  @apply
+  rounded-br-xl
 }
 
 table.navy td:last-child {
-    @apply
-    bg-transparent
-    text-red-500
+  @apply
+  bg-transparent
+  text-red-500
 }
 table.navy th:last-child {
-    @apply
-    bg-transparent
+  @apply
+  bg-transparent
 }
 
 table.navy th {
-    @apply
-    bg-navy-950
-    text-white
-    font-semibold
-    px-5
-    py-2
+  @apply
+  bg-navy-950
+  text-white
+  font-semibold
+  px-5
+  py-2
 }
 table.navy td {
-    @apply
-    bg-gray-200
-    text-navy-950
-    px-5
-    py-2
+  @apply
+  bg-gray-200
+  text-navy-950
+  px-5
+  py-2
 }
 table.navy tr {
-    @apply
-    h-[60px]
+  @apply
+  h-[60px]
 }
 /* first column */
 table.navy-1 th {
-    @apply
-    bg-navy-950
-    text-white
-    font-semibold
-    px-5
-    py-2
+  @apply
+  bg-navy-950
+  text-white
+  font-semibold
+  px-5
+  py-2
 }
 table.navy-1 td {
-    @apply
-    bg-gray-200
-    text-navy-950
-    px-5
-    py-2
+  @apply
+  bg-gray-200
+  text-navy-950
+  px-5
+  py-2
 }
 table.navy-1 tr:not(:first-child) {
-    @apply
-    h-[60px];
+  @apply
+  h-[60px];
 }
 table.navy-1 {
-    border-collapse: separate;
-    @apply
-    text-center 
+  border-collapse: separate;
+  @apply
+  text-center 
 }
 table.navy-1 tr:first-child th:first-child {
-    @apply
-    rounded-tl-xl
+  @apply
+  rounded-tl-xl
 }
 table.navy-1 tr:last-child td:last-child {
-    @apply
-    rounded-bl-xl
+  @apply
+  rounded-bl-xl
 }
 table.navy-1 .border-effect {
-    padding-left: calc(1.25rem + 2px);
-    @apply
-    border-r-2
-    border-white
+  padding-left: calc(1.25rem + 2px);
+  @apply
+  border-r-2
+  border-white
 }
+
 .green-action {
   @apply
   font-semibold
