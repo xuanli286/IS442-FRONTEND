@@ -195,7 +195,6 @@
             } catch (error) {
                 console.error(error.message);
             }
-            console.log(dataset.value)
         }
     });
 
