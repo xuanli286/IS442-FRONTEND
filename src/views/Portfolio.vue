@@ -1,14 +1,23 @@
 <template>
     <div>
-        <PortfolioBreakdown :portfolioId="portfolioId" :portfolioName="portfolioName"/>
+        <PortfolioBreakdown :portfolio="portfolio"/>
         <div class="grid grid-cols-3 gap-2">
-            <!-- <div class="white-card"> -->
-            <DonutChart :isOverview="false" :portfolioId="portfolioId"/>
-
+            <DonutChart :isOverview="false" :portfolioId="portfolio.portfolioId"/>
         </div>
         
     </div>
 </template>
+
+<script setup>
+    import { defineProps } from 'vue';
+
+    const props = defineProps({
+        portfolio: {
+            type: Object,
+            required: true,
+        },
+    })
+</script>
 
 <script>
 import DonutChart from '../components/charts/DonutChart.vue';
@@ -22,8 +31,8 @@ export default {
     },
     data(){
         return {
-            portfolioId: "06lcHYp5MKVnsIvH12QJ",
-            portfolioName: "High Risk Portfolio"
+            // portfolioId: "06lcHYp5MKVnsIvH12QJ",
+            // portfolioName: "High Risk Portfolio"
         }
     },
     computed: {

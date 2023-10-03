@@ -3,7 +3,7 @@
     <div class="text-red-500 px-1" v-if="empty">
       <i class="bi bi-exclamation-circle aspect-square"></i>
     </div>
-    <div class="relative">
+    <div class="relative" ref="datalist">
       <i tabindex="0" v-if="modelValue && display" class="bi bi-x-circle-fill input-icon z-50 cursor-pointer" ref="close"></i>
       <i class="bi bi-search input-icon transition z-[0]" v-else></i>
 
@@ -39,7 +39,7 @@ export default {
   },
   mounted() {
     document.addEventListener('click', (event) => {
-      if (this.$refs.inputField && this.$refs.dropdown && !this.$refs.inputField.contains(event.target) && !this.$refs.dropdown.contains(event.target)) {
+      if (this.$refs.datalist && !this.$refs.datalist.contains(event.target)) {
         this.isActive = false;
       }
     });

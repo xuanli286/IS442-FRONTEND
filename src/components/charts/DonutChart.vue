@@ -103,7 +103,7 @@
 
                                     // console.log(totalSum);
 
-                                    const indiv = (context.parsed / totalSum * 100).toFixed(1);
+                                    const indiv = (context.parsed / totalSum * 100).toFixed(2);
                                     // console.log(indiv)
                                     return `${indiv}%`;
                                 }
@@ -115,7 +115,8 @@
             }
         },
         async created() {
-            this.userId = this.loginUser.id;
+            // this.userId = this.loginUser.id;
+            this.userId = "google-oauth2_113348502313853368765";
 
             this.loaded = false;
 
@@ -129,7 +130,7 @@
             axios.get(url)
             .then(response => {
                 // Handle the response data here
-                console.log(response.data);
+                // console.log(response.data);
                 const sectorCounts = response.data;
 
                 let i = 0;
@@ -139,7 +140,7 @@
                     this.chartData.datasets[0].data[i] = sectorCounts[sector];
                     i++;
                 }
-                console.log(this.chartData.datasets[0].data);
+                // console.log(this.chartData.datasets[0].data);
 
                 this.loaded = true;
                 

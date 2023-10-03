@@ -52,8 +52,8 @@ const routes = [
     component: MyProfile
   },
   {
-    path: '/stock',
-    name: Stock,
+    path: '/stock/:stockTicker',
+    name: 'Stock',
     component: Stock
   },
 ]

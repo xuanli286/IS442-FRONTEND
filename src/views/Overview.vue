@@ -132,6 +132,7 @@
 
     onMounted(() => {
         selectedPortfolios.value = defaultPortfolios.value;
+        // console.log(selectedPortfolios.value)
     })
 
     function back() {

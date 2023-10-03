@@ -4,27 +4,40 @@
     @click="toggleDropdown"
     class="p-3 bg-white hover:bg-gray-100 rounded w-56 font-semibold flex items-center"
     >
-    <span class="flex-grow">{{ selectedPortfolio }}</span>
-    <i class="bi bi-chevron-down transition ml-auto" :class="{ 'chevDown': isOpen }"></i>
+    <span class="flex-grow text-navy-950">{{ selectedPortfolio }}</span>
+    <i class="bi bi-chevron-down transition ml-auto text-navy-950" :class="{ 'chevDown': isOpen }"></i>
     </button>
 
     <div v-if="isOpen" class="absolute top-12 mt-2 p-2 w-56 bg-white border border-gray-300 shadow-lg rounded-lg z-10">
         <ul ref="dropdown">
-            <li @click="selectPortfolio(portfolioName)" class="option" v-for="portfolioName in portfolios" :key="portfolioName">
-                <a>{{ portfolioName }}</a>
+            <li @click="selectPortfolio(portfolio)" class="option" v-for="portfolio in portfolios" :key="portfolio">
+                <a class="text-navy-950">{{ portfolio.portfolioName }}</a>
             </li>
         </ul>
     </div>
 </template>
 
+<script setup>
+    import { defineProps } from 'vue';
+
+    const props = defineProps({
+        userId: {
+            type: String,
+            required : true
+        }
+    })
+</script>
+
 <script>
+import axios from 'axios';
+
 export default {
     emits: ['isSelect'],
     data(){
         return {
-            portfolios: ["Overview", "portfolio 1", "portfolio 2" ],
+            portfolios: [{portfolioName: "Overview"}],
             isOpen: false,
-            selectedPortfolio: "Overview",
+            selectedPortfolio: "",
         }
     },
     computed: {
@@ -42,15 +55,28 @@ export default {
             this.isOpen = !this.isOpen;
         },
         selectPortfolio(portfolio) {
-            this.selectedPortfolio = portfolio;
-            this.$emit("isSelect", this.selectedPortfolio);
+            this.selectedPortfolio = portfolio.portfolioName;
+            this.$emit("isSelect", portfolio);
             this.isOpen = false; // Close the dropdown
         },
 
     },
     created() {
-        this.selectedPortfolio = this.portfolios[0] // take first portfolio by default
-        this.$emit("isSelect", this.selectedPortfolio);
+        // console.log(this.userId)
+
+        axios.get(`http://localhost:5000/portfolio/getportfolios/${this.userId}`)
+        .then((response) => {
+            response.data.sort((a, b) => b.portfolioValue - a.portfolioValue);
+     
+            this.portfolios = this.portfolios.concat(response.data)
+
+            this.selectPortfolio(this.portfolios[0])
+            
+        })
+        .catch((error) => {
+            console.log(error.message);
+        })
+
     }
 
 }
