@@ -42,15 +42,15 @@
               <td>{{ stock.price }}</td>
 
               <td>
-                <button class="float-left" @click="stock.qty+=1">
-                  <i class="bi bi-plus"></i>
+                <button v-if="stock.qty>1" class="float-left" @click="stock.qty-=1">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <button v-else class="float-left text-gray-400" disabled>
+                  <i class="bi bi-dash"></i>
                 </button>
                 {{ stock.qty }}
-                <button v-if="stock.qty>1" class="float-right" @click="stock.qty-=1">
-                  <i class="bi bi-dash"></i>
-                </button>
-                <button v-else class="float-right text-gray-400" disabled>
-                  <i class="bi bi-dash"></i>
+                <button class="float-right" @click="stock.qty+=1">
+                  <i class="bi bi-plus"></i>
                 </button>
               </td>
 
