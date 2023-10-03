@@ -71,16 +71,19 @@ export default {
           {
             "name": "AAPL",
             "price": 151.21,
+            "date": "2023-04",
             "qty": 1
           },
           {
             "name": "AAPL",
             "price": 161.21,
+            "date": "2023-10",
             "qty": 1
           },
           {
             "name": "BABA",
             "price": 86.74,
+            "date": "2023-07",
             "qty": 3
           }
         ],
@@ -161,7 +164,7 @@ export default {
     stockValidation() {
       var valid = true;
       for (var stock of this.stocks) {
-        if (stock.name == "") {
+        if (!stock.name || !stock.date) {
           stock.empty = true;
           valid = false;
         } else {
@@ -174,55 +177,68 @@ export default {
       var stockBefore = {};
       var stockAfter = {};
       var allStockNames = [];
-      var stockResult = {};
-
-      var stockUpdate = {};
+      var stockResult = { add: {}, delete: {}, update: {} };
 
       for (var stock of this.testData.stocks) {
-        stockBefore[`${stock.name}+${stock.price}`] = stock;
-        allStockNames.push(`${stock.name}+${stock.price}`);
+        stockBefore[`${stock.name}.${stock.date}`] = stock;
+        allStockNames.push(`${stock.name}.${stock.date}`);
       }
       for (var stock of this.stocks) {
-        stockAfter[`${stock.name}+${stock.price}`] = stock;
-        if (!allStockNames.includes(`${stock.name}+${stock.price}`)) {
-          allStockNames.push(`${stock.name}+${stock.price}`);
+        stockAfter[`${stock.name}.${stock.date}`] = stock;
+        if (!allStockNames.includes(`${stock.name}.${stock.date}`)) {
+          allStockNames.push(`${stock.name}.${stock.date}`);
         }
       }
 
       for (var stock of allStockNames) {
         // add
         if (!(stock in stockBefore) && (stock in stockAfter)) {
-          if ("add" in stockResult) {
-            stockResult["add"][stockAfter[stock].name] = {qty: stockAfter[stock].qty, price: stockAfter[stock].price};
+          var s1 = stockAfter[stock];
+          var n1 = stockAfter[stock].name;
+
+          if (n1 in stockResult.add) {
+            stockResult.add[n1].push({quantity: s1.qty, dateBought: s1.date, stockBoughtPrice: s1.price});
           } else {
-            stockResult["add"] = {};
-            stockResult["add"][stockAfter[stock].name] = {qty: stockAfter[stock].qty, price: stockAfter[stock].price};
+            stockResult.add[n1] = [{quantity: s1.qty, dateBought: s1.date, stockBoughtPrice: s1.price}];
           }
         }
 
         // delete
         if ((stock in stockBefore) && !(stock in stockAfter)) {
-          if ("delete" in stockResult) {
-            stockResult["delete"][stockBefore[stock].name] = {qty: stockBefore[stock].qty, price: stockBefore[stock].price};
+          var s2 = stockBefore[stock];
+          var n2 = stockBefore[stock].name;
+
+          if (n2 in stockResult.delete) {
+            stockResult.delete[n2].push({quantity: s2.qty, dateBought: s2.date, stockBoughtPrice: s2.price});
           } else {
-            stockResult["delete"] = {};
-            stockResult["delete"][stockBefore[stock].name] = {qty: stockBefore[stock].qty, price: stockBefore[stock].price};
+            stockResult.delete[n2] = [{quantity: s2.qty, dateBought: s2.date, stockBoughtPrice: s2.price}];
           }
         }
 
         // update
         if ((stock in stockBefore) && (stock in stockAfter)) {
           if (stockBefore[stock].qty != stockAfter[stock].qty) {
-            if (stockAfter[stock].name in stockUpdate) {
-              stockUpdate[stockAfter[stock].name].push({qty: stockAfter[stock].qty, price: stockAfter[stock].price});
+            var s3 = stockAfter[stock];
+            var n3 = stockAfter[stock].name;
+
+            if (n3 in stockResult.update) {
+              stockResult.update[n3].push({quantity: s3.qty, dateBought: s3.date, stockBoughtPrice: s3.price});
             } else {
-              stockUpdate[stockAfter[stock].name] = [{qty: stockAfter[stock].qty, price: stockAfter[stock].price}];
+              stockResult.update[n3] = [{quantity: s3.qty, dateBought: s3.date, stockBoughtPrice: s3.price}];
             }
           }
         }
-        if (Object.keys(stockUpdate).length != 0) {
-          stockResult["update"] = stockUpdate;
-        }
+
+      }
+
+      if (Object.keys(stockResult.add).length == 0) {
+        delete stockResult.add;
+      }
+      if (Object.keys(stockResult.delete).length == 0) {
+        delete stockResult.delete;
+      }
+      if (Object.keys(stockResult.update).length == 0) {
+        delete stockResult.update;
       }
 
       var newPF = {
@@ -236,9 +252,6 @@ export default {
 
       console.log(newPF);
 
-      for (stock of this.stocks) {
-        stock["freeze"] = true;
-      }
       this.testData.stocks = JSON.parse(JSON.stringify(this.stocks));
 
       this.isModal = true;

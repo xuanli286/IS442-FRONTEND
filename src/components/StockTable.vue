@@ -17,11 +17,8 @@
               </td>
               <td v-else-if="haveEmpty" style="background-color:transparent;padding:5px!important"></td>
 
-              <td style="padding:5px!important" class="relative" v-if="!stock.freeze">
-                <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(`${item}.${stock.date}`) || stockNames[idx] == `${item}.${stock.date}`) )" v-model="stock.name" @change="newStock(idx)" />
-              </td>
-              <td style="padding-top:5px!important;padding-right:5px!important;padding-bottom:5px!important;padding-left:1.0625rem!important;" class="relative text-left" v-else>
-                {{ stock.name }}
+              <td style="padding:5px!important" class="relative">
+                <DataList :empty="stock.empty" :items="items" v-model="stock.name" @change="newStock(idx)" />
               </td>
             </tr>
           </table>
@@ -117,7 +114,6 @@ export default {
   data(){
     return {
       stocks: [],
-      stockNames: [],
       nextStockId: 1,
       scrollbarVisible: false,
     }
@@ -163,13 +159,13 @@ export default {
   methods: {
     populate() {
       this.stocks = [];
-      this.stockNames = [];
 
       for (var stock of this.stockData) {
         var newStockId = this.nextStockId++;
         this.stocks.push({
           id: newStockId,
           name: stock.name,
+          date: stock.date,
           price: stock.price,
           qty: stock.qty,
           get total() {
@@ -177,7 +173,6 @@ export default {
           },
           action: "BUY",
           empty: false,
-          freeze: true,
         });
       }
     },
@@ -186,7 +181,7 @@ export default {
       this.stocks.push({
         id: newStockId,
         name: "",
-        date: new Date().toISOString().slice(0, 7),
+        date: null,
         price: 0,
         qty: 1,
         get total() {
@@ -195,19 +190,21 @@ export default {
         action: "BUY",
         empty: false,
       });
-      this.stockNames.push("");
     },
     deleteRow(idx) {
       this.stocks.splice(idx, 1);
-      this.stockNames.splice(idx, 1);
       console.log(this.stocks);
     },
     newStock(idx) {
       let stock = this.stocks[idx];
 
+      const matchIdx = this.stocks.findIndex(item => {
+        return item.name === stock.name && item.date === stock.date;
+      });
+
       if (!stock.name || !stock.date) {
         stock.price = 0;
-      } else if (this.items.includes(stock.name) && !this.stockNames.includes(`${stock.name}.${stock.date}`)) {        
+      } else if (this.items.includes(stock.name) && matchIdx == idx) {        
         axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${stock.name}?month=${stock.date.split("-")[1]}&year=${stock.date.split("-")[0]}`)
         .then((response) => {
           stock.price = response.data["4. close"];
@@ -219,12 +216,9 @@ export default {
       } else {
         this.stocks[idx].name = "";
         this.stocks[idx].date = "";
-        this.stockNames[idx] = "";
         stock.empty = true;
       }
 
-      this.stockNames[idx] = `${stock.name}.${stock.date}`;
-      console.log(this.stockNames);
       console.log(this.stocks);
     },
   },

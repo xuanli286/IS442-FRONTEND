@@ -47,6 +47,8 @@ import StockTable from '../components/StockTable.vue'
 import CapitalInput from '../components/CapitalInput.vue'
 import Modal from '../components/Modal.vue'
 import axios from "axios";
+import { useUserStore } from "@/stores/useUserStore";
+import { storeToRefs } from "pinia";
 
 export default {
   name: 'CreatePortfolio',
@@ -64,6 +66,7 @@ export default {
       budget: null,
       error: {},
       isModal: false,
+      userID: useUserStore().loginUser.id,
     }
   },
   computed: {
