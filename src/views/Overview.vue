@@ -43,8 +43,11 @@
                     <DonutChart :isOverview="true" />
                 </div>
                 <div class="col-span-2 white-card">
-                    <p class="font-semibold mt-1">Portfolio Performance</p>
-                    <LineChart :portfoliosValue="portfoliosValue" />
+                    <p class="font-semibold mt-1 mb-4">
+                        Portfolio Performance for Year 
+                        <span class="font-bold text-lg">{{ currentYear }}</span>
+                    </p>
+                    <LineChart :dataset="dataset" />
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
@@ -64,8 +67,7 @@
                 </p>
             </div>
             <label class="text-sm" v-for="(portfolio, id) of top3Portfolios" :key="id">
-                <input class="ml-8" type="checkbox" v-model="selectedPortfolios" :value="id"
-                    :disabled="selectedPortfolios.length >= 2 && !selectedPortfolios.includes(id)">
+                <input class="ml-8" type="checkbox" v-model="selectedPortfolios" :value="id" :disabled="selectedPortfolios.length >= 2 && !selectedPortfolios.includes(id)" @change="handlePortfolioComparison">
                 {{ id }}
             </label>
             <div class="grid grid-cols-2 gap-4 mt-3 mx-8">
@@ -105,71 +107,114 @@
                         </p>
                     </div>
                 </div>
+                <div v-if="selectedPortfolios.length > 0" class="col-span-2 white-card">
+                    <p class="font-semibold mt-1 mb-4">
+                        Portfolio Performance Comparison for Year 
+                        <span class="font-bold text-lg">{{ currentYear }}</span>
+                    </p>
+                    <LineChart :dataset="selectedDataset" />
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import DonutChart from '@/components/charts/DonutChart.vue';
-import PortfolioButton from '@/components/PortfolioButton.vue';
-import { defineProps, ref, onMounted, computed } from 'vue';
-import LineChart from '@/components/charts/LineChart.vue';
-import { useUserStore } from "@/stores/useUserStore";
-import { storeToRefs } from 'pinia';
-// import ChoroplethMap from "@/components/charts/ChoroplethMap.vue";
-import MapChart from 'vue-map-chart'
-import axios from 'axios';
+    import DonutChart from '@/components/charts/DonutChart.vue';
+    import PortfolioButton from '@/components/PortfolioButton.vue';
+    import { defineProps, ref, onMounted, computed, watch } from 'vue';
+    import LineChart from '@/components/charts/LineChart.vue';
+    import { useUserStore } from "@/stores/useUserStore";
+    import { storeToRefs } from 'pinia';
+    // import ChoroplethMap from "@/components/charts/ChoroplethMap.vue";
+    import MapChart from 'vue-map-chart'
+    import axios from 'axios';
+    import { useAuth0 } from '@auth0/auth0-vue';    
+    const { user, isAuthenticated } = useAuth0();
 
-const store = useUserStore();
-const {
-    loginUser
-} = storeToRefs(store);
+    const store = useUserStore();
+    const {
+        loginUser
+    } = storeToRefs(store);
 
-const props = defineProps({
-    top3Portfolios: {
-        type: Object,
-        required: true,
-    },
-    portfoliosValue: {
-        type: Object,
-        required: true,
-    }
-});
+    const isCompare = ref(false);
+    const isHover = ref(false);
+    const selectedPortfolios = ref([]);
+    const top3Portfolios = ref({});
+    const dataset = ref({});
+    const selectedDataset = ref({});
+    const currentYear = ref("");
 
+    currentYear.value = new Date().getFullYear();
 
-const isCompare = ref(false);
-const isHover = ref(false);
-const selectedPortfolios = ref([]);
-
-const defaultPortfolios = computed(() => {
-    return Object.keys(props.top3Portfolios).slice(0, 2);
-});
-
-onMounted(() => {
-
-    selectedPortfolios.value = defaultPortfolios.value;
-    // console.log(selectedPortfolios.value)
-
-    // get portfolio data
-    // /getportfolios/{userId}
-    axios.get('/getportfolios/{userId}', {
-        params: {
-            'userId': ''
+    onMounted(async () => {
+        if (isAuthenticated) {
+            try {
+                const response = await axios.get(`http://localhost:5000/portfolio/getportfolios/${user.value.sub}`);
+                response.data.sort((a, b) => b.portfolioValue - a.portfolioValue);
+                const portfolios = response.data;
+                const performingPortfolios = portfolios.slice(0, 3);
+                for (let portfolio of performingPortfolios) {
+                    let key = `${portfolio.portfolioName} [${portfolio.portfolioId}]`;
+                    top3Portfolios.value[key] = {
+                        portfolioId: portfolio.portfolioId,
+                        portfolioName: portfolio.portfolioName,
+                        portfolioValue: portfolio.portfolioValue,
+                        unrealisedPnL: portfolio.unrealisedPnL,
+                        dateCreated: portfolio.dateCreated,
+                        capital: portfolio.capital,
+                    };
+                }
+                selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
+                for (let portfolio of portfolios) {
+                    let totalvalue = new Array(12).fill(0);
+                    for (let i = 1; i <= 12; i++) {
+                        for (let [key, value] of Object.entries(portfolio.portStock)) {
+                            try {
+                                const response = await axios.get(
+                                    `http://localhost:5000/stockprice/getmonthlypricebydate/${key}?month=${i.toString().padStart(2, '0')}&year=${currentYear.value}`
+                                );
+                                let lastDayOfMonth = response.data["stockDate"];
+                                let monthStockPrice = response.data["4. close"];
+                                for (let transaction of value) {
+                                    let [day, month, year] = transaction.dateBought.split('/');
+                                    let dateBought = new Date(`${year}-${month}-${day}`);
+                                    dateBought = dateBought.toISOString();
+                                    if (dateBought <= lastDayOfMonth) {
+                                        totalvalue[i - 1] += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
+                                    }
+                                }
+                            } catch (error) {
+                                console.error(error.message);
+                            }
+                        }
+                    }
+                    dataset.value[`${portfolio.portfolioName} [${portfolio.portfolioId}]`] = totalvalue;
+                }
+                handlePortfolioComparison();
+            } catch (error) {
+                console.error(error.message);
+            }
         }
-    })
-        .then(response => {
-            console.log(response.data);
-        })
-        .catch(error => {
-            console.log(error.message);
-        });
-})
+    });
 
-function back() {
-    isCompare.value = false;
-    isHover.value = false;
-}
+    function handlePortfolioComparison() {
+        selectedDataset.value = {};
+        for (let portfolioName of selectedPortfolios.value) {
+            for (let [key, value] of Object.entries(dataset.value)) {
+                if (portfolioName == key) {
+                    selectedDataset.value[key] = value;
+                }
+            }
+        }
+    }
 
+    watch(selectedPortfolios, () => {
+        handlePortfolioComparison();
+    });
 
+    function back() {
+        isCompare.value = false;
+        isHover.value = false;
+    }
 </script>
