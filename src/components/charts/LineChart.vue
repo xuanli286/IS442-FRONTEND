@@ -34,6 +34,8 @@
   });
 
   const chartData = computed(() => {
+    let currentMonth = new Date().getMonth();
+    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].slice(0,currentMonth);
     const datapoints = [];
     let count = 0;
     const colors = [
@@ -61,7 +63,7 @@
     }
 
     return {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      labels: labels,
       datasets: datapoints,
     };
   });
