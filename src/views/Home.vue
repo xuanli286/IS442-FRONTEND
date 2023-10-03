@@ -1,11 +1,11 @@
 <template>
     <div class="px-8 sm:px-12 py-11 font-inter">
         <div class="relative flex justify-between mb-5">
-            <PortfolioDropdown @isSelect="handleSelect" :userId="'google-oauth2_113348502313853368765'"/>
+            <PortfolioDropdown @isSelect="handleSelect" :userId="'google-oauth2_113721728140921289635'"/>
             <CustomButton :isDelete="isDelete"/>
         </div>
         <SummarizedValue :isOverview="!isDelete"/>
-        <Portfolio v-if="isDelete"/>
+        <Portfolio v-if="isDelete" :portfolio="selectedPortfolio"/>
         <Overview :top3Portfolios="top3Portfolios" :portfoliosValue="portfoliosValue" v-else/>
     </div>
 </template>
