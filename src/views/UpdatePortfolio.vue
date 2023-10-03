@@ -71,16 +71,19 @@ export default {
           {
             "name": "AAPL",
             "price": 151.21,
+            "date": "2023-04",
             "qty": 1
           },
           {
             "name": "AAPL",
             "price": 161.21,
+            "date": "2023-10",
             "qty": 1
           },
           {
             "name": "BABA",
             "price": 86.74,
+            "date": "2023-07",
             "qty": 3
           }
         ],
@@ -161,7 +164,7 @@ export default {
     stockValidation() {
       var valid = true;
       for (var stock of this.stocks) {
-        if (stock.name == "") {
+        if (!stock.name || !stock.date) {
           stock.empty = true;
           valid = false;
         } else {
@@ -179,13 +182,13 @@ export default {
       var stockUpdate = {};
 
       for (var stock of this.testData.stocks) {
-        stockBefore[`${stock.name}+${stock.price}`] = stock;
-        allStockNames.push(`${stock.name}+${stock.price}`);
+        stockBefore[`${stock.name}.${stock.date}`] = stock;
+        allStockNames.push(`${stock.name}.${stock.date}`);
       }
       for (var stock of this.stocks) {
-        stockAfter[`${stock.name}+${stock.price}`] = stock;
-        if (!allStockNames.includes(`${stock.name}+${stock.price}`)) {
-          allStockNames.push(`${stock.name}+${stock.price}`);
+        stockAfter[`${stock.name}.${stock.date}`] = stock;
+        if (!allStockNames.includes(`${stock.name}.${stock.date}`)) {
+          allStockNames.push(`${stock.name}.${stock.date}`);
         }
       }
 
