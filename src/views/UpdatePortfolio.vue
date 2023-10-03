@@ -206,9 +206,9 @@ export default {
           var n1 = stockAfter[stock].name;
 
           if (n1 in stockResult.add) {
-            stockResult.add[n1].push({quantity: s1.qty, dateBought: s1.date, stockBoughtPrice: s1.price});
+            stockResult.add[n1].push({"quantity": s1.qty, "dateBought": s1.date, "stockBoughtPrice": s1.price});
           } else {
-            stockResult.add[n1] = [{quantity: s1.qty, dateBought: s1.date, stockBoughtPrice: s1.price}];
+            stockResult.add[n1] = [{"quantity": s1.qty, "dateBought": s1.date, "stockBoughtPrice": s1.price}];
           }
         }
 
@@ -218,9 +218,9 @@ export default {
           var n2 = stockBefore[stock].name;
 
           if (n2 in stockResult.delete) {
-            stockResult.delete[n2].push({quantity: s2.qty, dateBought: s2.date, stockBoughtPrice: s2.price});
+            stockResult.delete[n2].push({"quantity": s2.qty, "dateBought": s2.date, "stockBoughtPrice": s2.price});
           } else {
-            stockResult.delete[n2] = [{quantity: s2.qty, dateBought: s2.date, stockBoughtPrice: s2.price}];
+            stockResult.delete[n2] = [{"quantity": s2.qty, "dateBought": s2.date, "stockBoughtPrice": s2.price}];
           }
         }
 
@@ -231,9 +231,9 @@ export default {
             var n3 = stockAfter[stock].name;
 
             if (n3 in stockResult.update) {
-              stockResult.update[n3].push({quantity: s3.qty, dateBought: s3.date, stockBoughtPrice: s3.price});
+              stockResult.update[n3].push({"quantity": s3.qty, "dateBought": s3.date, "stockBoughtPrice": s3.price});
             } else {
-              stockResult.update[n3] = [{quantity: s3.qty, dateBought: s3.date, stockBoughtPrice: s3.price}];
+              stockResult.update[n3] = [{"quantity": s3.qty, "dateBought": s3.date, "stockBoughtPrice": s3.price}];
             }
           }
         }
@@ -251,10 +251,10 @@ export default {
       }
 
       var newPF = {
-        pName: this.pName,
-        pDesc: this.pDesc,
-        capital: this.budget,
-        isPublic: this.isPublic,
+        "pName": this.pName,
+        "pDesc": this.pDesc,
+        "capital": this.budget,
+        "isPublic": this.isPublic,
       }
       if (Object.keys(stockResult).length != 0) {
         newPF["stocks"] = stockResult;

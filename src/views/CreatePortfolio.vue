@@ -39,7 +39,7 @@
     <!-- Modal -->
     <Modal v-model="isModal" width="50%" height="fit-content">
       <div class="text-center">
-        <h3 class="text-navy-950 font-bold mb-5">Portfolio has been successfully created</h3>
+        <h3 class="text-navy-950 font-bold mb-5">{{ modalMsg }}</h3>
         <button class="btn-navy">Go to Overview</button>
       </div>
     </Modal>
@@ -63,7 +63,7 @@ export default {
     Modal,
   },
   setup() {
-    const userID = useUserStore().loginUser.id;
+    const userID = useUserStore().loginUser.id.split("|")[1];
 
     return { userID }
   },
@@ -73,9 +73,10 @@ export default {
       pDesc: null,
       stocks: [],
       items: [],
-      budget: null,
+      budget: 0,
       error: {},
       isModal: false,
+      modalMsg: "",
       isPublic: true,
     }
   },
@@ -122,7 +123,7 @@ export default {
         this.error["desc"] = "Description is too long"
       }
 
-      if (!this.budget) {
+      if (this.budget == null) {
         this.error["budget"] = "Field is required"; 
       } else {
         if (isNaN(this.budget)) {
@@ -156,25 +157,40 @@ export default {
       return valid;
     },
     createPortfolio() {
-      var allStocks = [];
+      var allStocks = {};
       for (var stock of this.stocks) {
-        allStocks.push({"name": stock.name, "qty": stock.qty});
+        if (stock.name in allStocks) {
+          allStocks[stock.name].push({"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": stock.date})
+        } else {
+          allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": stock.date}]
+        }
       }
-      const newPF = {
-        pName: this.pName,
-        pDesc: this.pDesc,
-        stocks: allStocks,
-        capital: this.budget,
-        isPublic: this.isPublic,
+      const pfData = {
+        "portfolioName": this.pName,
+        "portfolioDescription": this.pDesc,
+        "userId": this.userID,
+        "dateCreated": new Date().toLocaleDateString('en-GB'),
+        "capital": this.budget,
+        "isPublic": this.isPublic,
+        "portStock": allStocks,
       }
-      
-      console.log(newPF);
-      this.isModal = true;
 
-      this.pName = null;
-      this.pDesc = null;
-      this.stocks.splice(0);
-      this.budget = null;
+      axios.post(`http://localhost:5000/portfolio/create`, pfData)
+      .then((response) => {
+        console.log(response.data);
+        console.log(pfData);
+        this.modalMsg = "Portfolio has been successfully created!";
+        this.pName = null;
+        this.pDesc = null;
+        this.stocks.splice(0);
+        this.budget = 0;
+      })
+      .catch((error) => {
+        console.log(error.message);
+        this.modalMsg = "Something went wrong!"
+      })
+      
+      this.isModal = true;
     },
   },
 }
