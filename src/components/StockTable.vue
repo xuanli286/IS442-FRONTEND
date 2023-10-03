@@ -12,10 +12,10 @@
               <div class="absolute left-0 top-0 w-[150px]" style="top:calc(50% - 12px); left:calc(50vw - 166px);">No stocks added.</div>
             </tr>
             <tr v-for="(stock, idx) of stocks" :key="stock.id">
-              <td v-if="stock.empty" style="background-color:transparent;">
-                <i class="bi bi-exclamation-circle aspect-square text-red-500"></i>
+              <td v-if="stock.empty" style="background-color:transparent;padding:5px!important">
+                <i class="bi bi-exclamation-circle text-red-500 text-xl"></i>
               </td>
-              <td v-else-if="haveEmpty" style="background-color:transparent;"></td>
+              <td v-else-if="haveEmpty" style="background-color:transparent;padding:5px!important"></td>
 
               <td style="padding:5px!important" class="relative" v-if="!stock.freeze">
                 <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(`${item}.${stock.date}`) || stockNames[idx] == `${item}.${stock.date}`) )" v-model="stock.name" @change="newStock(idx)" />
@@ -232,10 +232,10 @@ export default {
 </script>
 
 <style scoped>
-/* .t1-scroll {
+.t1-scroll {
   @apply
   opacity-0
-} */
+}
 
 .input-month {
   @apply
