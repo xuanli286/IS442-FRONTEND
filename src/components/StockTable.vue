@@ -114,7 +114,6 @@ export default {
   data(){
     return {
       stocks: [],
-      stockNames: [],
       nextStockId: 1,
       scrollbarVisible: false,
     }
@@ -160,7 +159,6 @@ export default {
   methods: {
     populate() {
       this.stocks = [];
-      this.stockNames = [];
 
       for (var stock of this.stockData) {
         var newStockId = this.nextStockId++;
@@ -176,8 +174,6 @@ export default {
           action: "BUY",
           empty: false,
         });
-
-        this.stockNames.push(`${stock.name}.${stock.date}`);
       }
     },
     addRow() {
@@ -194,19 +190,21 @@ export default {
         action: "BUY",
         empty: false,
       });
-      this.stockNames.push("");
     },
     deleteRow(idx) {
       this.stocks.splice(idx, 1);
-      this.stockNames.splice(idx, 1);
       console.log(this.stocks);
     },
     newStock(idx) {
       let stock = this.stocks[idx];
 
+      const matchIdx = this.stocks.findIndex(item => {
+        return item.name === stock.name && item.date === stock.date;
+      });
+
       if (!stock.name || !stock.date) {
         stock.price = 0;
-      } else if (this.items.includes(stock.name) && !this.stockNames.includes(`${stock.name}.${stock.date}`)) {        
+      } else if (this.items.includes(stock.name) && matchIdx == idx) {        
         axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${stock.name}?month=${stock.date.split("-")[1]}&year=${stock.date.split("-")[0]}`)
         .then((response) => {
           stock.price = response.data["4. close"];
@@ -218,12 +216,9 @@ export default {
       } else {
         this.stocks[idx].name = "";
         this.stocks[idx].date = "";
-        this.stockNames[idx] = "";
         stock.empty = true;
       }
 
-      this.stockNames[idx] = `${stock.name}.${stock.date}`;
-      console.log(this.stockNames);
       console.log(this.stocks);
     },
   },
