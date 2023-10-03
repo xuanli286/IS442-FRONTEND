@@ -25,6 +25,10 @@
 
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
 
+      <!-- Portfolio Visibility -->
+      <h3 class="text-navy-950 mb-8 font-bold">Portfolio Visbility</h3>
+      <ToggleButton v-model="isPublic" left="Public" right="Private"/>
+
       <!-- Create/cancel buttons -->
       <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
         <button class="btn-grey" @click="cancel">Cancel</button>
@@ -45,16 +49,17 @@
 <script>
 import StockTable from '../components/StockTable.vue'
 import CapitalInput from '../components/CapitalInput.vue'
+import ToggleButton from '../components/ToggleButton.vue'
 import Modal from '../components/Modal.vue'
 import axios from "axios";
 import { useUserStore } from "@/stores/useUserStore";
-import { storeToRefs } from "pinia";
 
 export default {
   name: 'CreatePortfolio',
   components: {
     StockTable,
     CapitalInput,
+    ToggleButton,
     Modal,
   },
   setup() {
@@ -71,6 +76,7 @@ export default {
       budget: null,
       error: {},
       isModal: false,
+      isPublic: true,
     }
   },
   computed: {
@@ -159,6 +165,7 @@ export default {
         pDesc: this.pDesc,
         stocks: allStocks,
         capital: this.budget,
+        isPublic: this.isPublic,
       }
       
       console.log(newPF);

@@ -25,6 +25,10 @@
 
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
 
+      <!-- Portfolio Visibility -->
+      <h3 class="text-navy-950 mb-8 font-bold">Portfolio Visbility</h3>
+      <ToggleButton v-model="isPublic" left="Public" right="Private"/>
+
       <!-- Create/cancel buttons -->
       <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
         <button class="btn-grey" @click="cancel">Cancel</button>
@@ -45,6 +49,7 @@
 <script>
 import StockTable from '../components/StockTable.vue'
 import CapitalInput from '../components/CapitalInput.vue'
+import ToggleButton from '../components/ToggleButton.vue'
 import Modal from '../components/Modal.vue'
 import axios from "axios";
 
@@ -53,6 +58,7 @@ export default {
   components: {
     StockTable,
     CapitalInput,
+    ToggleButton,
     Modal,
   },
   data(){
@@ -64,6 +70,7 @@ export default {
       budget: null,
       error: {},
       isModal: false,
+      isPublic: null,
       testData: {
         pName: "test",
         pDesc: "this is a test",
@@ -88,6 +95,7 @@ export default {
           }
         ],
         budget: 600,
+        isPublic: false,
       },
     }
   },
@@ -108,6 +116,7 @@ export default {
       this.pName = this.testData.pName;
       this.pDesc = this.testData.pDesc;
       this.budget = this.testData.budget;
+      this.isPublic = this.testData.isPublic;
     },
     retrieveStocks() {
       axios.get(`http://localhost:8080/listing_status.csv`)
@@ -245,6 +254,7 @@ export default {
         pName: this.pName,
         pDesc: this.pDesc,
         capital: this.budget,
+        isPublic: this.isPublic,
       }
       if (Object.keys(stockResult).length != 0) {
         newPF["stocks"] = stockResult;
