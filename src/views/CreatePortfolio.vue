@@ -63,7 +63,7 @@ export default {
     Modal,
   },
   setup() {
-    const userID = useUserStore().loginUser.id.split("|")[1];
+    const userID = useUserStore().loginUser.id;
 
     return { userID }
   },
