@@ -1,11 +1,15 @@
 <template>
     <div class="text-blue-950">
         <div v-if="!isCompare">
-            <div class="flex">
-                <div class="h-1/3 w-1/3 white-card">
-                    <DonutChart :isOverview="true"/>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="col-span-1 white-card">
+                    <p class="font-semibold mt-1">Overall Performance</p>
+                    <p class="mt-8 font-medium">Compound Annual Return</p>
+                    <p class="mt-4 font-medium">Dividends Received</p>
+                    <p class="mt-4 font-medium">Beta</p>
+                    <p class="mt-4 font-medium">Sharpe Ratio</p>
                 </div>
-                <div class="h-2/3 w-2/3 white-card ml-4">
+                <div class="col-span-2 white-card">
                     <div class="flex items-center">
                         <p class="font-semibold mr-2">Top Performers</p>
                         <i class="fa fa-line-chart" aria-hidden="true"></i>
@@ -13,7 +17,7 @@
                             <p>Compare Portfolio</p>
                         </PortfolioButton>
                     </div>
-                    <div class="grid grid-cols-3 gap-4 mt-3">
+                    <div class="grid grid-cols-3 gap-4 mt-5">
                         <div class="border-2 border-blue-950 p-3 rounded-lg " v-for="(portfolio, id) of top3Portfolios" :key="id">
                             <p class="font-bold">{{ portfolio.portfolioName }}</p>
                             <p class="text-gray-500 text-xs">Date Created: {{ (new Date(portfolio.dateCreated)).toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' }) }}</p>
@@ -29,6 +33,13 @@
                             </p>
                         </div>
                     </div>
+                </div>
+                <div class="col-span-1 white-card">
+                    <DonutChart :isOverview="true"/>
+                </div>
+                <div class="col-span-2 white-card">
+                    <p class="font-semibold mt-1">Portfolio Performance</p>
+                    <LineChart :portfoliosValue="portfoliosValue"/>
                 </div>
             </div>
         </div>
@@ -92,12 +103,23 @@
     import PortfolioButton from '@/components/PortfolioButton.vue';
     import { defineProps, ref, onMounted, computed } from 'vue';
     import LineChart from '@/components/charts/LineChart.vue';
+    import { useUserStore } from "@/stores/useUserStore";
+    import { storeToRefs } from 'pinia';
+
+    const store = useUserStore();
+    const {
+        loginUser
+    } = storeToRefs(store);
 
     const props = defineProps({
         top3Portfolios: {
             type: Object,
             required: true,
         },
+        portfoliosValue: {
+            type: Object,
+            required: true,
+        }
     });
 
     const isCompare = ref(false);
@@ -110,7 +132,6 @@
 
     onMounted(() => {
         selectedPortfolios.value = defaultPortfolios.value;
-        console.log(selectedPortfolios.value)
     })
 
     function back() {

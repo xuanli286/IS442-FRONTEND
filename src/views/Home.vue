@@ -6,7 +6,7 @@
         </div>
         <SummarizedValue :isOverview="!isDelete"/>
         <Portfolio v-if="isDelete"/>
-        <Overview :top3Portfolios="top3Portfolios" v-else/>
+        <Overview :top3Portfolios="top3Portfolios" :portfoliosValue="portfoliosValue" v-else/>
     </div>
 </template>
 
@@ -31,7 +31,7 @@ const {
 
 const portfolioStore = usePortfolioStore();
 const {
-    portfolios,
+    portfoliosValue,
     top3Portfolios,
 } = storeToRefs(portfolioStore);
 
@@ -79,8 +79,8 @@ if (isAuthenticated.value) {
     axios.get(`http://localhost:5000/portfolio/getportfolios/${data.id}`)
       .then((response) => {
         response.data.sort((a, b) => b.portfolioValue - a.portfolioValue);
-        portfolios.value = response.data;
-        const performingPortfolios = portfolios.value.slice(0,3);
+        let portfolios = response.data;
+        const performingPortfolios = portfolios.slice(0,3);
         for (let i of performingPortfolios) {
           let key = `${i.portfolioName} [${i.portfolioId}]`;
           top3Portfolios.value[key] = {
@@ -92,9 +92,33 @@ if (isAuthenticated.value) {
             capital: i.capital,
           }
         }
-      })
-      .catch((error) => {
-          console.log(error.message);
+
+        const currentYear = new Date().getFullYear();
+        for (let portfolio of portfolios) {
+          let totalvalue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+          for (let i=1; i<=12; i++) {
+            for (let [key, value] of Object.entries(portfolio["portStock"])) {   
+              axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${key}?month=${i.toString().padStart(2, '0')}&year=${currentYear}`)
+                .then((response) => {
+                  let lastDayOfMonth = response.data["stockDate"];
+                  let monthStockPrice = response.data["4. close"];
+                  for (let transaction of value) {
+                    let [day, month, year] = transaction.dateBought.split('/');
+                    let dateBought = new Date(`${year}-${month}-${day}`);
+                    dateBought = dateBought.toISOString();
+                    if (dateBought <= lastDayOfMonth) {
+                      totalvalue[i-1] += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
+                    }
+                  }
+                })
+                .catch((error) => {
+                  console.log(error.message);
+                })
+            }
+          }
+          portfoliosValue.value[`${portfolio.portfolioName} [${portfolio.portfolioId}]`] = totalvalue;
+        }
+        console.log(portfoliosValue.value)
       })
   });
 }
