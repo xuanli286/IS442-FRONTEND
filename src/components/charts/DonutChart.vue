@@ -1,7 +1,13 @@
 <template>
     
     <div class="white-card md:doughnut-padding">
-        <Doughnut v-if="loaded" :data="chartData" :options="chartOptions"/>
+        <div class="chart-container">
+            <Doughnut v-if="loaded" :data="chartData" :options="chartOptions"/>
+            <div v-if="haveSector" class="center-text text-xs sm:text-sm md:text-lg lg:text-2xl">
+                By Sector
+            </div>
+           
+        </div>
     </div>
     
 </template>
@@ -19,6 +25,7 @@
             required: false,
         },
     })
+
 </script>
 
   
@@ -26,7 +33,6 @@
     import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
     import { Doughnut } from 'vue-chartjs'
     import axios from "axios";
-    import { useUserStore } from "@/stores/useUserStore";
     
     ChartJS.register(ArcElement, Tooltip, Legend)
     
@@ -35,15 +41,10 @@
         components: {
             Doughnut
         },
-        computed: {
-            loginUser() {
-                const store = useUserStore();
-                return store.loginUser;
-            },
-        },
         data() {
             return {
                 loaded: false,
+                haveSector: true,
                 userId: "",
                 chartData: {
                     labels: [],
@@ -116,7 +117,7 @@
         },
         async created() {
             // this.userId = this.loginUser.id;
-            this.userId = "google-oauth2_113348502313853368765";
+            this.userId = "google-oauth2|113348502313853368765";
 
             this.loaded = false;
 
@@ -142,6 +143,10 @@
                 }
                 // console.log(this.chartData.datasets[0].data);
 
+                if (this.chartData.datasets[0].data.length == 0) {
+                    this.haveSector = false;
+                }
+
                 this.loaded = true;
                 
                 
@@ -163,4 +168,16 @@
     p-5 !important
 }
 
+.chart-container {
+  position: relative;
+}
+
+.center-text {
+  position: absolute;
+  top: 41%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  text-align: center;
+}
 </style>

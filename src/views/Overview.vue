@@ -39,7 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-span-1 white-card">
+                <div class="col-span-1">
                     <DonutChart :isOverview="true" />
                 </div>
                 <div class="col-span-2 white-card">
