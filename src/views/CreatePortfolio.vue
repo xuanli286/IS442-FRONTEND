@@ -121,7 +121,7 @@ export default {
       }
 
       if (!this.stockValidation()) {
-        this.error["stocks"] = "Stock name cannot be empty";
+        this.error["stocks"] = "Invalid/empty stock input";
       }
 
       if (Object.keys(this.error).length === 0) {
@@ -133,7 +133,7 @@ export default {
     stockValidation() {
       var valid = true;
       for (var stock of this.stocks) {
-        if (stock.name == "") {
+        if (!stock.name || !stock.date) {
           stock.empty = true;
           valid = false;
         } else {
