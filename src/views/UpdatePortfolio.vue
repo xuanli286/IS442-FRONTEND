@@ -239,9 +239,6 @@ export default {
 
       console.log(newPF);
 
-      for (stock of this.stocks) {
-        stock["freeze"] = true;
-      }
       this.testData.stocks = JSON.parse(JSON.stringify(this.stocks));
 
       this.isModal = true;

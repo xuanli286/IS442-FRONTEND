@@ -17,11 +17,8 @@
               </td>
               <td v-else-if="haveEmpty" style="background-color:transparent;padding:5px!important"></td>
 
-              <td style="padding:5px!important" class="relative" v-if="!stock.freeze">
+              <td style="padding:5px!important" class="relative">
                 <DataList :empty="stock.empty" :items="items" v-model="stock.name" @change="newStock(idx)" />
-              </td>
-              <td style="padding-top:5px!important;padding-right:5px!important;padding-bottom:5px!important;padding-left:1.0625rem!important;" class="relative text-left" v-else>
-                {{ stock.name }}
               </td>
             </tr>
           </table>
@@ -47,7 +44,7 @@
 
             <tr v-for="(stock, idx) of stocks" :key="stock.id">
               <td style="padding:5px 5px 5px 11px!important">
-                <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="stock.date" @change="newStock(idx)" class="input-month" :disabled="stock.freeze"/>
+                <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="stock.date" @change="newStock(idx)" class="input-month"/>
               </td>
 
               <td>{{ stock.price }}</td>
@@ -178,7 +175,6 @@ export default {
           },
           action: "BUY",
           empty: false,
-          freeze: true,
         });
 
         this.stockNames.push(`${stock.name}.${stock.date}`);
