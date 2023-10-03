@@ -57,6 +57,11 @@ export default {
     CapitalInput,
     Modal,
   },
+  setup() {
+    const userID = useUserStore().loginUser.id;
+
+    return { userID }
+  },
   data(){
     return {
       pName: null,
@@ -66,7 +71,6 @@ export default {
       budget: null,
       error: {},
       isModal: false,
-      userID: useUserStore().loginUser.id,
     }
   },
   computed: {
