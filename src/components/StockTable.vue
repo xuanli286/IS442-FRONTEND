@@ -12,7 +12,7 @@
             </tr>
             <tr v-for="(stock, idx) of stocks" :key="stock.id" class>
               <td style="padding:5px!important" class="relative" v-if="!stock.freeze">
-                <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(item) || stockNames[idx]) )" v-model="stock.name" @change="newStock(stock.name, idx)" />
+                <DataList :empty="stock.empty" :items="items.filter(item => (!stockNames.includes(`${item}.${stock.date}`) || stockNames[idx] == `${item}.${stock.date}`) )" v-model="stock.name" @change="newStock(idx)" />
               </td>
               <td style="padding-top:5px!important;padding-right:5px!important;padding-bottom:5px!important;padding-left:1.0625rem!important;" class="relative text-left" v-else>
                 {{ stock.name }}
@@ -24,6 +24,7 @@
         <div class="overflow-x-auto relative z-10 -ml-2" ref="t2">
           <table class="navy w-full">
             <tr>
+              <th>Date Purchased</th>
               <th>Price (SGD)</th>
               <th>Quantity</th>
               <th>Total Price (SGD)</th>
@@ -32,13 +33,17 @@
               <th :class='{hidden: stocks.length == 0}'></th>
             </tr>
             <tr v-if="stocks.length == 0">
-              <td colspan="5">
+              <td colspan="6">
                 <div class="margin-auto -translate-x-[60px] sm:-translate-x-[75px]"></div>
               </td>
               <td class="hidden"></td>
             </tr>
 
             <tr v-for="(stock, idx) of stocks" :key="stock.id">
+              <td>
+                <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="stock.date" @change="newStock(idx)"/>
+              </td>
+
               <td>{{ stock.price }}</td>
 
               <td>
@@ -114,8 +119,7 @@ export default {
   created() {
     if (this.stockData) {
       this.populate();
-    }
-    
+    }    
   },
   mounted() {
     if (this.$refs.t2) {
@@ -171,6 +175,7 @@ export default {
       this.stocks.push({
         id: newStockId,
         name: "",
+        date: new Date().toISOString().slice(0, 7),
         price: 0,
         qty: 1,
         get total() {
@@ -186,34 +191,32 @@ export default {
       this.stockNames.splice(idx, 1);
       console.log(this.stocks);
     },
-    newStock(name, idx) {
+    newStock(idx) {
       let stock = this.stocks[idx];
 
-      if (!stock.name) {
-        stock.price = 0;
-      }
+      // const matchIdx = this.stocks.findIndex(item => {
+      //   return item.name == stock.name && item.date == stock.date;
+      // });
+      // const isValid = matchIdx == idx ? true : false;
 
-      if (stock.name && this.items.includes(stock.name) && this.stockNames[idx] != name) {
-        // update properties of stocks
-        axios.get(`http://localhost:5000/stockprice/eodprice/${stock.name}`)
+      if (!stock.name || !stock.date) {
+        stock.price = 0;
+      } else if (this.items.includes(stock.name) && !this.stockNames.includes(`${stock.name}.${stock.date}`)) {        
+        axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${stock.name}?month=${stock.date.split("-")[1]}&year=${stock.date.split("-")[0]}`)
         .then((response) => {
-          const isMatch = this.stocks.some(item => {
-            return item.name == stock.name && item.price == response.data["4. close"];
-          });
-          if (!isMatch) {
-            stock.price = response.data["4. close"];
-            stock.empty = false;
-          } else {
-            this.stocks[idx].name = "";
-            this.stockNames[idx] = "";
-          }
+          stock.price = response.data["4. close"];
+          stock.empty = false;
         })
         .catch((error) => {
           console.log(error.message);
         })
+      } else {
+        this.stocks[idx].name = "";
+        this.stocks[idx].date = "";
+        this.stockNames[idx] = "";
       }
 
-      this.stockNames[idx] = name;
+      this.stockNames[idx] = `${stock.name}.${stock.date}`;
       console.log(this.stockNames);
       console.log(this.stocks);
     },
