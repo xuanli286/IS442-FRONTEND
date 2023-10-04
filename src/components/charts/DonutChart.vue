@@ -11,22 +11,6 @@
     </div>
     
 </template>
-
-<script setup>
-    import { defineProps } from 'vue';
-
-    const props = defineProps({
-        isOverview: {
-            type: Boolean,
-            required: true,
-        },
-        portfolioId: {
-            type: String,
-            required: false,
-        },
-    })
-</script>
-
   
 <script>
     import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
@@ -40,6 +24,16 @@
         name: 'DonutChart',
         components: {
             Doughnut
+        },
+        props: {
+            isOverview: {
+                type: Boolean,
+                required: true,
+            },
+            portfolioId: {
+                type: String,
+                required: false,
+            },
         },
         setup() {
             const userID = useUserStore().loginUser.id;
