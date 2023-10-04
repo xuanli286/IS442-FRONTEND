@@ -17,22 +17,17 @@
     </div>
 </template>
 
-<script setup>
-    import { defineProps } from 'vue';
-
-    const props = defineProps({
-        userId: {
-            type: String,
-            required : true
-        }
-    })
-</script>
-
 <script>
 import axios from 'axios';
+import { useUserStore } from '@/stores/useUserStore';
 
 export default {
     emits: ['isSelect'],
+    setup() {
+        const userID = useUserStore().loginUser.id;
+
+        return { userID }
+    },
     data(){
         return {
             portfolios: [{portfolioName: "Overview"}],
@@ -62,9 +57,8 @@ export default {
 
     },
     created() {
-        // console.log(this.userId)
 
-        axios.get(`http://localhost:5000/portfolio/getportfolios/${this.userId}`)
+        axios.get(`http://localhost:5000/portfolio/getportfolios/${this.userID}`)
         .then((response) => {
             response.data.sort((a, b) => b.portfolioValue - a.portfolioValue);
      

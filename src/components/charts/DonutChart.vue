@@ -115,8 +115,6 @@
         },
         created() {
 
-            // this.userId = "google-oauth2|113348502313853368765";
-
             console.log(this.userID)
 
             this.loaded = false;

@@ -1,7 +1,7 @@
 <template>
     <div class="px-8 sm:px-12 py-11 font-inter">
         <div class="relative flex justify-between mb-5">
-            <PortfolioDropdown @isSelect="handleSelect" :userId="user.sub"/>
+            <PortfolioDropdown @isSelect="handleSelect"/>
             <CustomButton :isDelete="isDelete"/>
         </div>
         <SummarizedValue :isOverview="!isDelete"/>
@@ -11,8 +11,6 @@
 </template>
 
 <script setup>
-import { useAuth0 } from '@auth0/auth0-vue';
-const { user, isAuthenticated } = useAuth0();
 import { ref, watch } from "vue";
 import PortfolioDropdown from '@/components/PortfolioDropdown.vue';
 import SummarizedValue from '@/components/SummarizedValue.vue';
