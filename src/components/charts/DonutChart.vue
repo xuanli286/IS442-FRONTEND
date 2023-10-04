@@ -25,7 +25,6 @@
             required: false,
         },
     })
-
 </script>
 
   
@@ -33,6 +32,7 @@
     import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
     import { Doughnut } from 'vue-chartjs'
     import axios from "axios";
+    import { useUserStore } from '@/stores/useUserStore';
     
     ChartJS.register(ArcElement, Tooltip, Legend)
     
@@ -41,11 +41,15 @@
         components: {
             Doughnut
         },
+        setup() {
+            const userID = useUserStore().loginUser.id;
+
+            return { userID }
+        },
         data() {
             return {
                 loaded: false,
                 haveSector: true,
-                userId: "",
                 chartData: {
                     labels: [],
                     datasets: [
@@ -115,22 +119,23 @@
                 }
             }
         },
-        async created() {
-            // this.userId = this.loginUser.id;
-            this.userId = "google-oauth2|113348502313853368765";
+        created() {
+
+            // this.userId = "google-oauth2|113348502313853368765";
+
+            console.log(this.userID)
 
             this.loaded = false;
 
             let url = `http://localhost:5000/portfolio/getsectorsbyportfolio/${this.portfolioId}`
 
             if (this.isOverview) {
-                url = `http://localhost:5000/portfolio/getsectorsbyuser/${this.userId}`
+                url = `http://localhost:5000/portfolio/getsectorsbyuser/${this.userID}`
             }
 
             // need to change url            
             axios.get(url)
             .then(response => {
-                // Handle the response data here
                 // console.log(response.data);
                 const sectorCounts = response.data;
 
