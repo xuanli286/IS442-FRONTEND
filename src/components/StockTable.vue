@@ -99,7 +99,7 @@ export default {
   },
   props: {
     stockData: {
-      type: Array,
+      type: Object,
     },
     items: {
       type: Array,
@@ -160,20 +160,22 @@ export default {
     populate() {
       this.stocks = [];
 
-      for (var stock of this.stockData) {
-        var newStockId = this.nextStockId++;
-        this.stocks.push({
-          id: newStockId,
-          name: stock.name,
-          date: stock.date,
-          price: stock.price,
-          qty: stock.qty,
-          get total() {
-            return Math.round(this.price * this.qty * 100) / 100;
-          },
-          action: "BUY",
-          empty: false,
-        });
+      for (var name in this.stockData) {
+        for (var stock of this.stockData[name]) {
+          var newStockId = this.nextStockId++;
+          this.stocks.push({
+            id: newStockId,
+            name: name,
+            date: stock.dateBought,
+            price: stock.stockBoughtPrice,
+            qty: stock.quantity,
+            get total() {
+              return Math.round(this.price * this.qty * 100) / 100;
+            },
+            action: "BUY",
+            empty: false,
+          });
+        }
       }
     },
     addRow() {

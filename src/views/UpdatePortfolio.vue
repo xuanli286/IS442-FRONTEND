@@ -16,7 +16,7 @@
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
       
       <!-- Table -->
-      <StockTable :stockData="testData.stocks" :items="items" :budget="budget" v-model="stocks"/>
+      <StockTable :stockData="stockData" :items="items" :budget="budget" v-model="stocks"/>
 
       <!-- Other Add Stocks -->
       <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
@@ -39,7 +39,7 @@
     <!-- Modal -->
     <Modal v-model="isModal" width="50%" height="fit-content">
       <div class="text-center">
-        <h3 class="text-navy-950 font-bold mb-5">Portfolio has been successfully updated</h3>
+        <h3 class="text-navy-950 font-bold mb-5">{{ modalMsg }}</h3>
         <button class="btn-navy">Go to Overview</button>
       </div>
     </Modal>
@@ -52,6 +52,7 @@ import CapitalInput from '../components/CapitalInput.vue'
 import ToggleButton from '../components/ToggleButton.vue'
 import Modal from '../components/Modal.vue'
 import axios from "axios";
+import { useUserStore } from "@/stores/useUserStore";
 
 export default {
   name: 'UpdatePortfolio',
@@ -61,42 +62,26 @@ export default {
     ToggleButton,
     Modal,
   },
+  setup() {
+    const userID = useUserStore().loginUser.id;
+
+    return { userID }
+  },
   data(){
     return {
+      // For testing: ?pID=I393f7rMWhtOe0fj1fTx
+      pID: this.$route.query.pID,
       pName: null,
       pDesc: null,
       stocks: [],
+      prevStocks: [],
       items: [],
       budget: null,
       error: {},
       isModal: false,
+      modalMsg: "",
       isPublic: null,
-      testData: {
-        pName: "test",
-        pDesc: "this is a test",
-        stocks: [
-          {
-            "name": "AAPL",
-            "price": 151.21,
-            "date": "2023-04",
-            "qty": 1
-          },
-          {
-            "name": "AAPL",
-            "price": 161.21,
-            "date": "2023-10",
-            "qty": 1
-          },
-          {
-            "name": "BABA",
-            "price": 86.74,
-            "date": "2023-07",
-            "qty": 3
-          }
-        ],
-        budget: 600,
-        isPublic: false,
-      },
+      stockData: {},
     }
   },
   created() {
@@ -113,10 +98,21 @@ export default {
       window.history.back();
     },
     populate() {
-      this.pName = this.testData.pName;
-      this.pDesc = this.testData.pDesc;
-      this.budget = this.testData.budget;
-      this.isPublic = this.testData.isPublic;
+      axios.get(`http://localhost:5000/portfolio/${this.pID}`)
+      .then((response) => {
+        if (this.userID == response.data.userId) {
+          this.pName = response.data.portfolioName;
+          this.pDesc = response.data.portfolioDescription;
+          this.budget = response.data.capital;
+          this.isPublic = response.data.public;
+          this.stockData = response.data.portStock;
+        } else {
+          console.log("Who are you");
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      })
     },
     retrieveStocks() {
       axios.get(`http://localhost:8080/listing_status.csv`)
@@ -188,10 +184,25 @@ export default {
       var allStockNames = [];
       var stockResult = { add: {}, delete: {}, update: {} };
 
-      for (var stock of this.testData.stocks) {
-        stockBefore[`${stock.name}.${stock.date}`] = stock;
-        allStockNames.push(`${stock.name}.${stock.date}`);
+      console.log(this.prevStocks)
+      // stockBefore
+      if (this.prevStocks.length == 0) {
+        for (var name in this.stockData) {
+          for (var stock of this.stockData[name]) {
+            stockBefore[`${name}.${stock.dateBought}`] = {"name": name, "price": stock.stockBoughtPrice, "date": stock.dateBought, "qty": stock.quantity};
+            allStockNames.push(`${name}.${stock.dateBought}`);
+          }
+        }
+      } else {
+        for (var stock of this.prevStocks) {
+          stockBefore[`${stock.name}.${stock.date}`] = stock;
+          if (!allStockNames.includes(`${stock.name}.${stock.date}`)) {
+            allStockNames.push(`${stock.name}.${stock.date}`);
+          }
       }
+      }
+
+      // stockAfter
       for (var stock of this.stocks) {
         stockAfter[`${stock.name}.${stock.date}`] = stock;
         if (!allStockNames.includes(`${stock.name}.${stock.date}`)) {
@@ -199,6 +210,7 @@ export default {
         }
       }
 
+      // stockResult
       for (var stock of allStockNames) {
         // add
         if (!(stock in stockBefore) && (stock in stockAfter)) {
@@ -240,29 +252,40 @@ export default {
 
       }
 
-      if (Object.keys(stockResult.add).length == 0) {
-        delete stockResult.add;
-      }
-      if (Object.keys(stockResult.delete).length == 0) {
-        delete stockResult.delete;
-      }
-      if (Object.keys(stockResult.update).length == 0) {
-        delete stockResult.update;
-      }
-
-      var newPF = {
-        "pName": this.pName,
-        "pDesc": this.pDesc,
+      // newPf
+      var newPf = {
+        "portfolioId": this.pID,
+        "portfolioName": this.pName,
+        "portfolioDescription": this.pDesc,
+        "userId": this.userID,
         "capital": this.budget,
         "isPublic": this.isPublic,
       }
-      if (Object.keys(stockResult).length != 0) {
-        newPF["stocks"] = stockResult;
+
+      if (Object.keys(stockResult.add).length != 0) {
+        newPf["add"] = stockResult.add;
+      }
+      if (Object.keys(stockResult.delete).length != 0) {
+        newPf["delete"] = stockResult.delete;
+      }
+      if (Object.keys(stockResult.update).length != 0) {
+        newPf["update"] = stockResult.update;
       }
 
-      console.log(newPF);
-
-      this.testData.stocks = JSON.parse(JSON.stringify(this.stocks));
+      console.log(newPf);
+      
+      axios.post(`http://localhost:5000/portfolio/updateportfolio/`, newPf)
+      .then((response) => {
+        console.log(response.data);
+        this.modalMsg = "Portfolio has been successfully updated!";
+        
+        // save prev stocks
+        this.prevStocks = JSON.parse(JSON.stringify(this.stocks));
+      })
+      .catch((error) => {
+        console.log(error.message);
+        this.modalMsg = "Something went wrong!"
+      })
 
       this.isModal = true;
     },

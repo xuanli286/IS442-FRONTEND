@@ -1,7 +1,7 @@
 <template>
   <div class="flex mb-8 rounded-xl w-fit relative overflow-hidden">
-    <button class="btn-toggle rounded-s-xl float-left w-1/2" :class="{'text-white': isLeft}" @click="toggleBtn(true)">{{ left }}</button>
-    <button class="btn-toggle rounded-e-xl float-right w-1/2" :class="{'text-white': !isLeft}" @click="toggleBtn(false)">{{ right }}</button>
+    <button class="btn-toggle rounded-s-xl float-left w-1/2" :class="{'text-white': isLeft}" @click="$emit('update:modelValue', true)">{{ left }}</button>
+    <button class="btn-toggle rounded-e-xl float-right w-1/2" :class="{'text-white': !isLeft}" @click="$emit('update:modelValue', false)">{{ right }}</button>
 
     <div class="sliding-block" :class="{ 'public': modelValue, 'private': !modelValue }"></div>
   </div>
@@ -20,13 +20,14 @@ export default {
       isLeft: this.modelValue,
     }
   },
-  methods: {
-    toggleBtn(bool) {
-      this.$emit('update:modelValue', bool);
-
-      setTimeout(() => {
-        this.isLeft = bool;
-      }, "100");
+  watch: {
+    modelValue: {
+      handler() {
+        setTimeout(() => {
+          this.isLeft = this.modelValue;
+        }, "100");
+      },
+      deep: true,
     },
   },
 }
