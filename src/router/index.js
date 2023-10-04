@@ -9,6 +9,46 @@ import LandingPage from "@/views/Landing.vue";
 import MyProfile from "@/views/MyProfile.vue";
 import VerifyEmail from "@/views/VerifyEmail.vue";
 import Stock from "@/views/Stock.vue";
+import { useAuth0 } from '@auth0/auth0-vue';
+import { useUserStore } from "@/stores/useUserStore";
+import { storeToRefs } from "pinia";
+import axios from "axios";
+
+function guardMyroute(to, from, next) {
+  const { user, isAuthenticated } = useAuth0();
+
+  const store = useUserStore();
+  const {
+      loginUser,
+  } = storeToRefs(store);
+
+  if (isAuthenticated.value) {
+    const data = {
+      name: user.value.given_name || user.value.family_name ? user.value.name : user.value.nickname,
+      email: user.value.email,
+      id: user.value.sub,
+      picture: user.value.picture,
+      updatedAt: user.value['updated_at'],
+      totalCapitalAvailable: 10000,
+    };
+    axios.get(`http://localhost:5000/customer/${data.id}`)
+    .then((response) => {
+      loginUser.value = response.data;
+      next();
+    })
+    .catch((error) => {
+      if (error.message.includes('404')) {
+        axios.post(`http://localhost:5000/customer/`, data)
+          .then((response) => {
+            loginUser.value = data;
+          })
+          .catch((error) => {
+            console.log(error.message);
+          })
+      }
+    })
+  }
+}
 
 const routes = [
   {
@@ -19,7 +59,8 @@ const routes = [
   {
     path: '/home',
     name: HomePage,
-    component: HomePage
+    component: HomePage,
+    beforeEnter: guardMyroute,
   },
   {
     path: '/verify',
