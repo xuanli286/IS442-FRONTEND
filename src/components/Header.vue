@@ -38,6 +38,12 @@
           My Portfolios
         </li>
         </RouterLink>
+        <RouterLink to="/logs">
+        <li class="option">
+          <i class="bi bi-file-earmark-text pr-2"></i>
+          Logs
+        </li>
+        </RouterLink>
         <hr/>
         <li class="option" @click="handleLogout">
           <i class="bi bi-box-arrow-right pr-2"></i>
