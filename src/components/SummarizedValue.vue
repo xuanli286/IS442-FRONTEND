@@ -6,60 +6,107 @@
         </div>
         <div class="flex justify-between col-span-4">
             <div class="flex items-center">
-            <div><i class="fa-solid fa-chart-pie fa-xl mr-5"></i></div>
-            <div>
-                <p class="text-graybrown">Portfolio Value</p>
-                <p class="font-bold text-navy-950">{{Math.abs(portfolioValue).toFixed(2)}}</p>
-            </div>
+                <div><i class="fa-solid fa-chart-pie fa-xl mr-5"></i></div>
+                <div>
+                    <p class="text-graybrown">Portfolio Value</p>
+                    <p class="font-bold text-navy-950"> ${{ Math.abs(portfolioData.portfolioValue).toFixed(2) }}</p>
+                </div>
             </div>
             <div class="flex items-center ">
                 <div><i class="fa-solid fa-scale-unbalanced-flip fa-xl mr-5"></i></div>
                 <div>
-                    <p class="text-graybrown">Unrealised P&L</p>
-                    <p class="font-bold" :class="unrealisedPnL < 0 ? 'text-red-500' : 'text-green-500'">{{Math.abs(unrealisedPnL).toFixed(2)}}</p>
+                    <p class="text-graybrown">Total P&L</p>
+                    <p class="font-bold" :class="unrealisedPnL < 0 ? 'text-red-500' : 'text-green-500'">
+                        {{ Math.abs(portfolioData.unrealisedPnL).toFixed(2) }}</p>
                 </div>
             </div>
             <div class="flex items-center">
                 <div><i class="fa-solid fa-piggy-bank fa-xl mr-5"></i></div>
                 <div>
                     <p class="text-graybrown">Buying Power</p>
-                    <p class="font-bold">{{Math.abs(buyingpower).toFixed(2)}}</p>
+                    <p class="font-bold">{{ Math.abs(buyingPower).toFixed(2) }}</p>
                 </div>
             </div>
             <div class="flex items-center">
                 <div><i class="fa-solid fa-calendar-check fa-xl mr-5"></i></div>
                 <div>
                     <p class="text-graybrown">Daily P&L</p>
-                    <p class="font-bold" :class="dailyPnL < 0 ? 'text-red-500' : 'text-green-500'">{{Math.abs(dailyPnL).toFixed(2)}}</p>
+                    <p class="font-bold" :class="dailyPnL < 0 ? 'text-red-500' : 'text-green-500'">
+                        {{ Math.abs(dailyPnL).toFixed(2) }}</p>
                 </div>
             </div>
         </div>
     </div>
-
 </template>
 
 <script setup>
-    import { defineProps } from 'vue';
+import { defineProps, ref, onMounted, reactive } from 'vue';
+import { useUserStore } from "@/stores/useUserStore";
+import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-vue';
+const { user, isAuthenticated } = useAuth0();
 
-    const props = defineProps({
-        isOverview: {
-            type: Boolean,
-            required: true,
-        },
-    })
+const props = defineProps({
+    isOverview: {
+        type: Boolean,
+        required: true,
+    },
+})
+
+console.log(user)
+console.log(user.value.sub)
+console.log(isAuthenticated)
+
+const portfolioId = ref("someID");
+const portfolioName = ref("Portfolio 1");
+const buyingPower = ref(0);
+const dailyPnL = ref(0);
+const cost = ref(0);
+const portfolioData = reactive({
+    portfolioValue: 0,
+    unrealisedPnL: 0,
+});
+
+const fetchPortfolioData = async () => {
+    if (isAuthenticated) {
+        try {
+            const portfolioResponse = await axios.get(`http://localhost:5000/portfolio/getportfolios/${user.value.sub}`);
+            const capitalResponse = await axios.get(`http://localhost:5000/customer/getcapital/${user.value.sub}`);
+
+            for (const portfolio of portfolioResponse.data) {
+                portfolioData.portfolioValue += portfolio.portfolioValue;
+                if (portfolio.portStock) {
+                    const stockKeys = Object.keys(portfolio.portStock);
+                    stockKeys.forEach(stockKey => {
+                        const stockItems = portfolio.portStock[stockKey];
+                        stockItems.forEach(item => {
+                            cost.value += (item.quantity * item.stockBoughtPrice)
+                        });
+                    });
+                }
+
+            }
+            portfolioData.unrealisedPnL = portfolioData.portfolioValue - cost.value;
+            portfolioId.value = 10;
+            buyingPower.value = capitalResponse.data;
+        } catch (error) {
+            console.error("Error in getting portfolio and capital data", error);
+        }
+    }
+};
+
+onMounted(() => {
+    fetchPortfolioData();
+});
+
 </script>
 
 <script>
 
 export default {
-    data(){
+    data() {
         return {
-            portfolioId: "someID",
-            portfolioName: "Portfolio 1",
-            portfolioValue: 8888.88,
-            unrealisedPnL: 10.00,
-            buyingpower: 1000.00,
-            dailyPnL: -1.23,
+
         }
     },
     computed: {
@@ -68,24 +115,53 @@ export default {
     methods: {
 
     },
-    created() {
+    // async created() {
 
-    }
+    //     if (isAuthenticated) {
+    //         this.portfolioId = user.sub;
+
+    //         try {
+    //             // const response = await axios.get(`http://localhost:5000/portfolio/getportfolios/${user.value.sub}`);
+    //             console.log(response.data);
+    //             //             // loop through to get portfolio value. if cnot use /gettotalportfoliovalue/{userId}
+
+    //             //             // loop through to get today's eod for all stocks in portfolio + the stock bought price to get total PnL
+
+    //             //             //loop through to get dailyPnL for all stocks in portfolio. check if possible to sum from the display below.
+    //             //             // if not we go through the dailyPnL for each stock and sum them up.
+
+    //         } catch {
+    //             console.log("Error in getting portfolios");
+    //         }
+
+    //         //         // customer/getcapital/{userId}
+    //         try {
+    //             // const response = await axios.get(`http://localhost:5000/customer/getcapital/${user.value.sub}`);
+    //             console.log(response.data);
+    //             this.buyingPower = response.data - this.portfolioValue;
+
+    //         } catch {
+    //             console.log("Error in getting capital");
+    //         }
+
+
+    //     }
+
+    // }
 
 }
 </script>
 
 <style scoped>
-  h3 {
-    @apply
-    text-4xl
-  }
-  h4 {
-    @apply
-    text-2xl
-  }
-  i {
-    @apply
-    text-navy-950
-  }
+h3 {
+    @apply text-4xl
+}
+
+h4 {
+    @apply text-2xl
+}
+
+i {
+    @apply text-navy-950
+}
 </style>
