@@ -67,7 +67,6 @@ const fetchPortfolioData = async () => {
     if (isAuthenticated) {
         try {
             getPortfolioValue();
-            getCapital();
             // portfolioId.value = 10;
 
         } catch (error) {
@@ -84,7 +83,7 @@ const getPnl = async (stockKey, item) => {
     portfolioData.dailyPnL += (eodPrice - ytdPrice) * item.quantity;
 }
 
-const getcapital = async () => {
+const getCapital = async () => {
     const capitalResponse = await axios.get(`http://localhost:5000/customer/getcapital/${user.value.sub}`);
     buyingPower.value = capitalResponse.data - cost.value;
 }
@@ -107,6 +106,7 @@ const getPortfolioValue = async () => {
         }
     }
     portfolioData.unrealisedPnL = portfolioData.portfolioValue - cost.value;
+    getCapital();
 }
 
 onMounted(() => {
@@ -129,39 +129,6 @@ export default {
     methods: {
 
     },
-    // async created() {
-
-    //     if (isAuthenticated) {
-    //         this.portfolioId = user.sub;
-
-    //         try {
-    //             // const response = await axios.get(`http://localhost:5000/portfolio/getportfolios/${user.value.sub}`);
-    //             console.log(response.data);
-    //             //             // loop through to get portfolio value. if cnot use /gettotalportfoliovalue/{userId}
-
-    //             //             // loop through to get today's eod for all stocks in portfolio + the stock bought price to get total PnL
-
-    //             //             //loop through to get dailyPnL for all stocks in portfolio. check if possible to sum from the display below.
-    //             //             // if not we go through the dailyPnL for each stock and sum them up.
-
-    //         } catch {
-    //             console.log("Error in getting portfolios");
-    //         }
-
-    //         //         // customer/getcapital/{userId}
-    //         try {
-    //             // const response = await axios.get(`http://localhost:5000/customer/getcapital/${user.value.sub}`);
-    //             console.log(response.data);
-    //             this.buyingPower = response.data - this.portfolioValue;
-
-    //         } catch {
-    //             console.log("Error in getting capital");
-    //         }
-
-
-    //     }
-
-    // }
 
 }
 </script>
