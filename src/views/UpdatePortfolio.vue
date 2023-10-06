@@ -103,9 +103,9 @@ export default {
           this.pName = response.data.portfolioName;
           this.pDesc = response.data.portfolioDescription;
           this.budget = response.data.capital;
-          this.isPublic = response.data.public;
+          this.isPublic = response.data.isPublic;
           this.stockData = response.data.portStock;
-          // console.log(this.stockData)
+          // console.log(response.data)
         } else {
           console.log("login eh");
         }
