@@ -2,10 +2,10 @@
     
     <div class="white-card md:doughnut-padding">
         <div class="chart-container">
-            <Doughnut v-if="loaded" :data="chartData" :options="chartOptions"/>
-            <div v-if="haveSector" class="center-text text-xs sm:text-sm md:text-lg lg:text-2xl">
+            <Doughnut v-if="loaded" :data="chartData" :options="chartOptions" :plugins="plugins"/>
+            <!-- <div v-if="haveSector" class="center-text text-xs sm:text-sm md:text-lg lg:text-2xl">
                 By Sector
-            </div>
+            </div> -->
            
         </div>
     </div>
@@ -19,6 +19,30 @@
     import { useUserStore } from '@/stores/useUserStore';
     
     ChartJS.register(ArcElement, Tooltip, Legend)
+
+    const donutLabel = {
+        id: "donutLabel",
+
+        beforeDatasetsDraw(chart, args, options) {
+            const {ctx, data, tooltip, chartArea: {top, bottom, left, right, width, height}, scales: {x, y}} = chart;
+
+            ctx.save();
+
+            console.log(chart.getDatasetMeta(0))
+
+            const xCoor = chart.getDatasetMeta(0).data[0].x;
+            const yCoor = chart.getDatasetMeta(0).data[0].y;
+
+            console.log(options.font.size)
+
+            ctx.font = options.font.size + "px bold sans-serif";
+            ctx.fillStyle = "#192e47";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("By Sector", xCoor, yCoor)
+
+        }
+    }
     
     export default {
         name: 'DonutChart',
@@ -59,21 +83,12 @@
                     maintainAspectRatio: false,
                     cutout: "70%",
                     plugins: {
-                        title: {
-                            display: false,
-                            text: 'By Sector',
-                            font: {
-                                size: 30,
-                                weight: 'bold',
-                            },
-                            position: 'top', 
-                        },
                         legend: {
                             display: true,
                             position: 'bottom',
                             labels: {
                                 font: {
-                                    size: 12,
+                                    size: 10,
                                     weight: 'medium'
                                 }
                             }
@@ -88,9 +103,9 @@
                                 weight : 'bold'
                             },
                             bodyFont : {
-                                size : 20,
+                                size : 15,
                             },
-                            boxPadding : 5,
+                            boxPadding : 2,
                             callbacks: {
                                 label: function(context) {
 
@@ -108,14 +123,20 @@
                                 }
                                 
                             }
-                        }
+                        },
+                        donutLabel: {
+                            font: {
+                                size: 20
+                            }
+                        },
                     }
-                }
+                },
+                plugins: [donutLabel]
             }
         },
         created() {
 
-            console.log(this.userID)
+            // console.log(this.userID)
 
             this.loaded = false;
 
