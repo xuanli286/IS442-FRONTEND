@@ -74,7 +74,6 @@ export default {
       pName: null,
       pDesc: null,
       stocks: [],
-      prevStocks: [],
       items: [],
       budget: null,
       error: {},
@@ -106,8 +105,9 @@ export default {
           this.budget = response.data.capital;
           this.isPublic = response.data.public;
           this.stockData = response.data.portStock;
+          // console.log(this.stockData)
         } else {
-          console.log("Who are you");
+          console.log("login eh");
         }
       })
       .catch((error) => {
@@ -184,22 +184,14 @@ export default {
       var allStockNames = [];
       var stockResult = { add: {}, delete: {}, update: {} };
 
-      console.log(this.prevStocks)
       // stockBefore
-      if (this.prevStocks.length == 0) {
-        for (var name in this.stockData) {
-          for (var stock of this.stockData[name]) {
-            stockBefore[`${name}.${stock.dateBought}`] = {"name": name, "price": stock.stockBoughtPrice, "date": stock.dateBought, "qty": stock.quantity};
-            allStockNames.push(`${name}.${stock.dateBought}`);
-          }
+      for (var name in this.stockData) {
+        var i = 0;
+        for (var stock of this.stockData[name]) {
+          stockBefore[`${name}.${stock.dateBought}`] = {"name": name, "price": stock.stockBoughtPrice, "date": stock.dateBought, "qty": stock.quantity, "idx": i};
+          allStockNames.push(`${name}.${stock.dateBought}`);
+          i++;
         }
-      } else {
-        for (var stock of this.prevStocks) {
-          stockBefore[`${stock.name}.${stock.date}`] = stock;
-          if (!allStockNames.includes(`${stock.name}.${stock.date}`)) {
-            allStockNames.push(`${stock.name}.${stock.date}`);
-          }
-      }
       }
 
       // stockAfter
@@ -229,11 +221,10 @@ export default {
           var s2 = stockBefore[stock];
           var n2 = stockBefore[stock].name;
 
-          if (n2 in stockResult.delete) {
-            stockResult.delete[n2].push({"quantity": s2.qty, "dateBought": s2.date, "stockBoughtPrice": s2.price});
-          } else {
-            stockResult.delete[n2] = [{"quantity": s2.qty, "dateBought": s2.date, "stockBoughtPrice": s2.price}];
+          if (!(n2 in stockResult.delete)) {
+            stockResult.delete[n2] = {};
           }
+          stockResult.delete[n2][stockBefore[stock].idx] = {"quantity": s2.qty, "dateBought": s2.date, "stockBoughtPrice": s2.price};
         }
 
         // update
@@ -242,11 +233,10 @@ export default {
             var s3 = stockAfter[stock];
             var n3 = stockAfter[stock].name;
 
-            if (n3 in stockResult.update) {
-              stockResult.update[n3].push({"quantity": s3.qty, "dateBought": s3.date, "stockBoughtPrice": s3.price});
-            } else {
-              stockResult.update[n3] = [{"quantity": s3.qty, "dateBought": s3.date, "stockBoughtPrice": s3.price}];
+            if (!(n3 in stockResult.update)) {
+              stockResult.update[n3] = {};
             }
+            stockResult.update[n3][stockBefore[stock].idx] = {"quantity": s3.qty, "dateBought": s3.date, "stockBoughtPrice": s3.price};
           }
         }
 
@@ -279,8 +269,8 @@ export default {
         console.log(response.data);
         this.modalMsg = "Portfolio has been successfully updated!";
         
-        // save prev stocks
-        this.prevStocks = JSON.parse(JSON.stringify(this.stocks));
+        // get updated portfolio
+        this.populate();
       })
       .catch((error) => {
         console.log(error.message);
