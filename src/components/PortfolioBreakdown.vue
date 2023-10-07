@@ -6,7 +6,7 @@
             {{ Object.keys(portfolioStocks).length }}
             </span>
         </div>
-        <div class="border-2 border-black rounded-md p-4 text-navy-950">
+        <div class="border-2 border-navy-950 rounded-md p-4 text-navy-950">
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-4">
                     <h5 class="text-xl font-semibold">{{ portfolio.portfolioName }}</h5>

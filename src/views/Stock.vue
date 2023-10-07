@@ -4,7 +4,7 @@
         <p class="text-white text-sm">Market Closed {{currentDate()}}</p>
         <div class="m-3"></div>
         <CandleStick :stockTicker="stockTicker"/>
-        <TabComponent :stock="stockTicker"/>      
+        <TabComponent :stock="stockTicker"/>  
     </div>
 
 </template>

@@ -15,7 +15,7 @@
                 @click="activeTab = 'tab2'">Financials</button>
         </nav>
   
-        <div class="py-2">
+        <div class="pt-1">
           <div v-show="activeTab === 'tab1'" class="my-5">
             <h4 class="text-white font-semibold">Description</h4>
             <p class="my-4 text-white">{{stockInfo.description}}</p>
@@ -31,31 +31,26 @@
     </div>
 </template>
 
-<script setup>
-    import { defineProps } from 'vue';
-    import axios from "axios";
-
-    const props = defineProps({
-      stock: {
-        type: String,
-        required: true,
-      }
-    })
-
-</script>
   
 <script>
 import DonutChart from '../components/charts/DonutChart.vue'
 import Financials from '../components/Financials.vue'
+import axios from "axios";
     
     export default {
       components: {
         DonutChart,
         Financials,
       },
+      props: {
+        stock: {
+          type: String,
+          required: true,
+        }
+      },
       data() {
         return {
-          activeTab: 'tab1',
+          activeTab: 'tab2',
           stockInfo: {}
         };
       },

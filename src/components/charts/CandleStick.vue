@@ -2,9 +2,9 @@
   <div class="white-card">
     <div class="grid grid-cols-3 mb-5 items-center">
       <div>
-        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="dailyPrice" :class="timeRange == 'dailyprice' ? 'border-b-4 border-navy-950' : ''">Daily</button>
-        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="weeklyPrice" :class="timeRange == 'weeklyprice' ? 'border-b-4 border-navy-950' : ''">Weekly</button>
-        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="monthlyPrice" :class="timeRange == 'monthlyprice' ? 'border-b-4 border-navy-950' : ''">Monthly</button>
+        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="selectedTimeRange('dailyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'dailyprice'}">Daily</button>
+        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="selectedTimeRange('weeklyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'weeklyprice'}">Weekly</button>
+        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="selectedTimeRange('monthlyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'monthlyprice'}">Monthly</button>
       </div>
       <div class="flex justify-center items-center">
         <button class="btn bg-navy-950 text-white text-xs md:text-sm rounded-lg p-1 md:py-2 md:px-3 font-medium" @click="toggleDateRange">{{ defaultPlaceholder }}</button>
@@ -378,16 +378,13 @@ export default {
     resetZoomChart() {
       this.$refs.myChart.chart.resetZoom()
     },
-    dailyPrice() {
-      this.timeRange = "dailyprice"
-      // this.fetchStockData()
-    },
-    weeklyPrice() {
-      this.timeRange = "weeklyprice"
-      // this.fetchStockData()
-    },
-    monthlyPrice() {
-      this.timeRange = "monthlyprice"
+    selectedTimeRange(selectedTimeRange) {
+
+      if (this.timeRange === selectedTimeRange) {
+        this.timeRange = null
+      } else {
+        this.timeRange = selectedTimeRange
+      }
       // this.fetchStockData()
     },
     clearDate() {

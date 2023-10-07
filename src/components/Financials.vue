@@ -1,42 +1,54 @@
 <template>
 
-    <h4 class="text-white font-semibold">Income Statement</h4>
-    <h4 class="text-white font-semibold">Balance Sheet</h4>
+  <div class="white-card">
+    <div class="mb-6 items-center">
+      <button class="btn text-xs md:text-base font-semibold mr-5 pb-1" @click="pickedFinancials('incomestmt')" :class="{'border-b-4 border-navy-950' : financial == 'incomestmt'}">Income Statement</button>
+      <button class="btn text-xs md:text-base font-semibold pb-1" @click="pickedFinancials('balancesheet')" :class="{'border-b-4 border-navy-950' : financial == 'balancesheet'}">Balance Sheet</button>
+    </div>
+
+    <BalanceSheet :stock="stock" v-if="financial === 'balancesheet'"/>
+
+  </div>
+
 
 </template>
 
 
-<script setup>
-    import { defineProps } from 'vue';
-    import axios from "axios";
 
-    const props = defineProps({
+
+<script>
+  import axios from "axios";
+  import BalanceSheet from "@/components/BalanceSheet.vue"
+  export default {
+    components: {
+      BalanceSheet
+    },
+    props: {
       stock: {
         type: String,
         required: true,
       }
-    })
+    },
+    data() {
+        return {
+         financial: "balancesheet"
+        };
+    },
+    created() {
 
-</script>
-
-
-<script>
-    
-    export default {
-      components: {
-        
-      },
-      data() {
-          return {
-            
-              
-          };
-      },
-      created() {
-
-      }
-        
+    },
+    methods: {
+      pickedFinancials(financials) {
+        if (this.financial === financials) {
+          this.financial = null
+        } else {
+          this.financial = financials
+        }
+      // this.fetchStockData()
+    },
     }
+      
+  }
 </script>
 
 <style scoped>
