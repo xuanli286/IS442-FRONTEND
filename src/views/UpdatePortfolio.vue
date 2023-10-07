@@ -105,7 +105,7 @@ export default {
           this.budget = response.data.capital;
           this.isPublic = response.data.isPublic;
           this.stockData = response.data.portStock;
-          // console.log(response.data)
+          console.log(response.data)
         } else {
           console.log("login eh");
         }
@@ -222,9 +222,9 @@ export default {
           var n2 = stockBefore[stock].name;
 
           if (!(n2 in stockResult.delete)) {
-            stockResult.delete[n2] = {};
+            stockResult.delete[n2] = [];
           }
-          stockResult.delete[n2][stockBefore[stock].idx] = {"quantity": s2.qty, "dateBought": s2.date, "stockBoughtPrice": s2.price};
+          stockResult.delete[n2].push(stockBefore[stock].idx);
         }
 
         // update
