@@ -1,14 +1,15 @@
 <template>
 
-  <div class="white-card">
-    <div class="mb-6 items-center">
-      <button class="btn text-xs md:text-base font-semibold mr-5 pb-1" @click="pickedFinancials('incomestmt')" :class="{'border-b-4 border-navy-950' : financial == 'incomestmt'}">Income Statement</button>
-      <button class="btn text-xs md:text-base font-semibold pb-1" @click="pickedFinancials('balancesheet')" :class="{'border-b-4 border-navy-950' : financial == 'balancesheet'}">Balance Sheet</button>
+  <div class="flex">
+    <div class="white-card">
+      <div class="mb-6 items-center">
+        <button class="btn text-xs md:text-base font-semibold mr-5 pb-1" @click="pickedFinancials('incomestatement')" :class="{'border-b-4 border-navy-950' : financial == 'incomestatement'}">Income Statement</button>
+        <button class="btn text-xs md:text-base font-semibold pb-1" @click="pickedFinancials('balancesheet')" :class="{'border-b-4 border-navy-950' : financial == 'balancesheet'}">Balance Sheet</button>
+      </div>
+      <FinancialsBreakdown :stock="stock" :selectedFinancials="financial"/>
     </div>
-
-    <BalanceSheet :stock="stock" v-if="financial === 'balancesheet'"/>
-
   </div>
+  
 
 
 </template>
@@ -17,11 +18,10 @@
 
 
 <script>
-  import axios from "axios";
-  import BalanceSheet from "@/components/BalanceSheet.vue"
+  import FinancialsBreakdown from "@/components/FinancialsBreakdown.vue"
   export default {
     components: {
-      BalanceSheet
+      FinancialsBreakdown
     },
     props: {
       stock: {
@@ -30,9 +30,9 @@
       }
     },
     data() {
-        return {
-         financial: "balancesheet"
-        };
+      return {
+        financial: "incomestatement"
+      };
     },
     created() {
 
@@ -44,10 +44,8 @@
         } else {
           this.financial = financials
         }
-      // this.fetchStockData()
-    },
+      },
     }
-      
   }
 </script>
 

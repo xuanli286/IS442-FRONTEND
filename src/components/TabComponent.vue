@@ -1,16 +1,16 @@
 <template>
     <div class="mt-10">
-        <nav class="border-b text-sm flex justify-start grid grid-cols-4">
-            <button class="btn text-lg lg:text-2xl border-2 rounded-t-lg py-2"
+        <nav class="border-b text-sm md:text-lg lg:text-2xl flex justify-start grid grid-cols-4">
+            <button class="btn border-x-4 border-t-4 rounded-t-lg py-2"
                 :class="{
                     'text-white': activeTab !== 'tab1',
-                    'bg-white border-black': activeTab === 'tab1',
+                    'bg-white border-x-4 border-t-4 border-black': activeTab === 'tab1',
                 }"
                 @click="activeTab = 'tab1'">Company Overview</button>
-            <button class="btn text-lg lg:text-2xl border-2 py-2 rounded-t-lg"
+            <button class="btn border-x-4 border-t-4 rounded-t-lg py-2"
                 :class="{
                     'text-white': activeTab !== 'tab2',
-                    'bg-white border-black': activeTab === 'tab2',
+                    'bg-white border-x-4 border-t-4 border-black': activeTab === 'tab2',
                 }"
                 @click="activeTab = 'tab2'">Financials</button>
         </nav>
