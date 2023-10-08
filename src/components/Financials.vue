@@ -1,12 +1,13 @@
 <template>
 
-  <div class="flex">
+  <div class="w-full">
     <div class="white-card">
       <div class="mb-6 items-center">
         <button class="btn text-xs md:text-base font-semibold mr-5 pb-1" @click="pickedFinancials('incomestatement')" :class="{'border-b-4 border-navy-950' : financial == 'incomestatement'}">Income Statement</button>
         <button class="btn text-xs md:text-base font-semibold pb-1" @click="pickedFinancials('balancesheet')" :class="{'border-b-4 border-navy-950' : financial == 'balancesheet'}">Balance Sheet</button>
       </div>
       <FinancialsBreakdown :stock="stock" :selectedFinancials="financial"/>
+      <FB :stock="stock" :selectedFinancials="financial"></FB>
     </div>
   </div>
   
