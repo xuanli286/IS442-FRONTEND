@@ -24,25 +24,33 @@
         id: "donutLabel",
 
         beforeDatasetsDraw(chart, args, options) {
-            const {ctx, data, tooltip, chartArea: {top, bottom, left, right, width, height}, scales: {x, y}} = chart;
 
-            ctx.save();
+            const { ctx, chartArea, font } = chart;
+            const text = "By Sector";
 
-            console.log(chart.getDatasetMeta(0))
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
 
-            const xCoor = chart.getDatasetMeta(0).data[0].x;
-            const yCoor = chart.getDatasetMeta(0).data[0].y;
 
-            console.log(options.font.size)
+            const fontSize = Math.min(chart.width, chart.height) * 0.10;
 
-            ctx.font = options.font.size + "px bold sans-serif";
+            ctx.font = fontSize + "px " + "px bold sans-serif"
             ctx.fillStyle = "#192e47";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText("By Sector", xCoor, yCoor)
 
-        }
+            const textX = centerX;
+            const textY = centerY;
+
+            ctx.fillText(text, textX, textY);
+        },
+
+        resize(chart, newChartSize, options) {
+            chart.update();
+        },
     }
+
+
     
     export default {
         name: 'DonutChart',
@@ -86,12 +94,12 @@
                         legend: {
                             display: true,
                             position: 'bottom',
-                            labels: {
-                                font: {
-                                    size: 10,
-                                    weight: 'medium'
-                                }
-                            }
+                            // labels: {
+                            //     font: {
+                            //         size: 10,
+                            //         weight: 'medium'
+                            //     }
+                            // }
                         },
                         tooltip : {
                             backgroundColor : '#192e47',
@@ -126,7 +134,7 @@
                         },
                         donutLabel: {
                             font: {
-                                size: 20
+                                size: 20,
                             }
                         },
                     }
@@ -174,7 +182,6 @@
                 console.error(error);
             });
         }
-
     }
 </script>
 
