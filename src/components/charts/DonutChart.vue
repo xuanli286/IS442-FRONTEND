@@ -3,9 +3,6 @@
     <div class="white-card md:doughnut-padding">
         <div class="chart-container">
             <Doughnut v-if="loaded" :data="chartData" :options="chartOptions" :plugins="plugins"/>
-            <!-- <div v-if="haveSector" class="center-text text-xs sm:text-sm md:text-lg lg:text-2xl">
-                By Sector
-            </div> -->
            
         </div>
     </div>
@@ -25,7 +22,7 @@
 
         beforeDatasetsDraw(chart, args, options) {
 
-            const { ctx, chartArea, font } = chart;
+            const { ctx, chartArea } = chart;
             const text = "By Sector";
 
             const centerX = (chartArea.left + chartArea.right) / 2;
@@ -34,7 +31,7 @@
 
             const fontSize = Math.min(chart.width, chart.height) * 0.10;
 
-            ctx.font = fontSize + "px " + "px bold sans-serif"
+            ctx.font = fontSize + "px " + "px bold inter, sans-serif"
             ctx.fillStyle = "#192e47";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
@@ -45,12 +42,10 @@
             ctx.fillText(text, textX, textY);
         },
 
-        resize(chart, newChartSize, options) {
+        resize(chart) {
             chart.update();
         },
     }
-
-
     
     export default {
         name: 'DonutChart',
@@ -80,7 +75,20 @@
                     labels: [],
                     datasets: [
                         {
-                        backgroundColor: ["#2d455c", '#7a9cb8', '#314F76', '#3F6392', "#587e9d", "#000000"],
+                        backgroundColor: [
+                            '#2d455c',
+                            '#a8bed1',
+                            '#436584',
+                            '#d0dce7',
+                            '#37526c',
+                            '#2d455c',
+                            '#192e47', 
+                            '#7a9cb8', 
+                            '#1d2a3a',
+                            "#587e9d",
+                            '#314F76', 
+                            '#3F6392', 
+                        ],
                         data: [],
                         hoverOffset: 4
                         }
@@ -94,12 +102,6 @@
                         legend: {
                             display: true,
                             position: 'bottom',
-                            // labels: {
-                            //     font: {
-                            //         size: 10,
-                            //         weight: 'medium'
-                            //     }
-                            // }
                         },
                         tooltip : {
                             backgroundColor : '#192e47',
@@ -132,19 +134,12 @@
                                 
                             }
                         },
-                        donutLabel: {
-                            font: {
-                                size: 20,
-                            }
-                        },
                     }
                 },
                 plugins: [donutLabel]
             }
         },
         created() {
-
-            // console.log(this.userID)
 
             this.loaded = false;
 
@@ -167,7 +162,6 @@
                     this.chartData.datasets[0].data[i] = sectorCounts[sector];
                     i++;
                 }
-                // console.log(this.chartData.datasets[0].data);
 
                 if (this.chartData.datasets[0].data.length == 0) {
                     this.haveSector = false;
@@ -197,12 +191,4 @@
   position: relative;
 }
 
-.center-text {
-  position: absolute;
-  top: 41%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-weight: bold;
-  text-align: center;
-}
 </style>
