@@ -1,12 +1,9 @@
 <template>
     
-    <div class="white-card md:doughnut-padding">
-        <div class="chart-container">
-            <Doughnut v-if="loaded" :data="chartData" :options="chartOptions" :plugins="plugins"/>
-           
-        </div>
+    <div class="relative">
+        <Doughnut v-if="loaded" :data="chartData" :options="chartOptions" :plugins="plugins"/>
     </div>
-    
+
 </template>
   
 <script>
@@ -141,40 +138,48 @@
         },
         created() {
 
-            this.loaded = false;
+            this.getSectorCounts();
 
-            let url = `http://localhost:5000/portfolio/getsectorsbyportfolio/${this.portfolioId}`
+        },
+        methods: {
+            getSectorCounts() {
 
-            if (this.isOverview) {
-                url = `http://localhost:5000/portfolio/getsectorsbyuser/${this.userID}`
+                this.loaded = false;
+
+                let url = `http://localhost:5000/portfolio/getsectorsbyportfolio/${this.portfolioId}`
+
+                if (this.isOverview) {
+                    url = `http://localhost:5000/portfolio/getsectorsbyuser/${this.userID}`
+                }
+
+                this.chartData.labels = []
+       
+                axios.get(url)
+                .then(response => {
+                    const sectorCounts = response.data;
+
+                    let i = 0;
+
+                    for (const sector in sectorCounts) {
+                        this.chartData.labels.push(sector);
+                        this.chartData.datasets[0].data[i] = sectorCounts[sector];
+                        i++;
+                    }
+
+                    this.loaded = true;
+                    
+                })
+                .catch(error => {
+                    // Handle any errors that occurred during the request
+                    console.error(error);
+                });
+
             }
 
-            // need to change url            
-            axios.get(url)
-            .then(response => {
-                // console.log(response.data);
-                const sectorCounts = response.data;
-
-                let i = 0;
-
-                for (const sector in sectorCounts) {
-                    this.chartData.labels.push(sector);
-                    this.chartData.datasets[0].data[i] = sectorCounts[sector];
-                    i++;
-                }
-
-                if (this.chartData.datasets[0].data.length == 0) {
-                    this.haveSector = false;
-                }
-
-                this.loaded = true;
-                
-                
-            })
-            .catch(error => {
-                // Handle any errors that occurred during the request
-                console.error(error);
-            });
+        },
+        watch: {
+            portfolioId: "getSectorCounts",
+            userID: "getSectorCounts"
         }
     }
 </script>
@@ -182,13 +187,5 @@
 
 <style scoped>
 
-.doughnut-padding {
-    @apply
-    p-5 !important
-}
-
-.chart-container {
-  position: relative;
-}
 
 </style>
