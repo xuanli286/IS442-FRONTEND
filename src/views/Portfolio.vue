@@ -2,22 +2,17 @@
     <div>
         <PortfolioBreakdown :portfolio="portfolio"/>
         <div class="grid grid-cols-3 gap-2">
-            <DonutChart :isOverview="false" :portfolioId="portfolio.portfolioId"/>
+            <div class="white-card">
+                <p class="font-semibold mt-1 mb-4 text-navy-950">
+                    Market Exposure
+                </p>
+                <DonutChart :isOverview="false" :portfolioId="portfolio.portfolioId"/>
+            </div>
+            
         </div>
         
     </div>
 </template>
-
-<script setup>
-    import { defineProps } from 'vue';
-
-    const props = defineProps({
-        portfolio: {
-            type: Object,
-            required: true,
-        },
-    })
-</script>
 
 <script>
 import DonutChart from '../components/charts/DonutChart.vue';
@@ -29,32 +24,16 @@ export default {
         DonutChart,
         PortfolioBreakdown
     },
-    data(){
-        return {
-            // portfolioId: "06lcHYp5MKVnsIvH12QJ",
-            // portfolioName: "High Risk Portfolio"
-        }
-    },
-    computed: {
-
-    },
-    methods: {
-
-    },
-    created() {
-
+    props: {
+        portfolio: {
+            type: Object,
+            required: true,
+        },
     }
 
 }
 </script>
 
 <style scoped>
-  h3 {
-    @apply
-    text-4xl
-  }
-  h4 {
-    @apply
-    text-2xl
-  }
+
 </style>

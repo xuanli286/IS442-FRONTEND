@@ -11,7 +11,6 @@
 
 
 <script>
-import axios from 'axios'
 import CandleStick from '../components/charts/CandleStick.vue'
 import TabComponent from "../components/TabComponent.vue"
 
@@ -25,9 +24,6 @@ export default {
         return {
             stockTicker: "MSFT",
         }
-    },
-    computed: {
-
     },
     methods: {
         currentDate() {
