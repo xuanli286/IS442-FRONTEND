@@ -2,10 +2,14 @@
   <div class="px-8 sm:px-12 py-11 font-inter">
     <div class="relative flex justify-between mb-5">
       <PortfolioDropdown @isSelect="handleSelect" />
-      <CustomButton :isDelete="isDelete" />
+      <div v-if="isSelected" class="flex space-x-5">
+        <CustomButton type='e' :id="selectedPortfolio.portfolioId" />
+        <CustomButton type='d'/>
+      </div>
+      <CustomButton v-else type='c'/>
     </div>
-    <SummarizedValue :isOverview="!isDelete" :portfolio="selectedPortfolio" />
-    <Portfolio v-if="isDelete" :portfolio="selectedPortfolio" />
+    <SummarizedValue :isOverview="!isSelected" :portfolio="selectedPortfolio" />
+    <Portfolio v-if="isSelected" :portfolio="selectedPortfolio" />
     <Overview v-else />
   </div>
 </template>
@@ -20,10 +24,10 @@ import Overview from "@/views/Overview.vue";
 
 const selectedPortfolio = ref("");
 
-const isDelete = ref(false)
+const isSelected = ref(false)
 
 watch(() => selectedPortfolio.value.portfolioName, (newPortfolioName) => {
-  isDelete.value = newPortfolioName !== 'Overview';
+  isSelected.value = newPortfolioName !== 'Overview';
 });
 
 function handleSelect(portfolio) {

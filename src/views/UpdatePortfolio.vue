@@ -84,8 +84,12 @@ export default {
     }
   },
   created() {
-    this.populate();
-    this.retrieveStocks();
+    if (this.pID) {
+      this.populate();
+      this.retrieveStocks();
+    } else {
+      this.$router.go(-1);
+    }
   },
   computed: {
     portfolioTotal() {
@@ -94,7 +98,7 @@ export default {
   },
   methods: {
     cancel() {
-      window.history.back();
+      this.$router.push('/home');
     },
     populate() {
       axios.get(`http://localhost:5000/portfolio/${this.pID}`)
@@ -107,11 +111,12 @@ export default {
           this.stockData = response.data.portStock;
           console.log(response.data)
         } else {
-          console.log("login eh");
+          console.log("who u");
         }
       })
       .catch((error) => {
         console.log(error.message);
+        this.$router.push('/home');
       })
     },
     retrieveStocks() {
