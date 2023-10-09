@@ -1,27 +1,59 @@
 <template>
-  <div class="white-card">
+  <div class="white-card text-xs md:text-sm">
     <div class="grid grid-cols-3 mb-5 items-center">
-      <div>
-        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="selectedTimeRange('dailyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'dailyprice'}">Daily</button>
-        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="selectedTimeRange('weeklyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'weeklyprice'}">Weekly</button>
-        <button class="btn text-xs md:text-sm md:font-medium mx-2 pb-1" @click="selectedTimeRange('monthlyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'monthlyprice'}">Monthly</button>
-      </div>
-      <div class="flex justify-center items-center">
-        <button class="btn bg-navy-950 text-white text-xs md:text-sm rounded-lg p-1 md:py-2 md:px-3 font-medium" @click="toggleDateRange">{{ defaultPlaceholder }}</button>
-        <div class="overlay" v-show="showDateRange" @click="closeOverlay">
-          <div class="white-card">
-          <input type="date" :min="startDate" :max="endDate" v-model="sDate" class="border-2 rounded-lg border-navy-950 p-1 md:p-2 text-xs md:text-sm md:mr-2">
-          -
-          <input type="date" :min="sDate" :max="endDate" v-model="eDate" class="border-2 rounded-lg border-navy-950 p-1 md:p-2 text-xs md:text-sm md:ml-2" >
-          <button class="btn bg-navy-950 text-white text-xs rounded-lg p-1 md:py-2 md:px-3" @click="updateChart">Apply</button>
-          <button class="btn bg-navy-950 text-white text-xs rounded-lg p-1 md:py-2 md:px-3" @click="clearDate">Clear</button>
+      <div class="relative sm:hidden">
+        <button
+        @click="toggleDropdown"
+        class="btn sep md:px-3 w-24"
+        >
+          <span>{{ selectedTimeLabel[timeRange] }}</span>
+          <i class="bi bi-chevron-down transition ml-2 text-white" :class="{ 'chevDown': isOpen }"></i>
+        </button>
+
+        <div v-if="isOpen" class="timeDrop absolute w-24 top-6 p-2 mt-2 z-10">
+            <ul>
+                <li @click="selectTimeLabel(timeLabel)" 
+                    class="option" 
+                    v-for="(val, timeLabel) in selectedTimeLabel" :key="timeLabel"
+                >
+                    <a class="text-navy-950">{{ val }}</a>
+                </li>
+            </ul>
         </div>
+      </div>
+      <div class="mobile:hidden sm:block">
+        <button class="btn md:font-medium mx-2 pb-1" @click="selectedTimeRange('dailyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'dailyprice'}">Daily</button>
+        <button class="btn md:font-medium mx-2 pb-1" @click="selectedTimeRange('weeklyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'weeklyprice'}">Weekly</button>
+        <button class="btn md:font-medium mx-2 pb-1" @click="selectedTimeRange('monthlyprice')" :class="{'border-b-4 border-navy-950' : timeRange == 'monthlyprice'}">Monthly</button>
+      </div>
+      
+      <div class="flex justify-center items-center relative">
+        <button 
+          class="btn sep px-0.5 md:px-3 hover:bg-white hover:text-navy-950" 
+          @click="toggleDateRange"
+        >
+          {{ defaultPlaceholder }}
+        </button>
+        
+        <div class="overlay sm:top-20 lg:top-10" v-show="showDateRange" @click="closeOverlay">
+          <div class="timeDrop">
+            <div class="my-5 mx-8">
+              <div class="flex items-center mb-3">
+                <input type="date" :min="startDate" :max="endDate" v-model="sDate" class="border-2 rounded-lg border-navy-950 p-1 md:p-2 text-xs md:text-sm">
+                <p class="font-extrabold mx-2 text-lg">-</p>
+                <input type="date" :min="sDate" :max="endDate" v-model="eDate" class="border-2 rounded-lg border-navy-950 p-1 md:p-2 text-xs md:text-sm" >
+              </div>
+              <div class="flex justify-between gap-4">
+                <button class="btn sep px-3 hover:bg-green-500 hover:text-white" @click="updateChart">Apply</button>
+                <button class="btn clearButton hover:bg-red-500 hover:text-white" @click="clearDate">Clear</button>
+              </div>
+            </div>
+          </div>
         </div>
         
       </div>
       <div class="flex justify-end">
-        <!-- <button class="btn bg-navy-950 text-white text-xs rounded-lg p-1 md:py-2 md:px-3" @click="clearDate">Clear</button> -->
-        <button class="btn bg-navy-950 text-white text-xs md:text-sm rounded-lg p-1 md:py-2 md:px-3 font-medium" @click="resetZoomChart">Reset Zoom</button>
+        <button class="btn sep px-1 md:px-3 hover:bg-white hover:text-navy-950" @click="resetZoomChart">Reset Zoom</button>
       </div>
     </div>
     <div>
@@ -37,7 +69,6 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import 'chartjs-adapter-date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import axios from "axios";
-// import DatePicker from "@/components/DatePicker.vue";
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeSeriesScale, zoomPlugin);
 
@@ -152,8 +183,14 @@ export default {
       sDate: "",
       eDate: "",
       defaultPlaceholder: "Select Date Range",
-      showDateRange: false,
       timeRange: "dailyprice",
+      selectedTimeLabel: {
+        dailyprice: "Daily",
+        weeklyprice: "Weekly",
+        monthlyprice: "Monthly"
+      },
+      isOpen: false,
+      showDateRange: false,
       chartData: {
         datasets: [ 
           { 
@@ -234,7 +271,8 @@ export default {
         },
         layout: {
           padding: {
-            bottom: 25
+            bottom: 25,
+            left: 10,
           }
         },
         scales: {
@@ -320,59 +358,9 @@ export default {
     }
   },
   created() {
+    
+    this.fetchStockData();
 
-    console.log(this.timeRange)
-
-    axios.get(`http://localhost:5000/stockprice/${this.timeRange}/${this.stockTicker}`)
-    .then(response => {
-
-      this.loaded = false;
-
-      const stockPriceList = response.data.stockPriceList;
-
-      const stDate = new Date(stockPriceList[stockPriceList.length - 1].stockDate)
-      const eDate = new Date(stockPriceList[0].stockDate)
-      const twoWeeksBeforeEDate = new Date(eDate.getTime() - 14 * 24 * 60 * 60 * 1000);
-
-      const standardSDate = `${stDate.getFullYear()}-${String(stDate.getMonth() + 1).padStart(2,'0')}-${String(stDate.getDate()).padStart(2,'0')}`
-
-      const standardEDate = `${eDate.getFullYear()}-${String(eDate.getMonth() + 1).padStart(2,'0')}-${String(eDate.getDate()).padStart(2,'0')}`
-
-      this.startDate = standardSDate
-      this.endDate = standardEDate
-
-      if (twoWeeksBeforeEDate < stDate) {
-        this.chartOptions.scales.x.min = standardSDate
-      } else {
-        this.chartOptions.scales.x.min = `${twoWeeksBeforeEDate.getFullYear()}-${String(twoWeeksBeforeEDate.getMonth() + 1).padStart(2,'0')}-${String(twoWeeksBeforeEDate.getDate()).padStart(2,'0')}`
-      }
-
-      this.chartOptions.scales.x.max = standardEDate
-
-      // need to reconstruct chartData
-
-      for(let i= 0; i < stockPriceList.length; i++) {
-
-        let stockPriceObj = {}
-
-        stockPriceObj.x = new Date(stockPriceList[i].stockDate).setHours(0,0,0,0)
-        stockPriceObj.o = stockPriceList[i]["1. open"]
-        stockPriceObj.h = stockPriceList[i]["2. high"]
-        stockPriceObj.l = stockPriceList[i]["3. low"]
-        stockPriceObj.c = stockPriceList[i]["4. close"]
-        stockPriceObj.s = [stockPriceList[i]["1. open"], stockPriceList[i]["4. close"]]
-
-        this.chartData.datasets[0].data[i] = stockPriceObj
-
-      }
-
-      this.loaded = true     
-        
-    })
-    .catch(error => {
-        // Handle any errors that occurred during the request
-        console.error(error);
-    });
   },
   methods: {
     resetZoomChart() {
@@ -402,7 +390,11 @@ export default {
       this.$refs.myChart.chart.options.scales.x.max = this.eDate;
       this.$refs.myChart.chart.update(); // Update the chart
       this.showDateRange = false;
-      this.defaultPlaceholder = `${this.sDate} - ${this.eDate}`
+      
+      let formatsDate = this.sDate.split("-")
+      let formateDate = this.eDate.split("-")
+
+      this.defaultPlaceholder = `${formatsDate[2]}/${formatsDate[1]}/${formatsDate[0]} - ${formateDate[2]}/${formateDate[1]}/${formateDate[0]}`
     },
     toggleDateRange() {
       this.showDateRange = !this.showDateRange;
@@ -412,48 +404,69 @@ export default {
         this.showDateRange = false;
       }
     },
-    // fetchStockData() {
+    toggleDropdown() {
+      this.isOpen = !this.isOpen;
+    },
+    selectTimeLabel(label) {
+      this.timeRange = label;
+      this.isOpen = false;
+      // You can perform any other actions based on the selected time label here
+    },
+    formattedDate(chosenDate) {
+      return `${chosenDate.getFullYear()}-${String(chosenDate.getMonth() + 1).padStart(2,'0')}-${String(chosenDate.getDate()).padStart(2,'0')}`
+    },
+    fetchStockData() {
 
-    //   console.log(this.timeRange)
-    //   console.log(`http://localhost:5000/stockprice/${this.timeRange}/${this.stockTicker}`)
+      this.loaded = false;
 
-    //   axios.get(`http://localhost:5000/stockprice/${this.timeRange}/${this.stockTicker}`)
-    //   .then(response => {
+      // console.log(this.timeRange)
 
-    //     this.loaded = false;
+      axios.get(`http://localhost:5000/stockprice/${this.timeRange}/${this.stockTicker}`)
+      .then(response => {
 
-    //     // need to reconstruct chartData
+        const stockPriceList = response.data.stockPriceList;
 
-    //     const stockPriceList = response.data.stockPriceList;
+        let idx = Math.min(9, stockPriceList.length - 1)
 
-    //     for(let i= 0; i < stockPriceList.length; i++) {
+        const stDate = new Date(stockPriceList[stockPriceList.length - 1].stockDate)
+        const eDate = new Date(stockPriceList[0].stockDate)
+        const startingDate = new Date(stockPriceList[idx].stockDate)
 
-    //       let stockPriceObj = {}
+        this.startDate = this.formattedDate(stDate)
+        this.endDate = this.formattedDate(eDate)
 
-    //       stockPriceObj.x = new Date(stockPriceList[i].stockDate).setHours(0,0,0,0)
-    //       stockPriceObj.o = stockPriceList[i]["1. open"]
-    //       stockPriceObj.h = stockPriceList[i]["2. high"]
-    //       stockPriceObj.l = stockPriceList[i]["3. low"]
-    //       stockPriceObj.c = stockPriceList[i]["4. close"]
-    //       stockPriceObj.s = [stockPriceList[i]["1. open"], stockPriceList[i]["4. close"]]
+        this.chartOptions.scales.x.min = this.formattedDate(startingDate)
+        this.chartOptions.scales.x.max = this.formattedDate(eDate)
 
-    //       this.chartData.datasets[0].data[i] = stockPriceObj
+        // need to reconstruct chartData
 
-    //     }
+        for(let i= 0; i < stockPriceList.length; i++) {
 
-    //     // console.log(this.chartData.datasets[0].data)
+          let stockPriceObj = {}
 
-    //     this.loaded = true
-        
+          stockPriceObj.x = new Date(stockPriceList[i].stockDate).setHours(0,0,0,0)
+          stockPriceObj.o = stockPriceList[i]["1. open"]
+          stockPriceObj.h = stockPriceList[i]["2. high"]
+          stockPriceObj.l = stockPriceList[i]["3. low"]
+          stockPriceObj.c = stockPriceList[i]["4. close"]
+          stockPriceObj.s = [stockPriceList[i]["1. open"], stockPriceList[i]["4. close"]]
+
+          this.chartData.datasets[0].data[i] = stockPriceObj
+
+        }
+
+        this.loaded = true     
           
-    //   })
-    //   .catch(error => {
-    //       // Handle any errors that occurred during the request
-    //       console.error(error);
-    //   });
-
-    // }
+      })
+      .catch(error => {
+          // Handle any errors that occurred during the request
+          console.error(error);
+      });
+    },
   },
+  watch: {
+    timeRange: 'fetchStockData'
+  }
 }
 </script>
 
@@ -464,16 +477,63 @@ export default {
   height: 500px;
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999; /* Ensure it's on top of other content */
+.sep {
+  @apply
+  bg-navy-950
+  text-white 
+  rounded-lg 
+  font-medium
+  py-2
+  border-2
+  border-navy-950
+
 }
+
+.clearButton {
+  @apply
+  text-navy-950 
+  border-2 
+  border-navy-950 
+  rounded-lg 
+  font-medium 
+  py-2 
+  px-3
+}
+
+.overlay {
+  @apply
+  flex 
+  justify-center 
+  items-center 
+  h-full 
+  z-10 
+  w-full 
+  fixed 
+  top-16
+}
+
+.option {
+    @apply
+    p-2
+    hover:bg-gray-100
+    cursor-pointer
+    rounded-md
+  }
+  .chevDown {
+    @apply
+    rotate-180
+  }
+
+  .timeDrop {
+    @apply
+    mt-2 
+    bg-white 
+    border 
+    border-gray-300 
+    shadow-lg 
+    rounded-lg 
+
+  }
+
 
 </style>
