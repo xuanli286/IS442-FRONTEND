@@ -10,7 +10,7 @@
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-4">
                     <h5 class="text-xl font-semibold">{{ portfolio.portfolioName }}</h5>
-                    <p class="text-sm font-medium"><b>Date Created:</b> {{ formattedDate }}</p>
+                    <p class="text-sm font-medium"><b>Date Created:</b> {{ portfolio.dateCreated }}</p>
                 </div>
                 <p class="text-sm font-medium"><b>Description:</b> {{portfolio.portfolioDescription}}</p>
             </div>
@@ -53,84 +53,74 @@
         
     </div>
 </template>
-
-<script setup>
-    import { defineProps } from 'vue';
-    import axios from "axios";
-
-    const props = defineProps({
-        portfolio: {
-            type: Object,
-            required: true,
-        }
-    })
-
-    function formatDate(inputDate) {
-        const date = new Date(inputDate); // Parse the input date string
-        const day = date.getDate().toString().padStart(2, '0'); // Get the day and pad with leading zeros if necessary
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get the month (months are zero-based) and pad with leading zeros if necessary
-        const year = date.getFullYear(); // Get the full year
-
-        return `${day}/${month}/${year}`;
-    }
-
-    // Format the date and store it in the formattedDate variable
-    const formattedDate = formatDate(props.portfolio.dateCreated);
-
-
-</script>
   
 
 <script>
+    import axios from "axios";
 
     export default {
         name : "PortfolioBreakdown",
         components: {
         
         },
+        props: {
+            portfolio: {
+                type: Object,
+                required: true,
+            }
+        },
         data() {
             return {
                 portfolioStocks: {},
-                stockInfo : {}
+                stockInfo : {},
             };
         },
         created() {
-            axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`)
-            .then(response => {
-                // Handle the response data here
-                // console.log(response.data.portStock);
-                this.portfolioStocks = response.data.portStock
 
-                let stocks = Object.keys(response.data.portStock)
+            this.getPortfolioData();
 
-                for (let stock of stocks) {
+        },
+        methods: {
+            getPortfolioData() {
 
-                    this.stockInfo[stock] = {symbol : "", sector: "", eod : 0}
+                axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`)
+                .then(response => {
+                    // console.log(response.data.portStock);
+                    this.portfolioStocks = response.data.portStock
 
-                    axios.get(`http://localhost:5000/stock/${stock}/companyOverview`)
-                    .then(response => {
-                        // console.log(response.data.country)
+                    let stocks = Object.keys(response.data.portStock)
 
-                        this.stockInfo[stock].symbol = response.data.country
-                        this.stockInfo[stock].sector = response.data.sector
+                    for (let stock of stocks) {
 
-                        axios.get(`http://localhost:5000/stockprice/eodprice/${stock}`)
+                        this.stockInfo[stock] = {symbol : "", sector: "", eod : 0}
+
+                        axios.get(`http://localhost:5000/stock/${stock}/companyOverview`)
                         .then(response => {
-                            // console.log(response.data["4. close"])
+                            // console.log(response.data.country)
 
-                            this.stockInfo[stock].eod = response.data["4. close"]
+                            this.stockInfo[stock].symbol = response.data.country
+                            this.stockInfo[stock].sector = response.data.sector
 
-                        }) 
-                    })
+                            axios.get(`http://localhost:5000/stockprice/eodprice/${stock}`)
+                            .then(response => {
+                                // console.log(response.data["4. close"])
+
+                                this.stockInfo[stock].eod = response.data["4. close"]
+
+                            }) 
+                        })
+                        
+                    }
                     
-                }
-                
-            })
-            .catch(error => {
-                // Handle any errors that occurred during the request
-                console.error(error);
-            });
-
+                })
+                .catch(error => {
+                    // Handle any errors that occurred during the request
+                    console.error(error);
+                });
+            },
+        },
+        watch: {
+            portfolio: "getPortfolioData"
         }
             
     }

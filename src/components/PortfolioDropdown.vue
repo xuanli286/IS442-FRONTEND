@@ -35,9 +35,6 @@ export default {
             selectedPortfolio: "",
         }
     },
-    computed: {
-
-    },
     mounted() {
         document.addEventListener('click', (event) => {
             if (this.$refs.toggle && this.$refs.dropdown && !this.$refs.toggle.contains(event.target) && !this.$refs.dropdown.contains(event.target)) {
