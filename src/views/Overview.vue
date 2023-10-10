@@ -54,9 +54,9 @@
                     </p>
                     <label class="mr-4" v-for="option in options" :key="option">
                         <input type="radio" :value="option" v-model="selectedOption" />
-                        {{ option }}
+                        {{ option.charAt(0).toUpperCase() + option.slice(1) }}
                     </label>
-                    <LineChart class="mt-4" :dataset="dataset" />
+                    <LineChart class="mt-4" :dataset="dataset" :display="selectedOption" />
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
@@ -156,7 +156,8 @@
     const currentYear = ref("");
     const selectedOption = ref("");
 
-    const options = ["Monthly", "Quarterly"]
+    const options = ["monthly", "quarterly"];
+    selectedOption.value = options[0];
 
     currentYear.value = new Date().getFullYear();
 
@@ -205,9 +206,10 @@
                             qtrValue[i/3-1] = totalvalue[i-1];
                         }
                     }
-                    dataset.value[portfolio.portfolioName] = totalvalue;
-                    qtrDataset.value[portfolio.portfolioName] = qtrValue;
-                    console.log(qtrDataset.value)
+                    dataset.value[portfolio.portfolioName] = {
+                        monthly: totalvalue,
+                        quarterly: qtrValue,
+                    }
                 }
                 handlePortfolioComparison();
             } catch (error) {

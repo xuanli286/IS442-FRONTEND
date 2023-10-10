@@ -31,11 +31,15 @@
       type: Object,
       required: true,
     },
+    display: {
+      type: String,
+      required: true,
+    }
   });
 
   const chartData = computed(() => {
     let currentMonth = new Date().getMonth();
-    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].slice(0,currentMonth);
+    const labels = [];
     const datapoints = [];
     let count = 0;
     const colors = [
@@ -57,9 +61,22 @@
         label: key,
         borderColor: colors[count],
         backgroundColor: colors[count],
-        data: value,
+        data: value[props.display],
       });
       count++;
+    }
+
+    if (props.display == "monthly") {
+      let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].slice(0,currentMonth);
+      for (let month of months) {
+        labels.push(month);
+      }
+    }
+    else {
+      let quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+      for (let quarter of quarters) {
+        labels.push(quarter);
+      }
     }
 
     return {
