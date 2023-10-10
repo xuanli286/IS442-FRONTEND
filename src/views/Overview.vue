@@ -39,15 +39,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-span-1 white-card">
-                    <DonutChart :isOverview="true" />
+                <div class="col-span-1 white-card flex flex-col items-center">
+                    <p class="font-semibold mt-1 mr-auto">
+                        Market Exposure
+                    </p>
+                    <div class="my-auto">
+                        <DonutChart :isOverview="true" />
+                    </div>
                 </div>
                 <div class="col-span-2 white-card">
-                    <p class="font-semibold mt-1 mb-4">
+                    <p class="font-semibold mt-1 mb-3">
                         Portfolio Performance for Year 
                         <span class="font-bold text-lg">{{ currentYear }}</span>
                     </p>
-                    <LineChart :dataset="dataset" />
+                    <label class="mr-4" v-for="option in options" :key="option">
+                        <input type="radio" :value="option" v-model="selectedOption" />
+                        {{ option }}
+                    </label>
+                    <LineChart class="mt-4" :dataset="dataset" />
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
@@ -142,8 +151,12 @@
     const selectedPortfolios = ref([]);
     const top3Portfolios = ref({});
     const dataset = ref({});
+    const qtrDataset = ref({})
     const selectedDataset = ref({});
     const currentYear = ref("");
+    const selectedOption = ref("");
+
+    const options = ["Monthly", "Quarterly"]
 
     currentYear.value = new Date().getFullYear();
 
@@ -155,8 +168,7 @@
                 const portfolios = response.data;
                 const performingPortfolios = portfolios.slice(0, 3);
                 for (let portfolio of performingPortfolios) {
-                    let key = `${portfolio.portfolioName} [${portfolio.portfolioId}]`;
-                    top3Portfolios.value[key] = {
+                    top3Portfolios.value[portfolio.portfolioName] = {
                         portfolioId: portfolio.portfolioId,
                         portfolioName: portfolio.portfolioName,
                         portfolioValue: portfolio.portfolioValue,
@@ -168,6 +180,7 @@
                 selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
                 for (let portfolio of portfolios) {
                     let totalvalue = new Array(12).fill(0);
+                    let qtrValue = new Array(4).fill(0);
                     for (let i = 1; i <= 12; i++) {
                         for (let [key, value] of Object.entries(portfolio.portStock)) {
                             try {
@@ -188,8 +201,13 @@
                                 console.error(error.message);
                             }
                         }
+                        if (i % 3 == 0) {
+                            qtrValue[i/3-1] = totalvalue[i-1];
+                        }
                     }
-                    dataset.value[`${portfolio.portfolioName} [${portfolio.portfolioId}]`] = totalvalue;
+                    dataset.value[portfolio.portfolioName] = totalvalue;
+                    qtrDataset.value[portfolio.portfolioName] = qtrValue;
+                    console.log(qtrDataset.value)
                 }
                 handlePortfolioComparison();
             } catch (error) {
@@ -199,6 +217,9 @@
     });
 
     function handlePortfolioComparison() {
+        if (Object.keys(top3Portfolios.value).length > 0 && selectedPortfolios.value.length == 0) {
+            selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
+        }
         selectedDataset.value = {};
         for (let portfolioName of selectedPortfolios.value) {
             for (let [key, value] of Object.entries(dataset.value)) {
