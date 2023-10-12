@@ -22,6 +22,7 @@ function guardMyroute(to, from, next) {
       loginUser,
   } = storeToRefs(store);
 
+
   if (isAuthenticated.value) {
     const data = {
       name: user.value.given_name || user.value.family_name ? user.value.name : user.value.nickname,
@@ -33,7 +34,8 @@ function guardMyroute(to, from, next) {
     };
     axios.get(`http://localhost:5000/customer/${data.id}`)
     .then((response) => {
-      loginUser.value = response.data;
+      loginUser.value = response.data.customerData;
+      localStorage.setItem('token', response.data.token)
       next();
     })
     .catch((error) => {
@@ -41,6 +43,8 @@ function guardMyroute(to, from, next) {
         axios.post(`http://localhost:5000/customer/`, data)
           .then((response) => {
             loginUser.value = data;
+            localStorage.setItem('token', response.data.token)
+            
           })
           .catch((error) => {
             console.log(error.message);

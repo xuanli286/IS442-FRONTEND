@@ -48,7 +48,7 @@
     import { useUserStore } from "@/stores/useUserStore";
     import { storeToRefs } from "pinia";
     import { computed, ref } from "vue";
-    import axios from "axios";
+    import axios from "../axiosConfig";
 
     const store = useUserStore();
     const {

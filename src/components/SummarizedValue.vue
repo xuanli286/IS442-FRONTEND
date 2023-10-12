@@ -42,7 +42,7 @@
 <script setup>
 import { defineProps, ref, onMounted, reactive, watch } from 'vue';
 import { useUserStore } from "@/stores/useUserStore";
-import axios from 'axios';
+import axios from "../axiosConfig";
 import { useAuth0 } from '@auth0/auth0-vue';
 const { user, isAuthenticated } = useAuth0();
 

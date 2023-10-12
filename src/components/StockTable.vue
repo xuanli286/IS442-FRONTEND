@@ -90,7 +90,7 @@ defineEmits(['update:modelValue'])
 
 <script>
 import DataList from './DataList.vue'
-import axios from "axios";
+import axios from "../axiosConfig";
 
 export default {
   name: 'HomePage',
