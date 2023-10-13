@@ -35,7 +35,7 @@
 <script>
 import DonutChart from '../components/charts/DonutChart.vue'
 import Financials from '../components/Financials.vue'
-import axios from "axios";
+import axios from "../axiosConfig";
     
     export default {
       components: {

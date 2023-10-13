@@ -51,7 +51,7 @@ import StockTable from '../components/StockTable.vue'
 import CapitalInput from '../components/CapitalInput.vue'
 import ToggleButton from '../components/ToggleButton.vue'
 import Modal from '../components/Modal.vue'
-import axios from "axios";
+import axios from "../axiosConfig";
 import { useUserStore } from "@/stores/useUserStore";
 
 export default {

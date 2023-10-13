@@ -21,6 +21,12 @@ import SummarizedValue from '@/components/SummarizedValue.vue';
 import CustomButton from "@/components/CustomButton.vue";
 import Portfolio from "@/views/Portfolio.vue";
 import Overview from "@/views/Overview.vue";
+import { useAuth0 } from "@auth0/auth0-vue";
+
+const {user, isAuthenticated} = useAuth0();
+if (isAuthenticated) {
+  console.log(user.value);
+}
 
 const selectedPortfolio = ref("");
 

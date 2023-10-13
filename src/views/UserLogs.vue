@@ -64,7 +64,7 @@
 
 <script>
 import { useUserStore } from "@/stores/useUserStore";
-import axios from "axios";
+import axios from "../axiosConfig";
 import { ref } from "vue";
 import Pagination from '../components/Pagination.vue'
 

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "../axiosConfig";
 import { useUserStore } from '@/stores/useUserStore';
 
 export default {

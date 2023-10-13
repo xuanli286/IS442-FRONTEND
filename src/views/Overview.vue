@@ -137,7 +137,7 @@
     import { storeToRefs } from 'pinia';
     // import ChoroplethMap from "@/components/charts/ChoroplethMap.vue";
     import MapChart from 'vue-map-chart'
-    import axios from 'axios';
+    import axios from "../axiosConfig";
     import { useAuth0 } from '@auth0/auth0-vue';    
     const { user, isAuthenticated } = useAuth0();
 
