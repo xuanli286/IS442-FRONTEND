@@ -1,7 +1,7 @@
 <template>
     <div>
         <PortfolioBreakdown :portfolio="portfolio"/>
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
             <div class="white-card">
                 <p class="font-semibold mt-1 mb-4 text-navy-950">
                     Market Exposure
