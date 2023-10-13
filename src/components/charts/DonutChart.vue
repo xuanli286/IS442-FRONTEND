@@ -9,7 +9,7 @@
 <script>
     import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
     import { Doughnut } from 'vue-chartjs'
-    import axios from "axios";
+    import axios from "../../axiosConfig";
     import { useUserStore } from '@/stores/useUserStore';
     
     ChartJS.register(ArcElement, Tooltip, Legend)
