@@ -27,7 +27,7 @@
         <div class="overflow-x-auto relative z-10 -ml-2" ref="t2">
           <table class="navy w-full">
             <tr>
-              <th>Date Purchased</th>
+              <th>Sector</th>
               <th>Price (SGD)</th>
               <th>Quantity</th>
               <th>Total Price (SGD)</th>
@@ -43,9 +43,7 @@
             </tr>
 
             <tr v-for="(stock, idx) of stocks" :key="stock.id">
-              <td style="padding:5px 5px 5px 11px!important">
-                <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="stock.date" @change="newStock(idx)" class="input-month"/>
-              </td>
+              <td>{{ stock.sector }}</td>
 
               <td>{{ stock.price }}</td>
 
@@ -64,7 +62,7 @@
 
               <td>{{ stock.total }}</td>
 
-              <td v-if="budget && budget>0">{{ Math.round( (stock.total/budget*100)  * 100) / 100 }}</td>
+              <td v-if="totalPrice>0">{{ Math.round( (stock.total/totalPrice*100)  * 100) / 100 }}</td>
               <td v-else>-</td>
 
               <td v-if="stock.action=='BUY'" class="green-action">{{ stock.action }}</td>
@@ -106,6 +104,9 @@ export default {
     },
     budget: {
       type: Number,
+    },
+    date: {
+      type: String,
     },
     modelValue: {
       type: Array,
@@ -150,10 +151,21 @@ export default {
       },
       deep: true,
     },
+    date: {
+      handler() {
+        this.getPrices();
+      },
+      deep: true,
+    },
   },
   computed: {
     haveEmpty() {
       return this.stocks.some(stock => stock.empty == true);
+    },
+    totalPrice() {
+      return this.stocks.reduce((accumulator, stock) => {
+        return accumulator + ( (stock.price == 0 || stock.price == "-") ? 0 : stock.price );
+      }, 0);
     },
   },
   methods: {
@@ -177,6 +189,8 @@ export default {
           });
         }
       }
+
+      this.getPrices();
     },
     addRow() {
       const newStockId = this.nextStockId++;
@@ -184,10 +198,11 @@ export default {
         id: newStockId,
         name: "",
         date: null,
-        price: 0,
+        sector: "-",
+        price: "-",
         qty: 1,
         get total() {
-          return this.price * this.qty;
+          return ( (this.price == 0 || this.price == "-") ? 0 : this.price ) * this.qty;
         },
         action: "BUY",
         empty: false,
@@ -201,27 +216,59 @@ export default {
       let stock = this.stocks[idx];
 
       const matchIdx = this.stocks.findIndex(item => {
-        return item.name === stock.name && item.date === stock.date;
+        return item.name === stock.name;
       });
 
-      if (!stock.name || !stock.date) {
-        stock.price = 0;
-      } else if (this.items.includes(stock.name) && matchIdx == idx) {        
-        axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${stock.name}?month=${stock.date.split("-")[1]}&year=${stock.date.split("-")[0]}`)
+      // stock not selected
+      if (!stock.name) {
+        stock.price = "-";
+
+      // selected and unique
+      } else if (this.items.includes(stock.name) && matchIdx == idx) { 
+        // get sector 
+        axios.get(`http://localhost:5000/stock/${stock.name}/companyOverview`)
         .then((response) => {
-          stock.price = response.data["4. close"];
+          stock.sector = response.data.sector
           stock.empty = false;
         })
         .catch((error) => {
           console.log(error.message);
         })
+
+        // if portfolio date selected, get price, else price is "-"
+        if (this.date) {
+          axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${stock.name}?month=${this.date.split("-")[1]}&year=${this.date.split("-")[0]}`)
+          .then((response) => {
+            console.log(response.data)
+            stock.price = this.date ? response.data["4. close"] : "-";
+
+          })
+          .catch((error) => {
+            console.log(error.message);
+          })
+        }
+        
+      // otherwise, stock choice is invalid, clear stock
       } else {
         this.stocks[idx].name = "";
-        this.stocks[idx].date = "";
+        this.stocks[idx].sector = "-";
         stock.empty = true;
       }
 
       console.log(this.stocks);
+    },
+    getPrices() {
+      for (let i=0; i<this.stocks.length; i++) {
+        axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${this.stocks[i].name}?month=${this.date.split("-")[1]}&year=${this.date.split("-")[0]}`)
+        .then((response) => {
+          console.log(response.data)
+          this.stocks[i].price = this.date ? response.data["4. close"] : "-";
+
+        })
+        .catch((error) => {
+          console.log(error.message);
+        })
+      }
     },
   },
 }
@@ -233,23 +280,6 @@ export default {
   opacity-0
 }
 
-.input-month {
-  @apply
-  bg-transparent
-  rounded-xl
-  p-3
-  w-full
-  text-navy-950
-  placeholder:text-navy-800
-}
-.input-month:focus {
-  background-color: rgb(0, 0, 0, 0.1);
-  outline: 2px solid;
-  @apply
-  outline-navy-950
-  -outline-offset-2
-  placeholder:text-navy-800
-}
 
 table.navy {
   border-collapse: separate;

@@ -12,17 +12,27 @@
       <h5 class="mt-8 form-label">Portfolio Description</h5>
       <textarea rows="5" placeholder="Write a short description or strategy about the portfolio." class="input-grey w-full" :class="{'invalid': error.desc}" v-model="pDesc"></textarea>
       <div class="form-invalid" v-if="error.desc">{{ error.desc }}</div>
-
-      <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
       
-      <!-- Table -->
-      <StockTable :items="items" :budget="budget" v-model="stocks"/>
+      <!-- Portfolio Date -->
+      <h5 class="mt-8 form-label">Portfolio Date</h5>
+      <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full"/>
+      <div class="form-invalid" v-if="error.date">{{ error.date }}</div>
 
-      <!-- Other Add Stocks -->
+      <!-- Capital -->
       <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
       <CapitalInput :valid="!error.budget" v-model="budget"/>
       <div class="form-invalid" v-if="error.budget">{{ error.budget }}</div>
 
+      <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
+      <div class="text-red-500 mb-2" v-if="error.date && stocks.length != 0">
+        <i class="bi bi-exclamation-circle text-xl"></i>
+        Please select a portfolio date!
+      </div>
+
+      <!-- Table -->
+      <StockTable :items="items" :budget="budget" :date="pDate" v-model="stocks"/>
+
+      <!-- Balance -->
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
 
       <!-- Portfolio Visibility -->
@@ -71,6 +81,7 @@ export default {
     return {
       pName: null,
       pDesc: null,
+      pDate: null,
       stocks: [],
       items: [],
       budget: 0,
@@ -123,6 +134,10 @@ export default {
         this.error["desc"] = "Description is too long"
       }
 
+      if (!this.pDate) {
+        this.error["date"] = "Field is required";
+      }
+
       if (this.budget == null) {
         this.error["budget"] = "Field is required"; 
       } else {
@@ -147,7 +162,7 @@ export default {
     stockValidation() {
       var valid = true;
       for (var stock of this.stocks) {
-        if (!stock.name || !stock.date) {
+        if (!stock.name) {
           stock.empty = true;
           valid = false;
         } else {
@@ -160,14 +175,15 @@ export default {
       var allStocks = {};
       for (var stock of this.stocks) {
         if (stock.name in allStocks) {
-          allStocks[stock.name].push({"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": stock.date})
+          allStocks[stock.name].push({"stockBoughtPrice": stock.price, "quantity": stock.qty})
         } else {
-          allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": stock.date}]
+          allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty}]
         }
       }
       const pfData = {
         "portfolioName": this.pName,
         "portfolioDescription": this.pDesc,
+        "portfolioDate": this.pDate,
         "userId": this.userID,
         "dateCreated": new Date().toLocaleDateString('en-GB'),
         "capital": this.budget,
@@ -175,20 +191,22 @@ export default {
         "portStock": allStocks,
       }
 
-      axios.post(`http://localhost:5000/portfolio/create`, pfData)
-      .then((response) => {
-        console.log(response.data);
-        console.log(pfData);
-        this.modalMsg = "Portfolio has been successfully created!";
-        this.pName = null;
-        this.pDesc = null;
-        this.stocks.splice(0);
-        this.budget = 0;
-      })
-      .catch((error) => {
-        console.log(error.message);
-        this.modalMsg = "Something went wrong!"
-      })
+      console.log(pfData);
+
+      // axios.post(`http://localhost:5000/portfolio/create`, pfData)
+      // .then((response) => {
+      //   console.log(response.data);
+      //   console.log(pfData);
+      //   this.modalMsg = "Portfolio has been successfully created!";
+      //   this.pName = null;
+      //   this.pDesc = null;
+      //   this.stocks.splice(0);
+      //   this.budget = 0;
+      // })
+      // .catch((error) => {
+      //   console.log(error.message);
+      //   this.modalMsg = "Something went wrong!"
+      // })
       
       this.isModal = true;
     },
@@ -201,4 +219,5 @@ export default {
     @apply
     text-2xl
   }
+
 </style>
