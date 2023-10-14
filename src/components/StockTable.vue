@@ -325,7 +325,7 @@ table.navy td {
 }
 table.navy tr {
   @apply
-  h-[60px]
+  h-[65px]
 }
 /* first column */
 table.navy-1 th {
@@ -345,7 +345,7 @@ table.navy-1 td {
 }
 table.navy-1 tr:not(:first-child) {
   @apply
-  h-[60px];
+  h-[65px];
 }
 table.navy-1 {
   border-collapse: separate;
