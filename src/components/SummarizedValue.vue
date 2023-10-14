@@ -9,7 +9,7 @@
                 <div><i class="fa-solid fa-chart-pie fa-xl mr-5"></i></div>
                 <div>
                     <p class="text-graybrown">Portfolio Value</p>
-                    <p class="font-bold text-navy-950"> ${{ Math.abs(portfolioData.portfolioValue).toFixed(2) }}</p>
+                    <p class="font-bold text-navy-950"> ${{ Math.abs(portfolioData.totalEOD).toFixed(2) }}</p>
                 </div>
             </div>
             <div class="flex items-center ">
@@ -61,29 +61,35 @@ const portfolioId = ref("someID");
 const portfolioName = ref("Portfolio 1");
 const buyingPower = ref(0);
 const cost = ref(0);
+
 const portfolioData = reactive({
-    portfolioValue: 0,
     unrealisedPnL: 0,
-    dailyPnL: 0
+    dailyPnL: 0,
+    totalEOD: 0,
 });
 
 const fetchPortfolioData = async () => {
     if (isAuthenticated) {
         try {
             getPortfolioValue();
-
         } catch (error) {
             console.error("Error in getting portfolio and capital data", error);
         }
     }
 };
 
+const getTotalEODPrice = async (stockKey, item) => {
+    const eodResponse = await axios.get(`http://localhost:5000/stockprice/dailyprice/${stockKey}`);
+    const stockPriceList = eodResponse.data.stockPriceList;
+    const eodPrice = stockPriceList[0]['4. close'];
+    portfolioData.totalEOD += (eodPrice) * item.quantity;
+}
+
 const getPnl = async (stockKey, item) => {
     const eodResponse = await axios.get(`http://localhost:5000/stockprice/dailyprice/${stockKey}`);
     const stockPriceList = eodResponse.data.stockPriceList;
     const eodPrice = stockPriceList[0]['4. close'];
     const ytdPrice = stockPriceList[1]['4. close'];
-    // console.log(`x ${item.quantity} ${stockKey} is =  ${eodPrice} - ${ytdPrice}`)
     portfolioData.dailyPnL += (eodPrice - ytdPrice) * item.quantity;
 }
 
@@ -96,34 +102,30 @@ const getCapital = async () => {
 const getPortfolioValue = async () => {
     const portfolioResponse = await axios.get(`http://localhost:5000/portfolio/getportfolios/${user.value.sub}`);
 
-    portfolioData.portfolioValue = 0;
+    cost.value = 0;
+    portfolioData.totalEOD = 0;
     for (const portfolio of portfolioResponse.data) {
-        portfolioData.portfolioValue += portfolio.portfolioValue;
         if (portfolio.portStock) {
             const stockKeys = Object.keys(portfolio.portStock);
-            cost.value = 0;
             stockKeys.forEach(stockKey => {
                 const stockItems = portfolio.portStock[stockKey];
                 stockItems.forEach(async item => {
                     cost.value += (item.quantity * item.stockBoughtPrice);
-                    // console.log(`I bought x ${item.quantity} ${stockKey} at ${item.stockBoughtPrice}`)
                     getPnl(stockKey, item);
-
+                    getTotalEODPrice(stockKey, item);
                 });
             });
         }
     }
-    // console.log(`total cost is : ${cost.value}`)
-    portfolioData.unrealisedPnL = portfolioData.portfolioValue - cost.value;
+    // console.log(`eod is ${portfolioData.totalEOD}`)
+    portfolioData.unrealisedPnL = portfolioData.totalEOD - cost.value;
     getCapital();
 }
 
 watch(
     () => props.portfolio, async (newPortfolio, oldPortfolio) => {
         portfolioData.dailyPnL = 0;
-        // portfolioData.cost = 0;
         if (newPortfolio?.portfolioId) {
-            // console.log(newPortfolio)
             await getEachPortfolioValue(newPortfolio.portfolioId);
         } else if (props.isOverview) {
             await getPortfolioValue();
@@ -134,24 +136,26 @@ watch(
 //each portfolio value TO DO
 const getEachPortfolioValue = async () => {
     const portfolioResponse = await axios.get(`http://localhost:5000/portfolio/${props.portfolio.portfolioId}`);
-    portfolioData.portfolioValue = 0;
-    portfolioData.portfolioValue = portfolioResponse.data.portfolioValue;
-
-    // depends where we doing the cal of port value!
-    // portfolioData.unrealisedPnL = portfolioResponse.data.unrealisedPnL;
-
+    portfolioData.totalEOD = 0;
     const stockKeys = Object.keys(portfolioResponse.data.portStock);
-    // console.log(stockKeys)
     cost.value = 0;
+    const asyncOperations = [];
     stockKeys.forEach(stockKey => {
         const stockItems = portfolioResponse.data.portStock[stockKey];
+
         stockItems.forEach(async item => {
-            cost.value += (item.quantity * item.stockBoughtPrice);
-            getPnl(stockKey, item);
+            // console.log(`I bought x ${item.quantity} ${stockKey} at ${item.stockBoughtPrice}`);
+            cost.value += item.quantity * item.stockBoughtPrice;
+            asyncOperations.push(getPnl(stockKey, item));
+            asyncOperations.push(getTotalEODPrice(stockKey, item));
         });
     });
+
+    await Promise.all(asyncOperations);
     // console.log(`total cost is : ${cost.value}`)
-    portfolioData.unrealisedPnL = portfolioData.portfolioValue - cost.value;
+    // console.log(`total portfolio value is : ${portfolioData.totalEOD}`)
+    // console.log(`so unrealised is : ${portfolioData.totalEOD - cost.value}`)
+    portfolioData.unrealisedPnL = portfolioData.totalEOD - cost.value;
 }
 
 onMounted(() => {
