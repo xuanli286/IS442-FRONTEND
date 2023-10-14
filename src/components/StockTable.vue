@@ -164,7 +164,7 @@ export default {
     },
     totalPrice() {
       return this.stocks.reduce((accumulator, stock) => {
-        return accumulator + ( (stock.price == 0 || stock.price == "-") ? 0 : stock.price );
+        return accumulator + ( (stock.price == 0 || stock.price == "-") ? 0 : stock.price ) * stock.qty;
       }, 0);
     },
   },
@@ -222,6 +222,8 @@ export default {
       // stock not selected
       if (!stock.name) {
         stock.price = "-";
+        stock.sector = "-";
+        stock.empty = true;
 
       // selected and unique
       } else if (this.items.includes(stock.name) && matchIdx == idx) { 

@@ -6,21 +6,21 @@
       <h3 class="text-navy-950 mb-8 font-bold">Basic Information</h3>
 
       <h5 class="form-label required">Portfolio Name</h5>
-      <input type="text" placeholder="Enter a portfolio name" class="input-grey w-full" :class="{'invalid': error.name}" v-model="pName">
+      <input type="text" placeholder="Enter a portfolio name" class="input-grey w-full" :class="{'invalid': error.name}" v-model="pName" @input="nameVal">
       <div class="form-invalid" v-if="error.name">{{ error.name }}</div>
 
       <h5 class="mt-8 form-label">Portfolio Description</h5>
-      <textarea rows="5" placeholder="Write a short description or strategy about the portfolio." class="input-grey w-full" :class="{'invalid': error.desc}" v-model="pDesc"></textarea>
+      <textarea rows="5" placeholder="Write a short description or strategy about the portfolio." class="input-grey w-full" :class="{'invalid': error.desc}" v-model="pDesc" @input="descVal"></textarea>
       <div class="form-invalid" v-if="error.desc">{{ error.desc }}</div>
       
       <!-- Portfolio Date -->
       <h5 class="mt-8 form-label">Portfolio Date</h5>
-      <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full"/>
+      <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full" @input="dateVal"/>
       <div class="form-invalid" v-if="error.date">{{ error.date }}</div>
 
       <!-- Capital -->
       <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
-      <CapitalInput :valid="!error.budget" v-model="budget"/>
+      <CapitalInput :valid="!error.budget" v-model="budget" @input="budgetVal"/>
       <div class="form-invalid" v-if="error.budget">{{ error.budget }}</div>
 
       <h3 class="text-navy-950 my-8 font-bold">Add Stocks</h3>
@@ -96,6 +96,15 @@ export default {
       return this.stocks.reduce((total, stock) => total + stock.total, 0);
     }
   },
+  watch: {
+    stocks() {
+      if (this.stocks.length == 1) {
+        this.dateVal();
+      }
+
+      this.stockVal();
+    },
+  },
   created() {
     this.retrieveStocks();
   },
@@ -115,10 +124,15 @@ export default {
         console.log(error.message);
       })
     },
-    validate() {
-      this.error = {};
+
+    // validation
+    nameVal() {
+      if ("name" in this.error) {
+        delete this.error["name"];
+      }
+
       const allowedCharactersPattern = /^[a-zA-Z0-9\s\-_]+$/;
-      
+
       if (!this.pName) {
         this.error["name"] = "Field is required";
       } else {
@@ -129,17 +143,32 @@ export default {
           this.error["name"] =  "Name can only contain letters, numbers, spaces, hypens and underscores";
         }
       }
-
+    },
+    descVal() {
+      if ("desc" in this.error) {
+        delete this.error["desc"];
+      }
+      
       if (this.pDesc && this.pDesc.length > 250) {
         this.error["desc"] = "Description is too long"
+      }
+    },
+    dateVal() {
+      if ("date" in this.error) {
+        delete this.error["date"];
       }
 
       if (!this.pDate) {
         this.error["date"] = "Field is required";
       }
-
+    },
+    budgetVal() {
+      if ("budget" in this.error) {
+        delete this.error["budget"];
+      }
+      
       if (this.budget == null) {
-        this.error["budget"] = "Field is required"; 
+        this.error["budget"] = "Field is required or invalid"; 
       } else {
         if (isNaN(this.budget)) {
           this.error["budget"] = "Please enter a number"; 
@@ -148,18 +177,8 @@ export default {
           this.error["budget"] = `Capital allocated must be at least $${ Math.round(this.portfolioTotal * 100) / 100}`; 
         }
       }
-
-      if (!this.stockValidation()) {
-        this.error["stocks"] = "Invalid/empty stock input";
-      }
-
-      if (Object.keys(this.error).length === 0) {
-        this.createPortfolio();
-      } else {
-        console.log(this.error);
-      }
     },
-    stockValidation() {
+    stockVal() {
       var valid = true;
       for (var stock of this.stocks) {
         if (!stock.name) {
@@ -169,7 +188,29 @@ export default {
           stock.empty = false;
         }
       }
+
+      if ("stocks" in this.error) {
+        delete this.error["stocks"];
+      }
+
+      if (!valid) {
+        this.error["stocks"] = "Invalid/empty stock input";
+      }
+
       return valid;
+    },
+    validate() {
+      this.nameVal();
+      this.descVal();
+      this.dateVal();
+      this.budgetVal();
+      this.stockVal();
+
+      if (Object.keys(this.error).length === 0) {
+        this.createPortfolio();
+      } else {
+        console.log(this.error);
+      }
     },
     createPortfolio() {
       var allStocks = {};
@@ -219,5 +260,4 @@ export default {
     @apply
     text-2xl
   }
-
 </style>
