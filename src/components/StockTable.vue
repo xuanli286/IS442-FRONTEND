@@ -171,26 +171,31 @@ export default {
   methods: {
     populate() {
       this.stocks = [];
-
-      for (var name in this.stockData) {
-        for (var stock of this.stockData[name]) {
-          var newStockId = this.nextStockId++;
-          this.stocks.push({
-            id: newStockId,
-            name: name,
-            date: stock.dateBought,
-            price: stock.stockBoughtPrice,
-            qty: stock.quantity,
-            get total() {
-              return Math.round(this.price * this.qty * 100) / 100;
-            },
-            action: "BUY",
-            empty: false,
-          });
+      
+      for (let name in this.stockData) {
+        for (let stock of this.stockData[name]) {
+          let newStockId = this.nextStockId++;
+          axios.get(`http://localhost:5000/stock/${name}/companyOverview`)
+          .then((response) => {
+            this.stocks.push({
+              id: newStockId,
+              name: name,
+              // date: stock.portfolioDate,
+              sector: response.data.sector,
+              price: stock.stockBoughtPrice,
+              qty: stock.quantity,
+              get total() {
+                return Math.round(this.price * this.qty * 100) / 100;
+              },
+              action: "BUY",
+              empty: false,
+            });
+          })
+          .catch((error) => {
+            console.log(error.message);
+          })
         }
       }
-
-      this.getPrices();
     },
     addRow() {
       const newStockId = this.nextStockId++;
