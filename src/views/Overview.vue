@@ -56,7 +56,7 @@
                         <input type="radio" :value="option" v-model="selectedOption" />
                         {{ option.charAt(0).toUpperCase() + option.slice(1) }}
                     </label>
-                    <LineChart class="mt-4" :dataset="dataset" :display="selectedOption" :date="earliestDate" />
+                    <LineChart v-if="isDataLoaded" class="mt-4" :dataset="dataset" :display="selectedOption" :date="earliestDate" />
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
@@ -131,7 +131,7 @@
 <script setup>
     import DonutChart from '@/components/charts/DonutChart.vue';
     import PortfolioButton from '@/components/PortfolioButton.vue';
-    import { defineProps, ref, onMounted, computed, watch } from 'vue';
+    import { defineProps, ref, computed, watch, onMounted } from 'vue';
     import LineChart from '@/components/charts/LineChart.vue';
     import { useUserStore } from "@/stores/useUserStore";
     import { storeToRefs } from 'pinia';
@@ -157,6 +157,7 @@
     const currentMonth = ref("");
     const selectedOption = ref("");
     const earliestDate = ref("");
+    const isDataLoaded = ref(false);
 
     const options = ["monthly", "quarterly", "all"];
     selectedOption.value = options[2];
@@ -207,9 +208,15 @@
                         let yearTotal = 0;
                         let totalvalue = [];
                         let qtrValue = [];
-                        totalvalue = new Array(12).fill(0);
-                        qtrValue = new Array(4).fill(0);
+                        let totaltooltip = [];
+                        let qtrtooltip = [];
+                        let stocks = {};
+                        totalvalue = new Array(12).fill(null);
+                        totaltooltip = new Array(12).fill(null);
+                        qtrValue = new Array(4).fill(null);
+                        qtrtooltip = new Array(4).fill(null);
                         for (let i = 1; i <= 12; i++) {
+                            let result = '';
                             for (let [key, value] of Object.entries(portfolio.portStock)) {
                                 try {
                                     const response = await axios.get(
@@ -224,6 +231,7 @@
                                         if (dateBought <= lastDayOfMonth) {
                                             yearTotal += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
                                             totalvalue[i - 1] += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
+                                            stocks[key] = transaction.quantity;
                                         }
                                     }
                                 }
@@ -237,14 +245,19 @@
                                 let endIdx = i - 1;
                                 qtrValue[qtrIdx] = totalvalue.slice(startIdx, endIdx + 1).reduce((acc, val) => acc + val, 0);
                             }
+                            for (const key in stocks) {
+                                result += `${key}: ${stocks[key]}\n`;
+                            }
+                            totaltooltip[i - 1] = result;
                         }
-                        dataset.value[year][portfolio.portfolioName].monthly = [...totalvalue];
+                        dataset.value[year][portfolio.portfolioName].monthly = {tooltip: totaltooltip, value: [...totalvalue]};
                         dataset.value[year][portfolio.portfolioName].quarterly = [...qtrValue];
                         dataset.value[year][portfolio.portfolioName].yearly = yearTotal;
                     }
                 }
-                console.log(dataset.value)
+                isDataLoaded.value = true;
                 handlePortfolioComparison();
+                console.log(dataset.value)
             } catch (error) {
                 console.error(error.message);
             }

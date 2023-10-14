@@ -1,10 +1,14 @@
 <template>
-  <Line :data="chartData" :options="chartOptions" />
+  <div>
+    <button class="bg-blue-400 text-white rounded-lg p-2 hover:bg-blue-600 hover:font-bold" @click="resetZoom">Zoom Out</button>
+    <Line ref="myChartRef" class="cursor-crosshair" :data="chartData" :options="chartOptions" />
+  </div>
 </template>
 
 <script setup>
   import { Line } from 'vue-chartjs';
-  import { defineProps, computed } from 'vue';
+  import 'chartjs-plugin-zoom';
+  import { defineProps, computed, ref, onMounted } from 'vue';
   import {
     Chart as ChartJS,
     CategoryScale,
@@ -41,6 +45,12 @@
     }
   });
 
+  const myChartRef = ref(null);
+
+  const resetZoom = () => {
+    myChartRef.value.chart.resetZoom();
+  };
+
   const chartData = computed(() => {
     let currentMonth = new Date().getMonth();
     const labels = [];
@@ -60,19 +70,26 @@
     ];
 
     const combinedData = {};
+    const tooltip = {};
     for (const [year, data] of Object.entries(props.dataset)) {
       for (const [portfolioName, portfolioData] of Object.entries(data)) {
         if (!combinedData[portfolioName]) {
           combinedData[portfolioName] = [];
+          tooltip[portfolioName] = [];
         }
         if (year == new Date(props.date).getFullYear()) {
-          combinedData[portfolioName].push(...portfolioData.monthly.slice(new Date(props.date).getMonth(),));
+          combinedData[portfolioName].push(...portfolioData.monthly.value.slice(new Date(props.date).getMonth(),));
+          tooltip[portfolioName].push(...portfolioData.monthly.tooltip.slice(new Date(props.date).getMonth(),));
         }
         else{
-          combinedData[portfolioName].push(...portfolioData.monthly);
+          combinedData[portfolioName].push(...portfolioData.monthly.value);
+          tooltip[portfolioName].push(...portfolioData.monthly.tooltip);
         }
       }
     }
+
+    console.log(tooltip)
+    console.log(combinedData)
 
     for (const [key, value] of Object.entries(combinedData)) {
       datapoints.push({
@@ -99,18 +116,24 @@
       }
     }
     else {
-      let currentDatePointer = new Date(props.date);
-      while (currentDatePointer <= new Date()) {
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      let startDate = new Date(props.date);
+      startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+      let currentDatePointer = new Date(startDate);
+      while (currentDatePointer <= new Date(currentYear, 11, 31)) {
         const month = currentDatePointer.toLocaleString('default', { month: 'short' });
         const year = currentDatePointer.getFullYear();
         const monthYearString = `${month} ${year}`;
         labels.push(monthYearString);
         currentDatePointer.setMonth(currentDatePointer.getMonth() + 1);
       }
+      console.log(datapoints)
     }
     return {
       labels: labels,
       datasets: datapoints,
+      tooltip: tooltip,
     };
   });
 
@@ -140,9 +163,66 @@
         borderWidth: 2,
         bodyFont: {
           size: 12,
-          weight: 'bold'
+          weight: 'bold',
+        },
+        position: 'nearest',
+        mode: 'index',
+        intersect: false,
+        external: function(context) {
+          const hitRadius = 0.5;
+          return {
+            x: context.x,
+            y: context.y,
+            r: hitRadius,
+          };
         },
         boxPadding : 5,
+        callbacks: {
+          label(context) {
+            const datasetIndex = context.datasetIndex;
+            const datasetLabel = chartData.value.datasets[datasetIndex].label;
+            const dataPointValue = `$${context.parsed.y.toFixed(2)}`;
+            const tooltipData = chartData.value.tooltip[datasetLabel];
+            const dataPoint = tooltipData[context.dataIndex];
+            const lines = dataPoint.split('\n');
+            if (lines[lines.length - 1] === '') {
+              lines.pop();
+            }
+            return [`${datasetLabel}: ${dataPointValue}`, ...lines];
+          }
+        }
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          drag: {
+            enabled:true,
+            backgroundColor: "rgba(71, 117, 174, 0.25)",
+            borderColor: "#192e47",
+            borderWidth: 2,
+          },
+          mode: 'x',
+        },
+      },
+      onZoom: function ({ chart }) {
+        // Define the zoom threshold for switching to quarterly data
+        const quarterlyZoomThreshold = 0.5; // Adjust as needed
+        const currentZoomLevel = chart.scales.x._mScale.options._table.zoom;
+        
+        // Check if zoom level is below the threshold
+        if (currentZoomLevel < quarterlyZoomThreshold) {
+          // Zoomed out, show yearly or monthly data
+          // Implement logic to switch back to yearly or monthly data
+        } else {
+          // Zoomed in, switch to quarterly data
+          // Implement logic to load and display quarterly data
+        }
       },
     },
     scales: {
