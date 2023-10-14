@@ -9,7 +9,7 @@
     </div>
     <div class="white-card mb-10" v-for="(p, idx) of filteredData.slice( (page-1)*5, page*5 )">
       <div class="font-bold mb-2">{{ p.portfolioName }}</div>
-      <div class="text-sm mb-7">Created by: {{ p.userId }}, {{ p.dateCreated }}</div>
+      <div class="text-sm mb-7">Created by: {{ p.username }}, {{ p.dateCreated }}</div>
       <div class="">Portfolio Value: ${{ p.portfolioValue }}</div>
     </div>
 
@@ -66,7 +66,7 @@ export default {
       var result = JSON.parse(JSON.stringify(this.portfolios));
 
       if (this.query) {
-        result = this.portfolios.filter((item) => ( item.portfolioName.toLowerCase().includes(this.query.toLowerCase()) || item.userId.toLowerCase().includes(this.query.toLowerCase())));
+        result = this.portfolios.filter((item) => ( item.portfolioName.toLowerCase().includes(this.query.toLowerCase()) || item.username.toLowerCase().includes(this.query.toLowerCase())));
       }
       if (this.option) {
         if (this.option == "dateCreated") {
@@ -80,15 +80,24 @@ export default {
     },
   },
   methods: {
-    populate() {
-      axios.get(`http://localhost:5000/portfolio/getpublicportfolios`)
+    async populate() {
+      await axios.get(`http://localhost:5000/portfolio/getpublicportfolios`)
       .then((response) => {
         this.portfolios = response.data;
-        console.log(this.portfolios);
+        for (let i=0; i<this.portfolios.length; i++) {
+          axios.get(`http://localhost:5000/customer/${this.portfolios[i].userId}`)
+          .then((response) => {
+            this.portfolios[i].username = response.data.customerData.name;
+          })
+          .catch((error) => {
+            this.portfolios[i].username = this.portfolios[i].userId;
+          })
+        }
       })
       .catch((error) => {
         console.log(error.message);
       })
+      console.log(this.portfolios);
     },
     clearConditions() {
       this.option = "";
