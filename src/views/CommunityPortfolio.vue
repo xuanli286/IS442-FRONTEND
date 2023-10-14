@@ -9,7 +9,7 @@
     </div>
     <div class="white-card mb-10" v-for="(p, idx) of filteredData.slice( (page-1)*5, page*5 )">
       <div class="font-bold mb-2">{{ p.portfolioName }}</div>
-      <div class="text-sm mb-7">Created by: {{ p.username }}, {{ p.dateCreated }}</div>
+      <div class="text-sm mb-7">Created by: {{ p.userId }}, {{ p.dateCreated }}</div>
       <div class="">Portfolio Value: ${{ p.portfolioValue }}</div>
     </div>
 
@@ -34,6 +34,7 @@
 import SearchInput from '../components/SearchInput.vue'
 import Pagination from '../components/Pagination.vue'
 import Modal from '../components/Modal.vue'
+import axios from "../axiosConfig";
 
 export default {
   name: 'CommunityPortfolio',
@@ -53,87 +54,19 @@ export default {
       },
       option: "",
       conditions: {},
-      testData: [
-      {
-        "dateCreated": "2023-08-10",
-        "username": "john_doe",
-        "portfolioName": "Tech Stocks",
-        "portfolioValue": 100000
-      },
-      {
-        "dateCreated": "2023-09-11",
-        "username": "jane_smith",
-        "portfolioName": "Blue Chip Investments",
-        "portfolioValue": 75000
-      },
-      {
-        "dateCreated": "2023-11-28",
-        "username": "investor123",
-        "portfolioName": "Tech Research Stocks",
-        "portfolioValue": 120000
-      },
-      {
-        "dateCreated": "2023-09-13",
-        "username": "trader_mike",
-        "portfolioName": "Energy Sector",
-        "portfolioValue": 85000
-      },
-      {
-        "dateCreated": "2023-04-10",
-        "username": "finance_guru",
-        "portfolioName": "Diversified Holdings",
-        "portfolioValue": 200000
-      },
-      // 6
-      {
-        "dateCreated": "2023-12-15",
-        "username": "stock_buff",
-        "portfolioName": "Value Investments",
-        "portfolioValue": 90000
-      },
-      {
-        "dateCreated": "2023-06-21",
-        "username": "trader_ann",
-        "portfolioName": "Healthcare Stocks",
-        "portfolioValue": 110000
-      },
-      {
-        "dateCreated": "2023-09-17",
-        "username": "investorX",
-        "portfolioName": "Financial Sector",
-        "portfolioValue": 95000
-      },
-      {
-        "dateCreated": "2023-10-19",
-        "username": "portfolio_guy",
-        "portfolioName": "Small Caps",
-        "portfolioValue": 80000
-      },
-      {
-        "dateCreated": "2023-03-14",
-        "username": "stock_lover",
-        "portfolioName": "Tech Innovators",
-        "portfolioValue": 130000
-      },
-      // 11
-      {
-        "dateCreated": "2023-08-20",
-        "username": "stock_sucks",
-        "portfolioName": "please",
-        "portfolioValue": 1000
-      }
-    ]
+      portfolios: [],
     }
   },
   created() {
     this.conditions = JSON.parse(JSON.stringify(this.defaultConditions));
+    this.populate();
   },
   computed: {
     filteredData() {
-      var result = JSON.parse(JSON.stringify(this.testData));
+      var result = JSON.parse(JSON.stringify(this.portfolios));
 
       if (this.query) {
-        result = this.testData.filter((item) => ( item.portfolioName.toLowerCase().includes(this.query.toLowerCase()) || item.username.toLowerCase().includes(this.query.toLowerCase())));
+        result = this.portfolios.filter((item) => ( item.portfolioName.toLowerCase().includes(this.query.toLowerCase()) || item.userId.toLowerCase().includes(this.query.toLowerCase())));
       }
       if (this.option) {
         if (this.option == "dateCreated") {
@@ -147,6 +80,16 @@ export default {
     },
   },
   methods: {
+    populate() {
+      axios.get(`http://localhost:5000/portfolio/getpublicportfolios`)
+      .then((response) => {
+        this.portfolios = response.data;
+        console.log(this.portfolios);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      })
+    },
     clearConditions() {
       this.option = "";
       this.conditions = {...JSON.parse(JSON.stringify(this.defaultConditions))};
