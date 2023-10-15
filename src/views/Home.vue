@@ -16,24 +16,33 @@
 
 <script setup>
 import { ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import PortfolioDropdown from '@/components/PortfolioDropdown.vue';
 import SummarizedValue from '@/components/SummarizedValue.vue';
 import CustomButton from "@/components/CustomButton.vue";
 import Portfolio from "@/views/Portfolio.vue";
 import Overview from "@/views/Overview.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
+import { usePortfolioStore } from "@/stores/usePortfolioStore";
 
 const {user, isAuthenticated} = useAuth0();
 if (isAuthenticated) {
   console.log(user.value);
 }
 
-const selectedPortfolio = ref("");
+const store = usePortfolioStore();
 
-const isSelected = ref(false)
+const {
+  selectedPortfolio,
+} = storeToRefs(store);
+
+const isSelected = ref(false);
 
 watch(() => selectedPortfolio.value.portfolioName, (newPortfolioName) => {
   isSelected.value = newPortfolioName !== 'Overview';
+  if (isSelected.value) {
+    window.scrollTo(0, 0);
+  }
 });
 
 function handleSelect(portfolio) {

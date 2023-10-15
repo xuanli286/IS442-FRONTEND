@@ -1,6 +1,6 @@
 <template>
     <div class="text-blue-950">
-        <div v-if="!isCompare">
+        <div>
             <div class="grid grid-cols-3 gap-4">
                 <div class="col-span-1 white-card">
                     <p class="font-semibold mt-1">Overall Performance</p>
@@ -11,25 +11,25 @@
                 </div>
                 <div class="col-span-2 white-card">
                     <div class="flex items-center">
-                        <p class="font-semibold mr-2">Top Performers</p>
+                        <p class="font-semibold mr-2">Top 3 Performers</p>
                         <i class="fa fa-line-chart" aria-hidden="true"></i>
-                        <PortfolioButton class="ml-auto" @click="isCompare = !isCompare">
-                            <p>Compare Portfolio</p>
-                        </PortfolioButton>
                     </div>
                     <div class="grid grid-cols-3 gap-4 mt-5">
-                        <div class="border-2 border-blue-950 p-3 rounded-lg " v-for="(portfolio, id) of top3Portfolios"
-                            :key="id">
-                            <p class="font-bold">{{ portfolio.portfolioName }}</p>
+                        <div class="border-2 border-blue-950 p-3 rounded-lg cursor-pointer hover:bg-slate-200"
+                            v-for="(portfolio, index) of top3PortfolioIdx" :key="index" @click="handleSelect(top3Portfolios[portfolio])">
+                            <div class="flex items-center justify-between">
+                                <p class="font-bold">{{ portfolio }}</p>
+                                <img class="h-6 w-auto" :src="require(`@/assets/${index}.png`)" alt="">
+                            </div>
                             <p class="text-gray-500 text-xs">Date Created: {{ (new
-                                Date(portfolio.dateCreated)).toLocaleString(undefined, {
+                                Date(top3Portfolios[portfolio].dateCreated)).toLocaleString(undefined, {
                                     year: 'numeric', month: 'numeric',
                                     day: 'numeric'
                                 }) }}</p>
                             <p class="text-sm font-medium mt-10">Portfolio Value</p>
                             <p class="font-bold flex items-center">
                                 <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">SGD</span>
-                                {{ portfolio.portfolioValue.toLocaleString('en-US', {
+                                {{ top3Portfolios[portfolio].portfolioValue.toLocaleString('en-US', {
                                     style: 'decimal',
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
@@ -65,66 +65,6 @@
                 </div>
             </div>
         </div>
-        <div v-else class="white-card">
-            <div class="flex items-center">
-                <i v-if="isHover" class="fa-solid fa-circle-left mr-2 cursor-pointer text-2xl" @mouseleave="isHover = false"
-                    @click="back"></i>
-                <i v-else class="fa-regular fa-circle-left mr-2 cursor-pointer text-2xl" @mouseenter="isHover = true"></i>
-                <p class="font-semibold">
-                    <span class="mr-2">Compare Portfolios</span>
-                    <i class="fa-solid fa-minimize"></i>
-                </p>
-            </div>
-            <label class="text-sm" v-for="(portfolio, id) of top3Portfolios" :key="id">
-                <input class="ml-8" type="checkbox" v-model="selectedPortfolios" :value="id" :disabled="selectedPortfolios.length >= 2 && !selectedPortfolios.includes(id)" @change="handlePortfolioComparison">
-                {{ id }}
-            </label>
-            <div class="grid grid-cols-2 gap-4 mt-3 mx-8">
-                <div class="border-2 border-blue-950 p-3 rounded-lg text-sm" v-for="id of selectedPortfolios" :key="id">
-                    <div class="flex items-center">
-                        <div>
-                            <p class="font-semibold">{{ id }}</p>
-                            <p class="text-xs">Date Created: {{ top3Portfolios[id].dateCreated }}</p>
-                        </div>
-                        <span class="bg-blue-600 text-white rounded-full p-1 text-xs ml-auto">SGD</span>
-                    </div>
-                    <div class="mt-5 flex items-center">
-                        <p class="font-semibold">Portfolio Value</p>
-                        <p class="ml-auto">{{ top3Portfolios[id].portfolioValue.toLocaleString('en-US', {
-                            style: 'decimal',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        }) }}
-                        </p>
-                    </div>
-                    <div class="mt-5 flex items-center">
-                        <p class="font-semibold">Unrealised P&L</p>
-                        <p class="ml-auto">{{ top3Portfolios[id].unrealisedPnL.toLocaleString('en-US', {
-                            style: 'decimal',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        }) }}
-                        </p>
-                    </div>
-                    <div class="mt-5 flex items-center">
-                        <p class="font-semibold">Capital Amount</p>
-                        <p class="ml-auto">{{ top3Portfolios[id].capital.toLocaleString('en-US', {
-                            style: 'decimal',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        }) }}
-                        </p>
-                    </div>
-                </div>
-                <div v-if="selectedPortfolios.length > 0" class="col-span-2 white-card">
-                    <p class="font-semibold mt-1 mb-4">
-                        Portfolio Performance Comparison for Year 
-                        <span class="font-bold text-lg">{{ currentYear }}</span>
-                    </p>
-                    <LineChart :dataset="selectedDataset" />
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -134,11 +74,13 @@
     import { defineProps, ref, computed, watch, onMounted } from 'vue';
     import LineChart from '@/components/charts/LineChart.vue';
     import { useUserStore } from "@/stores/useUserStore";
+    import { usePortfolioStore } from "@/stores/usePortfolioStore";
     import { storeToRefs } from 'pinia';
     // import ChoroplethMap from "@/components/charts/ChoroplethMap.vue";
     import MapChart from 'vue-map-chart'
     import axios from "../axiosConfig";
-    import { useAuth0 } from '@auth0/auth0-vue';    
+    import { useAuth0 } from '@auth0/auth0-vue';
+
     const { user, isAuthenticated } = useAuth0();
 
     const store = useUserStore();
@@ -146,13 +88,15 @@
         loginUser
     } = storeToRefs(store);
 
-    const isCompare = ref(false);
-    const isHover = ref(false);
-    const selectedPortfolios = ref([]);
+    const portStore = usePortfolioStore();
+    const {
+        selectedPortfolio
+    } = storeToRefs(portStore);
+
+    const top3PortfolioIdx = ref([]);
     const top3Portfolios = ref({});
     const dataset = ref({});
     const qtrDataset = ref({})
-    const selectedDataset = ref({});
     const currentYear = ref("");
     const currentMonth = ref("");
     const selectedOption = ref("");
@@ -164,6 +108,10 @@
 
     currentYear.value = new Date().getFullYear();
     currentMonth.value = new Date().getMonth() + 1;
+
+    function handleSelect(portfolio) {
+        selectedPortfolio.value = portfolio;
+    }
 
     onMounted(async () => {
         if (isAuthenticated) {
@@ -182,7 +130,7 @@
                         capital: portfolio.capital,
                     };
                 }
-                selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
+                top3PortfolioIdx.value = Object.keys(top3Portfolios.value);
                 let dates = [];
                 for (let portfolio of portfolios) {
                     for (let [key, value] of Object.entries(portfolio.portStock)) {
@@ -211,7 +159,6 @@
                         let totaltooltip = [];
                         let qtrtooltip = [];
                         let stocks = {};
-                        let qtrStocks = {};
                         totalvalue = new Array(12).fill(null);
                         totaltooltip = new Array(12).fill(null);
                         qtrValue = new Array(4).fill(null);
@@ -264,33 +211,9 @@
                     }
                 }
                 isDataLoaded.value = true;
-                handlePortfolioComparison();
             } catch (error) {
                 console.error(error.message);
             }
         }
     });
-
-    function handlePortfolioComparison() {
-        if (Object.keys(top3Portfolios.value).length > 0 && selectedPortfolios.value.length == 0) {
-            selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
-        }
-        selectedDataset.value = {};
-        for (let portfolioName of selectedPortfolios.value) {
-            for (let [key, value] of Object.entries(dataset.value)) {
-                if (portfolioName == key) {
-                    selectedDataset.value[key] = value;
-                }
-            }
-        }
-    }
-
-    watch(selectedPortfolios, () => {
-        handlePortfolioComparison();
-    });
-
-    function back() {
-        isCompare.value = false;
-        isHover.value = false;
-    }
 </script>

@@ -234,6 +234,12 @@
             weight: 'bold',
           }
         },
+        suggestedMin: Math.min(...chartData.value.datasets.map((dataset) => Math.min(...dataset.data))),
+        suggestedMax: Math.max(...chartData.value.datasets.map((dataset) => Math.max(...dataset.data))),
+        grid: {
+          drawBorder: true,
+          color: (context) => context.tick.value === 0 ? 'rgba(0, 0, 0, 1)' : 'rgba(0, 0, 0, 0.1)',
+        },
       },
     },
     animations: {
