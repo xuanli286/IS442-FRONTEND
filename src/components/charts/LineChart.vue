@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <button class="bg-blue-400 text-white rounded-lg p-2 hover:bg-blue-600 hover:font-bold" @click="resetZoom">Zoom Out</button>
-    <Line ref="myChartRef" class="cursor-crosshair" :data="chartData" :options="chartOptions" />
+  <div class="relative">
+    <Line class="w-100 h-[400px] cursor-crosshair" :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
@@ -45,12 +44,6 @@
     }
   });
 
-  const myChartRef = ref(null);
-
-  const resetZoom = () => {
-    myChartRef.value.chart.resetZoom();
-  };
-
   const chartData = computed(() => {
     let currentMonth = new Date().getMonth();
     const labels = [];
@@ -71,25 +64,57 @@
 
     const combinedData = {};
     const tooltip = {};
-    for (const [year, data] of Object.entries(props.dataset)) {
-      for (const [portfolioName, portfolioData] of Object.entries(data)) {
-        if (!combinedData[portfolioName]) {
-          combinedData[portfolioName] = [];
-          tooltip[portfolioName] = [];
-        }
-        if (year == new Date(props.date).getFullYear()) {
-          combinedData[portfolioName].push(...portfolioData.monthly.value.slice(new Date(props.date).getMonth(),));
-          tooltip[portfolioName].push(...portfolioData.monthly.tooltip.slice(new Date(props.date).getMonth(),));
-        }
-        else{
-          combinedData[portfolioName].push(...portfolioData.monthly.value);
-          tooltip[portfolioName].push(...portfolioData.monthly.tooltip);
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const startDate = new Date(new Date(props.date).getFullYear(), new Date(props.date).getMonth(), 1);
+    const currentDatePointer = new Date(startDate);
+
+    if (props.display == "monthly") {
+      while (currentDatePointer <= new Date(currentYear, 11, 31)) {
+        let month = currentDatePointer.toLocaleString('default', { month: 'short' });
+        let year = currentDatePointer.getFullYear();
+        let monthYearString = `${month} ${year}`;
+        labels.push(monthYearString);
+        currentDatePointer.setMonth(currentDatePointer.getMonth() + 1);
+      }
+      for (const [year, data] of Object.entries(props.dataset)) {
+        for (const [portfolioName, portfolioData] of Object.entries(data)) {
+          if (!combinedData[portfolioName]) {
+            combinedData[portfolioName] = [];
+            tooltip[portfolioName] = [];
+          }
+          if (year == new Date(props.date).getFullYear()) {
+            combinedData[portfolioName].push(...portfolioData.monthly.value.slice(new Date(props.date).getMonth(),));
+            tooltip[portfolioName].push(...portfolioData.monthly.tooltip.slice(new Date(props.date).getMonth(),));
+          }
+          else{
+            combinedData[portfolioName].push(...portfolioData.monthly.value);
+            tooltip[portfolioName].push(...portfolioData.monthly.tooltip);
+          }
         }
       }
     }
-
-    console.log(tooltip)
-    console.log(combinedData)
+    else {
+      while (currentDatePointer <= new Date(currentYear, 11, 31)) {
+        let quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+        let year = currentDatePointer.getFullYear();
+        for (let quarter of quarters) {
+          labels.push(`${quarter} ${year}`);
+        }
+        currentDatePointer.setFullYear(currentDatePointer.getFullYear() + 1);
+      }
+      for (const [year, data] of Object.entries(props.dataset)) {
+        for (const [portfolioName, portfolioData] of Object.entries(data)) {
+          if (!combinedData[portfolioName]) {
+            combinedData[portfolioName] = [];
+            tooltip[portfolioName] = [];
+          }
+          combinedData[portfolioName].push(...portfolioData.quarterly.value);
+          tooltip[portfolioName].push(...portfolioData.quarterly.tooltip);
+        }
+      }
+    }
 
     for (const [key, value] of Object.entries(combinedData)) {
       datapoints.push({
@@ -103,33 +128,6 @@
       count++;
     }
 
-    if (props.display == "monthly") {
-      let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].slice(0,currentMonth);
-      for (let month of months) {
-        labels.push(month);
-      }
-    }
-    else if (props.display == "quarterly") {
-      let quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-      for (let quarter of quarters) {
-        labels.push(quarter);
-      }
-    }
-    else {
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      let startDate = new Date(props.date);
-      startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-      let currentDatePointer = new Date(startDate);
-      while (currentDatePointer <= new Date(currentYear, 11, 31)) {
-        const month = currentDatePointer.toLocaleString('default', { month: 'short' });
-        const year = currentDatePointer.getFullYear();
-        const monthYearString = `${month} ${year}`;
-        labels.push(monthYearString);
-        currentDatePointer.setMonth(currentDatePointer.getMonth() + 1);
-      }
-      console.log(datapoints)
-    }
     return {
       labels: labels,
       datasets: datapoints,
@@ -151,10 +149,17 @@
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'bottom',
         display: true,
+        onHover: function(e) {
+          e.native.target.classList.add('cursor-pointer');
+        },
+        onLeave: function(e) {
+          e.native.target.classList.remove('cursor-pointer');
+        }
       },
       tooltip : {
         backgroundColor: '#192e47',
@@ -209,20 +214,6 @@
           },
           mode: 'x',
         },
-      },
-      onZoom: function ({ chart }) {
-        // Define the zoom threshold for switching to quarterly data
-        const quarterlyZoomThreshold = 0.5; // Adjust as needed
-        const currentZoomLevel = chart.scales.x._mScale.options._table.zoom;
-        
-        // Check if zoom level is below the threshold
-        if (currentZoomLevel < quarterlyZoomThreshold) {
-          // Zoomed out, show yearly or monthly data
-          // Implement logic to switch back to yearly or monthly data
-        } else {
-          // Zoomed in, switch to quarterly data
-          // Implement logic to load and display quarterly data
-        }
       },
     },
     scales: {
