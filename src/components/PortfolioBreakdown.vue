@@ -31,7 +31,7 @@
                         </tr>
                     </thead>
                     <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker">
-                        <tr class="border-b border-navy-950">
+                        <tr class="border-b border-navy-950" v-if="stockInfo[stockTicker]">
                             <td colspan="6" class="font-semibold text-left">
                                 <RouterLink :to="{name: 'Stock', params:{stockTicker}}">
                                     {{stockTicker}}
@@ -42,7 +42,7 @@
                                 </RouterLink>
                             </td>
                         </tr>
-                        <tr v-for="info in transactions">
+                        <tr v-for="info in transactions" v-if="stockInfo[stockTicker]">
                             <td></td>
                             <td>{{info.dateBought}}</td>
                             <td>{{info.quantity}}</td>
