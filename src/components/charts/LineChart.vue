@@ -50,12 +50,13 @@
     const datapoints = [];
     let count = 0;
     const colors = [
-      '#0077c8',
-      '#98c4ff',
-      '#4e8ef5',
-      '#2a65dd',
-      '#219ebc',
-      '#8ecae6',
+      '#BEA473',
+      '#C1949E',
+      '#738dbe',
+      '#34b7eb',
+      '#345ceb',
+      '#EBAD98',
+      '#7379be',
       '#b4c5e4',
       '#090c9b',
       '#3c3744',
