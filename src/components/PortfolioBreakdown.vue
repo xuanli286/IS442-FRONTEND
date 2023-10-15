@@ -16,7 +16,7 @@
                     </h5>
                 </div>
                 <p class="text-xs font-medium mb-4"><b>Date Created:</b> {{ portfolio.dateCreated }}</p>
-                <p class="text-sm font-medium mb-6"><b>Description:</b> {{portfolio.portfolioDescription}}</p>
+                <p class="text-sm font-medium mb-6"><b>Description:</b> {{ portfolio.portfolioDescription }}</p>
             </div>
             <div class="overflow-y-auto max-h-80">
                 <table class="w-full text-center text-xs lg:text-base">

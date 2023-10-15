@@ -4,7 +4,7 @@
     @click="toggleDropdown"
     class="p-3 bg-white hover:bg-gray-100 rounded w-56 font-semibold flex items-center"
     >
-    <span class="flex-grow text-navy-950">{{ selectedPortfolio }}</span>
+    <span class="flex-grow text-navy-950">{{ portfolio.portfolioName }}</span>
     <i class="bi bi-chevron-down transition ml-auto text-navy-950" :class="{ 'chevDown': isOpen }"></i>
     </button>
 
@@ -28,11 +28,16 @@ export default {
 
         return { userID }
     },
+    props: {
+        portfolio: {
+            type: Object,
+            required: true,
+        }
+    },
     data(){
         return {
             portfolios: [{portfolioName: "Overview"}],
             isOpen: false,
-            selectedPortfolio: "",
         }
     },
     mounted() {
@@ -47,9 +52,9 @@ export default {
             this.isOpen = !this.isOpen;
         },
         selectPortfolio(portfolio) {
-            this.selectedPortfolio = portfolio.portfolioName;
             this.$emit("isSelect", portfolio);
             this.isOpen = false; // Close the dropdown
+            console.log(portfolio)
         },
 
     },
@@ -68,6 +73,9 @@ export default {
             console.log(error.message);
         })
 
+    },
+    watch: {
+        portfolio: 'selectPortfolio'
     }
 
 }
