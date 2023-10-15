@@ -3,18 +3,17 @@
         <h3 class="text-white mb-4">{{ pfData.portfolioName }}</h3>
         <div class="rounded-full bg-gray-300 w-fit p-2">by {{ creator }}</div>
     </div>
-    <div class="px-8 sm:px-12 pb-11 font-inter">
+    <div class="px-8 sm:px-12 pb-11 font-inter" v-if="pfData.portfolioName">
         <SummarizedValue :portfolio="pfData" />
         <Portfolio :portfolio="pfData" />
     </div>
-    <PortfolioBreakdown :portfolio="pfData"/>
 </template>
 
 <script>
 import axios from "../axiosConfig";
 import { ref } from "vue";
 import SummarizedValue from '../components/SummarizedValue.vue';
-import Portfolio from "./Portfolio.vue";
+import Portfolio from "../components/Portfolio.vue";
 
 export default {
     name: "CommunityPortfolio",
@@ -26,12 +25,16 @@ export default {
         return {
             pID: this.$route.query.pID,
             page: 1,
-            pfData: [],
+            pfData: {},
             creator: "",
         };
     },
     created() {
-        this.populate();
+        if (this.pID) {
+            this.populate();
+        } else {
+            this.$router.go(-1);
+        }
     },
     methods: {
         populate() {
@@ -45,7 +48,7 @@ export default {
                         console.log(this.pfData);
                     })
                     .catch((error) => {
-                        console.log(error.message);
+                        this.creator = this.pfData.userId;
                     })
                 }
             })

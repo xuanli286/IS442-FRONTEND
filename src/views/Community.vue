@@ -7,10 +7,14 @@
       <button class="btn-outline-white" @click="isModal=true">Filter</button>
       <div class="hidden md:block"></div>
     </div>
-    <div class="white-card mb-10" v-for="(p, idx) of filteredData.slice( (page-1)*5, page*5 )">
-      <div class="font-bold mb-2">{{ p.portfolioName }}</div>
-      <div class="text-sm mb-7">Created by: {{ p.username }}, {{ p.dateCreated }}</div>
-      <div class="">Portfolio Value: ${{ p.portfolioValue }}</div>
+    <div class="bg-white rounded-md mb-10 hover:shadow-xl transition-transform transform hover:scale-[1.01]" v-for="(p, idx) of filteredData.slice( (page-1)*5, page*5 )">
+      <RouterLink :to="`/community/portfolio?pID=${p.portfolioId}`">
+        <div class="p-8">
+          <div class="font-bold mb-2">{{ p.portfolioName }}</div>
+          <div class="text-sm mb-7">Created by: {{ p.username }}, {{ p.dateCreated }}</div>
+          <div class="">Portfolio Value: ${{ p.portfolioValue }}</div>
+        </div>
+      </RouterLink>
     </div>
 
     <!-- Pagination -->
@@ -64,7 +68,7 @@ export default {
   computed: {
     filteredData() {
       var result = JSON.parse(JSON.stringify(this.portfolios));
-
+      
       if (this.query) {
         result = this.portfolios.filter((item) => ( item.portfolioName.toLowerCase().includes(this.query.toLowerCase()) || item.username.toLowerCase().includes(this.query.toLowerCase())));
       }

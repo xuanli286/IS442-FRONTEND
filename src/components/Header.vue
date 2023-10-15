@@ -38,6 +38,12 @@
           My Portfolios
         </li>
         </RouterLink>
+        <RouterLink to="/community">
+        <li class="option">
+          <i class="bi bi-people-fill pr-2"></i>
+          Community
+        </li>
+        </RouterLink>
         <RouterLink to="/logs">
         <li class="option">
           <i class="bi bi-file-earmark-text pr-2"></i>
