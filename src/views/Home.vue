@@ -1,7 +1,7 @@
 <template>
   <div class="px-8 sm:px-12 py-11 font-inter">
     <div class="relative flex justify-between mb-5">
-      <PortfolioDropdown @isSelect="handleSelect" />
+      <PortfolioDropdown @isSelect="handleSelect" :portfolio="selectedPortfolio"/>
       <div v-if="isSelected" class="flex space-x-5">
         <CustomButton type='e' :id="selectedPortfolio.portfolioId" />
         <CustomButton type='d'/>

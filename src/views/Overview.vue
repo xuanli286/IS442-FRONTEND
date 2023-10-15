@@ -125,6 +125,7 @@
                         portfolioId: portfolio.portfolioId,
                         portfolioName: portfolio.portfolioName,
                         portfolioValue: portfolio.portfolioValue,
+                        portfolioDescription: portfolio.portfolioDescription,
                         unrealisedPnL: portfolio.unrealisedPnL,
                         dateCreated: portfolio.dateCreated,
                         capital: portfolio.capital,
