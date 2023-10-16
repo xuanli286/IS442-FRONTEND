@@ -30,7 +30,7 @@ export default {
     },
     props: {
         portfolio: {
-            type: Object,
+            // type: Object,
             required: true,
         }
     },
@@ -54,7 +54,6 @@ export default {
         selectPortfolio(portfolio) {
             this.$emit("isSelect", portfolio);
             this.isOpen = false; // Close the dropdown
-            console.log(portfolio)
         },
 
     },
