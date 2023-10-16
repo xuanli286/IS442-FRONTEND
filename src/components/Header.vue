@@ -35,7 +35,7 @@
           </li>
         </template>
         <hr/>
-        <li class="option" @click="handleLogout">
+        <li class="option hover:bg-gray-50" @click="handleLogout">
           <i class="bi bi-box-arrow-right pr-2"></i>
           Log out
         </li>
