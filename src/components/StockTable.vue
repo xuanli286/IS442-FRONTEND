@@ -228,6 +228,7 @@ export default {
       if (!stock.name) {
         stock.price = "-";
         stock.sector = "-";
+        stock.qty = 1;
         stock.empty = true;
 
       // selected and unique
