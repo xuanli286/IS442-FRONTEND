@@ -267,22 +267,20 @@ export default {
 
       console.log(newPf);
       
-      axios.post(`http://localhost:5000/portfolio/updateportfolio/${this.pID}`, newPf)
+      axios.post(`http://localhost:5000/portfolio/updateportfolio`, newPf)
       .then((response) => {
         console.log(response.data);
         this.modalMsg = "Portfolio has been successfully updated!";
         
         // get updated portfolio
-        setTimeout(() => {
-          this.populate();
-          this.isModal = true;
-        }, 100)
+        this.populate();
       })
       .catch((error) => {
         console.log(error.message);
         this.modalMsg = "Something went wrong!"
-        this.isModal = true;
       })
+
+      this.isModal = true;
     },
   },
 }

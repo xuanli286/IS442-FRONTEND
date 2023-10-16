@@ -186,7 +186,7 @@ export default {
             price: stock.stockBoughtPrice,
             qty: stock.quantity,
             get total() {
-              return Math.round(this.price * this.qty * 100) / 100;
+              return (this.price * this.qty).toFixed(2);
             },
             action: "BUY",
             empty: false,
@@ -207,7 +207,7 @@ export default {
         price: "-",
         qty: 1,
         get total() {
-          return ( (this.price == 0 || this.price == "-") ? 0 : this.price ) * this.qty;
+          return ( ( (this.price == 0 || this.price == "-") ? 0 : this.price ) * this.qty ).toFixed(2);
         },
         action: "BUY",
         empty: false,
