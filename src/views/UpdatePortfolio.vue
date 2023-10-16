@@ -79,8 +79,9 @@ export default {
   },
   setup() {
     const userID = useUserStore().loginUser.id;
+    const capitalAvail = useUserStore().loginUser.totalCapitalAvailable;
 
-    return { userID }
+    return { userID, capitalAvail }
   },
   data(){
     return {
@@ -206,9 +207,14 @@ export default {
       } else {
         if (isNaN(this.budget)) {
           this.error["budget"] = "Please enter a number"; 
-
-        } else if (this.budget < this.portfolioTotal) {
+        } else if (this.portfolioTotal < this.capitalAvail && this.budget < this.portfolioTotal) {
           this.error["budget"] = `Capital allocated must be at least $${ Math.round(this.portfolioTotal * 100) / 100}`; 
+        } else if (this.budget > this.capitalAvail) {
+          this.error["budget"] = `Capital allocated exceeds your available capital of $${this.capitalAvail}`;
+        } else if (this.portfolioTotal > this.capitalAvail) {
+          this.error["budget"] = `Total price of stocks exceeds your available capital of $${this.capitalAvail}`;
+        } else if (this.portfolioTotal == this.capitalAvail && this.budget != this.portfolioTotal) {
+          this.error["budget"] = `Capital allocated must be $${this.capitalAvail};`
         }
       }
     },
