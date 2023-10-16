@@ -35,12 +35,18 @@
       <!-- Table -->
       <StockTable :items="items" :budget="budget" :date="pDate" v-model="stocks"/>
 
+
+      <!-- Portfolio Settings -->
+      <h3 class="text-navy-950 mb-8 font-bold">Portfolio Settings</h3>
+
+      <h5 class="mt-8 form-label">Rebalancing</h5>
+      <ToggleButton v-model="isRebalance" left="On" right="Off"/>
+
+      <h5 class="mt-8 form-label">Visibility</h5>
+      <ToggleButton v-model="isPublic" left="Public" right="Private"/>
+
       <!-- Balance -->
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
-
-      <!-- Portfolio Visibility -->
-      <h3 class="text-navy-950 mb-8 font-bold">Portfolio Visbility</h3>
-      <ToggleButton v-model="isPublic" left="Public" right="Private"/>
 
       <!-- Create/cancel buttons -->
       <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
@@ -99,6 +105,7 @@ export default {
       isModal: false,
       modalMsg: "",
       isPublic: true,
+      isRebalance: true,
     }
   },
   computed: {
@@ -239,6 +246,7 @@ export default {
         "dateCreated": new Date().toLocaleDateString('en-GB'),
         "capital": this.budget,
         "isPublic": this.isPublic,
+        "isRebalance": this.isRebalance,
         "portStock": allStocks,
       }
 

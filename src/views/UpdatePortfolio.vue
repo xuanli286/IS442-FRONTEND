@@ -32,12 +32,17 @@
       <!-- Table -->
       <StockTable :stockData="stockData" :items="items" :budget="budget" :date="pDate" v-model="stocks"/>
 
+      <!-- Portfolio Settings -->
+      <h3 class="text-navy-950 mb-8 font-bold">Portfolio Settings</h3>
+
+      <h5 class="mt-8 form-label">Rebalancing</h5>
+      <ToggleButton v-model="isRebalance" left="On" right="Off"/>
+
+      <h5 class="mt-8 form-label">Visibility</h5>
+      <ToggleButton v-model="isPublic" left="Public" right="Private"/>
+
       <!-- Balance -->
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
-
-      <!-- Portfolio Visibility -->
-      <h3 class="text-navy-950 mb-8 font-bold">Portfolio Visbility</h3>
-      <ToggleButton v-model="isPublic" left="Public" right="Private"/>
 
       <!-- Create/cancel buttons -->
       <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
@@ -90,6 +95,7 @@ export default {
       isModal: false,
       modalMsg: "",
       isPublic: null,
+      isRebalance: null,
       stockData: {},
     }
   },
@@ -126,7 +132,8 @@ export default {
           this.pName = response.data.portfolioName;
           this.pDesc = response.data.portfolioDescription;
           this.budget = response.data.capital;
-          this.isPublic = response.data.isPublic;
+          this.isPublic = response.data.public;
+          // this.isRebalance = response.data.isRebalance;
           this.stockData = response.data.portStock;
           console.log(response.data)
         } else {
@@ -297,6 +304,7 @@ export default {
         "userId": this.userID,
         "capital": this.budget,
         "isPublic": this.isPublic,
+        "isRebalance": this.isRebalance,
       }
 
       if (Object.keys(stockResult.add).length != 0) {
