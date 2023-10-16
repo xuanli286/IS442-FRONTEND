@@ -62,8 +62,8 @@
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
-                    <MapChart :countryData="{ 'US': 4, 'CA': 7, 'GB': 8, 'IE': 14, 'ES': 21 }" highColor="#192E47"
-                        lowColor="#5CA7FF" countryStrokeColor="#909090" defaultCountryFillColor="#FFFFFF" />
+                    <MapChart :countryData=countryCounter highColor="#192E47" lowColor="#4b87cc"
+                        countryStrokeColor="#909090" defaultCountryFillColor="#FFFFFF" />
                 </div>
             </div>
         </div>
@@ -105,7 +105,8 @@ const currentMonth = ref("");
 const selectedOption = ref("");
 const earliestDate = ref("");
 const isDataLoaded = ref(false);
-const countryCounter = ref({});
+const countryCounter = ref({ 'US': 0 });
+
 
 const options = ["monthly", "quarterly"];
 selectedOption.value = options[0];
@@ -135,9 +136,7 @@ onMounted(async () => {
         }
 
 
-        // selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
         let dates = [];
-        // let countryCounter = {};
         for (let portfolio of portfolios) {
             for (let [key, value] of Object.entries(portfolio.portStock)) {
 
@@ -145,7 +144,6 @@ onMounted(async () => {
                 const country = 'USA'
                 const country_2digits = getCountryISO2(country);
                 const qty = value[0]['quantity']
-
                 //call redis here
 
                 if (country_2digits in countryCounter.value) {
@@ -156,7 +154,6 @@ onMounted(async () => {
                     countryCounter.value[country_2digits] = qty
                 }
 
-                console.log(countryCounter.value)
                 top3PortfolioIdx.value = Object.keys(top3Portfolios.value);
                 let dates = [];
                 for (let portfolio of portfolios) {
