@@ -264,7 +264,7 @@ export default {
         "userId": this.userID,
         "dateCreated": this.pDate,
         "capital": this.budget,
-        "isPublic": this.isPublic,
+        "public": this.isPublic,
         "rebalancing": this.isRebalance,
         "portStock": allStocks,
       }
