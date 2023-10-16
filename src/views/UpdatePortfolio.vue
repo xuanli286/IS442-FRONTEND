@@ -247,54 +247,9 @@ export default {
       }
     },
     updatePortfolio() {
-      var stockBefore = {};
-      var stockAfter = {};
-      var allStockNames = [];
-      var stockResult = { add: {}, delete: {}, update: {} };
-
-      // stockBefore
-      for (var name in this.stockData) {
-        var i = 0;
-        for (var stock of this.stockData[name]) {
-          stockBefore[name] = {"name": name, "price": stock.stockBoughtPrice, "qty": stock.quantity, "idx": i};
-          allStockNames.push(name);
-          i++;
-        }
-      }
-
-      // stockAfter
+      var allStocks = {};
       for (var stock of this.stocks) {
-        stockAfter[name] = stock;
-        if (!allStockNames.includes(name)) {
-          allStockNames.push(name);
-        }
-      }
-
-      // stockResult
-      for (var stock of allStockNames) {
-        // add
-        if (!(stock in stockBefore) && (stock in stockAfter)) {
-          var s1 = stockAfter[stock];
-          var n1 = stockAfter[stock].name;
-
-          if (n1 in stockResult.add) {
-            stockResult.add[n1].push({"quantity": s1.qty, "stockBoughtPrice": s1.price});
-          } else {
-            stockResult.add[n1] = [{"quantity": s1.qty, "stockBoughtPrice": s1.price}];
-          }
-        }
-
-        // delete
-        if ((stock in stockBefore) && !(stock in stockAfter)) {
-          var s2 = stockBefore[stock];
-          var n2 = stockBefore[stock].name;
-
-          if (!(n2 in stockResult.delete)) {
-            stockResult.delete[n2] = [];
-          }
-          stockResult.delete[n2].push(stockBefore[stock].idx);
-        }
-
+        allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate, "allocation": Math.round( (stock.total/this.portfolioTotal*100)  * 100) / 100}]
       }
 
       // newPf
@@ -306,29 +261,23 @@ export default {
         "capital": this.budget,
         "isPublic": this.isPublic,
         "rebalancing": this.isRebalance,
-      }
-
-      if (Object.keys(stockResult.add).length != 0) {
-        newPf["add"] = stockResult.add;
-      }
-      if (Object.keys(stockResult.delete).length != 0) {
-        newPf["delete"] = stockResult.delete;
+        "portStock": allStocks,
       }
 
       console.log(newPf);
       
-      // axios.post(`http://localhost:5000/portfolio/updateportfolio/`, newPf)
-      // .then((response) => {
-      //   console.log(response.data);
-      //   this.modalMsg = "Portfolio has been successfully updated!";
+      axios.post(`http://localhost:5000/portfolio/updateportfolio/${this.pID}`, newPf)
+      .then((response) => {
+        console.log(response.data);
+        this.modalMsg = "Portfolio has been successfully updated!";
         
-      //   // get updated portfolio
-      //   this.populate();
-      // })
-      // .catch((error) => {
-      //   console.log(error.message);
-      //   this.modalMsg = "Something went wrong!"
-      // })
+        // get updated portfolio
+        this.populate();
+      })
+      .catch((error) => {
+        console.log(error.message);
+        this.modalMsg = "Something went wrong!"
+      })
 
       this.isModal = true;
     },
