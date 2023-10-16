@@ -29,12 +29,10 @@
         <hr/>
         </li>
         <template v-for="item of navItems">
-          <RouterLink :to="item.path">
-          <li class="option" :class="{ 'bg-gray-200': $route.path == item.path, 'hover:bg-gray-50': $route.path != item.path}">
+          <li class="option" :class="{ 'bg-gray-200': $route.path == item.path, 'hover:bg-gray-50': $route.path != item.path}" @click="handleRedirect(item.path)">
             <i :class="['bi', item.icon, 'pr-2']"></i>
             {{ item.name }}
           </li>
-          </RouterLink>
         </template>
         <hr/>
         <li class="option" @click="handleLogout">
@@ -67,10 +65,6 @@ const handleLogout = () => {
       returnTo: window.location.origin,
     }
   })
-}
-
-const handleProfile = () => {
-  router.push({path: '/profile'});
 }
 
 const handleLogo = () => {
@@ -107,7 +101,11 @@ export default {
   methods: {
     displayProfileMenu() {
       this.isActive = !this.isActive;
-    }
+    },
+    handleRedirect(redirectPath) {
+      this.$router.push({path: redirectPath});
+      this.isActive = false;
+    },
   },
 }
 </script>
@@ -156,7 +154,7 @@ export default {
     shadow-lg
     overflow-hidden
     max-h-0;
-    transition: max-height 0.2s ease-in-out, padding 0.2s ease-in-out, border 0.2s ease-in-out;
+    transition: max-height 0.1s ease-in-out, padding 0.1s ease-in-out, border 0.1s ease-in-out;
   }
   .dropdown.active {
     @apply
