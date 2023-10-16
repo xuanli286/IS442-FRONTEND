@@ -4,7 +4,7 @@
     <!-- Search & Filter -->
     <div class="pb-10 grid grid-cols-[1fr,auto] md:grid-cols-[60%,auto,1fr] lg:grid-cols-[45%,auto,1fr] gap-8">
       <SearchInput v-model="query"/>
-      <button class="btn-outline-white" @click="isModal=true">Filter</button>
+      <button class="btn-outline-white font-bold" @click="isModal=true">Filter</button>
       <div class="hidden md:block"></div>
     </div>
     <div class="bg-white rounded-md mb-10 hover:shadow-xl transition-transform transform hover:scale-[1.01]" v-for="(p, idx) of filteredData.slice( (page-1)*5, page*5 )">

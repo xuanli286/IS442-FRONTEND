@@ -1,7 +1,14 @@
 <template>
-    <div class="mx-8 sm:mx-12 mt-11 mb-8">
-        <h3 class="text-white mb-4">{{ pfData.portfolioName }}</h3>
-        <div class="rounded-full bg-gray-300 w-fit p-2">by {{ creator }}</div>
+    <div class="grid grid-cols-[auto,auto] justify-between mx-8 sm:mx-12 mt-11 mb-8">
+        <div>
+            <h3 class="text-white mb-4">{{ pfData.portfolioName }}</h3>
+            <div class="rounded-full bg-gray-300 w-fit p-2">by {{ creator }}</div>
+        </div>
+        <RouterLink to="/community" class="self-end">
+            <button class="btn-outline-white h-fit font-bold">
+                <i class="bi bi-arrow-left mr-2 -ml-1"></i>Back
+            </button>
+        </RouterLink>
     </div>
     <div class="px-8 sm:px-12 pb-11 font-inter" v-if="pfData.portfolioName">
         <SummarizedValue :portfolio="pfData" />
