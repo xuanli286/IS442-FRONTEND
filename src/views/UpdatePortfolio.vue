@@ -15,8 +15,7 @@
       
       <!-- Portfolio Date -->
       <h5 class="mt-8 form-label required">Portfolio Date</h5>
-      <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full" @input="dateVal" disabled/>
-      <div class="form-invalid" v-if="error.date">{{ error.date }}</div>
+      <input type="month" v-model="pDate" class="input-grey w-full" disabled/>
 
       <!-- Capital -->
       <h5 class="mt-8 form-label required">Amount of Capital (USD)</h5>
@@ -115,10 +114,6 @@ export default {
   },
   watch: {
     stocks() {
-      if (this.stocks.length == 1) {
-        this.dateVal();
-      }
-
       this.stockVal();
     },
     portfolioTotal() {
@@ -191,15 +186,6 @@ export default {
         this.error["desc"] = "Description is too long"
       }
     },
-    dateVal() {
-      if ("date" in this.error) {
-        delete this.error["date"];
-      }
-
-      if (!this.pDate) {
-        this.error["date"] = "Field is required";
-      }
-    },
     budgetVal() {
       if ("budget" in this.error) {
         delete this.error["budget"];
@@ -245,7 +231,6 @@ export default {
     validate() {
       this.nameVal();
       this.descVal();
-      this.dateVal();
       this.budgetVal();
       this.stockVal();
 

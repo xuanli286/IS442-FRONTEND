@@ -18,7 +18,7 @@
       
       <!-- Portfolio Date -->
       <h5 class="mt-8 form-label required">Portfolio Date</h5>
-      <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full" @input="dateVal"/>
+      <input type="month" :max="new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full" @input="dateVal"/>
       <div class="form-invalid" v-if="error.date">{{ error.date }}</div>
 
       <!-- Capital -->
@@ -194,6 +194,8 @@ export default {
 
       if (!this.pDate) {
         this.error["date"] = "Field is required";
+      } else if (Number( this.pDate.replace("-", "") ) > Number( (new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().slice(0, 7)).replace("-", "") )) {
+        this.error["date"] = `Date cannot exceed ${new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().slice(0, 7)}`;
       }
     },
     budgetVal() {
