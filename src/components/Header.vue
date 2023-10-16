@@ -28,28 +28,14 @@
           </div>
         <hr/>
         </li>
-        <li class="option" @click="handleProfile">
-          <i class="bi bi-person-circle pr-2"></i>
-          My Profile
-        </li>
-        <RouterLink to="/home">
-        <li class="option">
-          <i class="bi bi-briefcase-fill pr-2"></i>
-          My Portfolios
-        </li>
-        </RouterLink>
-        <RouterLink to="/community">
-        <li class="option">
-          <i class="bi bi-people-fill pr-2"></i>
-          Community
-        </li>
-        </RouterLink>
-        <RouterLink to="/logs">
-        <li class="option">
-          <i class="bi bi-file-earmark-text pr-2"></i>
-          Logs
-        </li>
-        </RouterLink>
+        <template v-for="item of navItems">
+          <RouterLink :to="item.path">
+          <li class="option" :class="{ 'bg-gray-200': $route.path == item.path, 'hover:bg-gray-50': $route.path != item.path}">
+            <i :class="['bi', item.icon, 'pr-2']"></i>
+            {{ item.name }}
+          </li>
+          </RouterLink>
+        </template>
         <hr/>
         <li class="option" @click="handleLogout">
           <i class="bi bi-box-arrow-right pr-2"></i>
@@ -103,6 +89,12 @@ export default {
   data() {
     return {
       isActive: false,
+      navItems: [
+        {name: "My Profile", icon: "bi-person-circle", path: "/profile"},
+        {name: "My Portfolios", icon: "bi-briefcase-fill", path: "/home"},
+        {name: "Community", icon: "bi-people-fill", path: "/community"},
+        {name: "Logs", icon: "bi-file-earmark-text", path: "/logs"},
+      ],
     }
   },
   mounted() {
@@ -176,7 +168,6 @@ export default {
   .option {
     @apply
     p-4
-    hover:bg-gray-100
     cursor-pointer
     rounded-md
   }
