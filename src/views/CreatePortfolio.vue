@@ -233,9 +233,9 @@ export default {
       var allStocks = {};
       for (var stock of this.stocks) {
         if (stock.name in allStocks) {
-          allStocks[stock.name].push({"stockBoughtPrice": stock.price, "quantity": stock.qty})
+          allStocks[stock.name].push({"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate})
         } else {
-          allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty}]
+          allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate}]
         }
       }
       const pfData = {
