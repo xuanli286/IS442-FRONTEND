@@ -109,7 +109,7 @@ export default {
   },
   computed: {
     portfolioTotal() {
-      return this.stocks.reduce((total, stock) => total + stock.total, 0);
+      return this.stocks.reduce((total, stock) => Number(total) + Number(stock.total), 0);
     }
   },
   watch: {
