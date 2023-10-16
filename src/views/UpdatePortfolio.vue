@@ -79,8 +79,9 @@ export default {
   },
   setup() {
     const userID = useUserStore().loginUser.id;
+    const capitalAvail = useUserStore().loginUser.totalCapitalAvailable;
 
-    return { userID }
+    return { userID, capitalAvail }
   },
   data(){
     return {
@@ -109,7 +110,7 @@ export default {
   },
   computed: {
     portfolioTotal() {
-      return this.stocks.reduce((total, stock) => total + stock.total, 0);
+      return this.stocks.reduce((total, stock) => Number(total) + Number(stock.total), 0);
     }
   },
   watch: {
@@ -206,9 +207,14 @@ export default {
       } else {
         if (isNaN(this.budget)) {
           this.error["budget"] = "Please enter a number"; 
-
-        } else if (this.budget < this.portfolioTotal) {
+        } else if (this.portfolioTotal < this.capitalAvail && this.budget < this.portfolioTotal) {
           this.error["budget"] = `Capital allocated must be at least $${ Math.round(this.portfolioTotal * 100) / 100}`; 
+        } else if (this.budget > this.capitalAvail) {
+          this.error["budget"] = `Capital allocated exceeds your available capital of $${this.capitalAvail}`;
+        } else if (this.portfolioTotal > this.capitalAvail) {
+          this.error["budget"] = `Total price of stocks exceeds your available capital of $${this.capitalAvail}`;
+        } else if (this.portfolioTotal == this.capitalAvail && this.budget != this.portfolioTotal) {
+          this.error["budget"] = `Capital allocated must be $${this.capitalAvail};`
         }
       }
     },
@@ -267,22 +273,20 @@ export default {
 
       console.log(newPf);
       
-      axios.post(`http://localhost:5000/portfolio/updateportfolio/${this.pID}`, newPf)
+      axios.post(`http://localhost:5000/portfolio/updateportfolio`, newPf)
       .then((response) => {
         console.log(response.data);
         this.modalMsg = "Portfolio has been successfully updated!";
         
         // get updated portfolio
-        setTimeout(() => {
-          this.populate();
-          this.isModal = true;
-        }, 100)
+        this.populate();
       })
       .catch((error) => {
         console.log(error.message);
         this.modalMsg = "Something went wrong!"
-        this.isModal = true;
       })
+
+      this.isModal = true;
     },
   },
 }

@@ -30,7 +30,7 @@ export default {
     },
     props: {
         portfolio: {
-            type: Object,
+            // type: Object,
             required: true,
         }
     },
