@@ -121,6 +121,9 @@ export default {
 
       this.stockVal();
     },
+    portfolioTotal() {
+      this.budgetVal();
+    },
   },
   methods: {
     cancel() {

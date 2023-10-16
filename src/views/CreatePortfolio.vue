@@ -127,6 +127,9 @@ export default {
 
       this.stockVal();
     },
+    portfolioTotal() {
+      this.budgetVal();
+    },
   },
   created() {
     this.retrieveStocks();
