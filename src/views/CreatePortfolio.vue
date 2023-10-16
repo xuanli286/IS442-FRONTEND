@@ -232,11 +232,7 @@ export default {
     createPortfolio() {
       var allStocks = {};
       for (var stock of this.stocks) {
-        if (stock.name in allStocks) {
-          allStocks[stock.name].push({"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate})
-        } else {
-          allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate}]
-        }
+        allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate, "allocation": Math.round( (stock.total/this.portfolioTotal*100)  * 100) / 100}]
       }
       const pfData = {
         "portfolioName": this.pName,
@@ -246,7 +242,7 @@ export default {
         "dateCreated": new Date().toLocaleDateString('en-GB'),
         "capital": this.budget,
         "isPublic": this.isPublic,
-        "isRebalance": this.isRebalance,
+        "rebalancing": this.isRebalance,
         "portStock": allStocks,
       }
 

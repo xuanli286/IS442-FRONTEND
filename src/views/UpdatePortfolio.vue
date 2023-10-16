@@ -133,7 +133,7 @@ export default {
           this.pDesc = response.data.portfolioDescription;
           this.budget = response.data.capital;
           this.isPublic = response.data.public;
-          // this.isRebalance = response.data.isRebalance;
+          // this.isRebalance = response.data.rebalancing;
           this.stockData = response.data.portStock;
           console.log(response.data)
         } else {
@@ -304,7 +304,7 @@ export default {
         "userId": this.userID,
         "capital": this.budget,
         "isPublic": this.isPublic,
-        "isRebalance": this.isRebalance,
+        "rebalancing": this.isRebalance,
       }
 
       if (Object.keys(stockResult.add).length != 0) {
