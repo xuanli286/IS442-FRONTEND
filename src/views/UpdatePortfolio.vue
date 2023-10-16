@@ -53,8 +53,8 @@
     <!-- Modal -->
     <Modal v-model="isModal" width="50%" height="fit-content">
       <div class="text-center">
-        <h3 class="text-navy-950 font-bold mb-5">{{ modalMsg }}</h3>
-        <button class="btn-navy">Go to Overview</button>
+        <h3 class="text-navy-950 font-bold mb-5">{{ modalMsg[0] }}</h3>
+        <button class="btn-navy" @click="handleModal">{{ modalMsg[1] }}</button>
       </div>
     </Modal>
   </div>
@@ -93,7 +93,7 @@ export default {
       budget: null,
       error: {},
       isModal: false,
-      modalMsg: "",
+      modalMsg: [],
       isPublic: null,
       isRebalance: null,
       stockData: {},
@@ -123,6 +123,14 @@ export default {
   methods: {
     cancel() {
       this.$router.go(-1);
+    },
+    handleModal() {
+      if (this.modalMsg[0] !== "Something went wrong!") {
+        this.$router.push('/home');
+      }
+      else {
+        this.cancel();
+      }
     },
     populate() {
       axios.get(`http://localhost:5000/portfolio/${this.pID}`)
@@ -264,14 +272,16 @@ export default {
       axios.post(`http://localhost:5000/portfolio/updateportfolio`, newPf)
       .then((response) => {
         console.log(response.data);
-        this.modalMsg = "Portfolio has been successfully updated!";
+        this.modalMsg[0] = "Portfolio has been successfully updated!";
+        this.modalMsg[1] = "Go to Overview";
         
         // get updated portfolio
         this.populate();
       })
       .catch((error) => {
         console.log(error.message);
-        this.modalMsg = "Something went wrong!"
+        this.modalMsg[0] = "Something went wrong!";
+        this.modalMsg[1] = "Back";
       })
 
       this.isModal = true;
