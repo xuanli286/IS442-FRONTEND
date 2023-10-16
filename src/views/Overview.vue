@@ -28,7 +28,7 @@
                                 }) }}</p>
                             <p class="text-sm font-medium mt-10">Portfolio Value</p>
                             <p class="font-bold flex items-center">
-                                <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">SGD</span>
+                                <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">USD</span>
                                 {{ top3Portfolios[portfolio].portfolioValue.toLocaleString('en-US', {
                                     style: 'decimal',
                                     minimumFractionDigits: 2,

@@ -230,7 +230,7 @@
       y: {
         title: {
           display: true,
-          text: 'Unrealised Profit & Loss (in SGD)',
+          text: 'Unrealised Profit & Loss (in USD)',
           font: {
             weight: 'bold',
           }

@@ -21,7 +21,7 @@
             <div class="bg-white mt-5 rounded-md p-5">
                 <p>
                     <span class="font-medium text-sm">Total Assets</span> 
-                    <span class="text-gray-500 text-xs ml-1">Unit: SGD</span>
+                    <span class="text-gray-500 text-xs ml-1">Unit: USD</span>
                 </p>
                 <p class="font-bold text-2xl mt-3 text-black-50">{{ formattedCapital }}</p>
             </div>

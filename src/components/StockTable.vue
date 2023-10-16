@@ -28,9 +28,9 @@
           <table class="navy w-full">
             <tr>
               <th>Sector</th>
-              <th>Price (SGD)</th>
+              <th>Price (USD)</th>
               <th>Quantity</th>
-              <th>Total Price (SGD)</th>
+              <th>Total Price (USD)</th>
               <th>Allocation (%)</th>
               <th>ACTION</th>
               <th :class='{hidden: stocks.length == 0}'></th>

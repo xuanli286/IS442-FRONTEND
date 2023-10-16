@@ -22,7 +22,7 @@
       <div class="form-invalid" v-if="error.date">{{ error.date }}</div>
 
       <!-- Capital -->
-      <h5 class="mt-8 form-label required">Amount of Capital (SGD)</h5>
+      <h5 class="mt-8 form-label required">Amount of Capital (USD)</h5>
       <CapitalInput :valid="!error.budget" v-model="budget" @input="budgetVal"/>
       <div class="form-invalid" v-if="error.budget">{{ error.budget }}</div>
 
