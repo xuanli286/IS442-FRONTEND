@@ -86,7 +86,7 @@ const chartData = computed(() => {
           tooltip[portfolioName] = [];
         }
         if (year == new Date(props.date).getFullYear()) {
-          // combinedData[portfolioName].push(...portfolioData.monthly.value.slice(new Date(props.date).getMonth(),));
+          combinedData[portfolioName].push(...portfolioData.monthly.value.slice(new Date(props.date).getMonth(),));
           tooltip[portfolioName].push(...portfolioData.monthly.tooltip.slice(new Date(props.date).getMonth(),));
         }
         else {
