@@ -131,9 +131,10 @@ export default {
         if (this.userID == response.data.userId) {
           this.pName = response.data.portfolioName;
           this.pDesc = response.data.portfolioDescription;
+          this.pDate = response.data.dateCreated;
           this.budget = response.data.capital;
           this.isPublic = response.data.public;
-          // this.isRebalance = response.data.rebalancing;
+          this.isRebalance = response.data.rebalancing;
           this.stockData = response.data.portStock;
           console.log(response.data)
         } else {

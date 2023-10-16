@@ -237,9 +237,8 @@ export default {
       const pfData = {
         "portfolioName": this.pName,
         "portfolioDescription": this.pDesc,
-        "portfolioDate": this.pDate,
         "userId": this.userID,
-        "dateCreated": new Date().toLocaleDateString('en-GB'),
+        "dateCreated": this.pDate,
         "capital": this.budget,
         "isPublic": this.isPublic,
         "rebalancing": this.isRebalance,
@@ -248,20 +247,20 @@ export default {
 
       console.log(pfData);
 
-      // axios.post(`http://localhost:5000/portfolio/create`, pfData)
-      // .then((response) => {
-      //   console.log(response.data);
-      //   console.log(pfData);
-      //   this.modalMsg = "Portfolio has been successfully created!";
-      //   this.pName = null;
-      //   this.pDesc = null;
-      //   this.stocks.splice(0);
-      //   this.budget = 0;
-      // })
-      // .catch((error) => {
-      //   console.log(error.message);
-      //   this.modalMsg = "Something went wrong!"
-      // })
+      axios.post(`http://localhost:5000/portfolio/create`, pfData)
+      .then((response) => {
+        console.log(response.data);
+        console.log(pfData);
+        this.modalMsg = "Portfolio has been successfully created!";
+        this.pName = null;
+        this.pDesc = null;
+        this.stocks.splice(0);
+        this.budget = 0;
+      })
+      .catch((error) => {
+        console.log(error.message);
+        this.modalMsg = "Something went wrong!"
+      })
       
       this.isModal = true;
     },
