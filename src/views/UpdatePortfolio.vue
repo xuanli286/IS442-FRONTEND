@@ -273,14 +273,16 @@ export default {
         this.modalMsg = "Portfolio has been successfully updated!";
         
         // get updated portfolio
-        this.populate();
+        setTimeout(() => {
+          this.populate();
+          this.isModal = true;
+        }, 100)
       })
       .catch((error) => {
         console.log(error.message);
         this.modalMsg = "Something went wrong!"
+        this.isModal = true;
       })
-
-      this.isModal = true;
     },
   },
 }
