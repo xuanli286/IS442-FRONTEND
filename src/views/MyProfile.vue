@@ -1,6 +1,5 @@
 <template>
     <div class="min-h-screen place-content-center px-8 sm:px-12 py-11 font-inter text-blue-950">
-    <RouterLink to="/update?pID=gAdXyQWvIoQjuw8fgOP8">ho</RouterLink>
         <div class="text-center p-5 rounded-md w-full bg-gray-100">
             <div class="flex ml-auto items-center relative">
                 <img class="rounded-full w-20" :src="loginUser.picture" alt="">
