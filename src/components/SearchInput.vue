@@ -1,15 +1,20 @@
 <template>
   <div class="flex">
-    <input type="text" class="input-search flex-left" placeholder="Search" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" ref="inputField">
-    <button class="btn-search cursor-default">
+    <button class="btn-search rounded-s-xl cursor-default flex-left">
       <i class="bi bi-search"></i>
+    </button>
+
+    <input type="text" class="input-search" placeholder="Search" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" ref="inputField">
+    
+    <button class="btn-search rounded-e-xl cursor-default flex-right cursor-pointer" @click="$emit('clear');">
+      <i class="bi bi-x-lg"></i>
     </button>
   </div>
 </template>
 
 <script setup>
 defineProps(['modelValue'])
-defineEmits(['update:modelValue'])
+defineEmits(['update:modelValue', 'clear'])
 </script>
 
 <script>
@@ -29,8 +34,7 @@ export default {
   input[type="text"].input-search {
     @apply
     bg-white
-    rounded-s-xl
-    px-4
+    pr-4
     py-3
     text-navy-950
     focus:outline-none
@@ -49,6 +53,5 @@ export default {
     bg-white
     px-4
     py-3
-    rounded-e-xl
   }
 </style>
