@@ -49,7 +49,7 @@
                 </div>
                 <div class="col-span-2 white-card">
                     <p class="font-semibold mt-1 mb-3">
-                        Portfolio Performance for Year 
+                        Portfolio Performance for Year
                         <span class="font-bold text-lg">{{ currentYear }}</span>
                     </p>
                     <label class="mr-4" v-for="option in options" :key="option">
@@ -60,8 +60,8 @@
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
-                    <MapChart :countryData="{ 'US': 4, 'CA': 7, 'GB': 8, 'IE': 14, 'ES': 21 }" highColor="#192E47"
-                        lowColor="#5CA7FF" countryStrokeColor="#909090" defaultCountryFillColor="#dadada" />
+                    <MapChart :countryData="{ 'US': 10, 'CA': 6 }" highColor="#192E47" lowColor="#5CA7FF"
+                        countryStrokeColor="#909090" defaultCountryFillColor="#DADADA" />
                 </div>
             </div>
         </div>
@@ -75,12 +75,14 @@
                     <i class="fa-solid fa-minimize"></i>
                 </p>
             </div>
-            <label class="text-sm" v-for="(portfolio, id) of top3Portfolios" :key="id">
-                <input class="ml-8" type="checkbox" v-model="selectedPortfolios" :value="id" :disabled="selectedPortfolios.length >= 2 && !selectedPortfolios.includes(id)" @change="handlePortfolioComparison">
+            <label class="text-sm" v-for="( portfolio, id ) of  top3Portfolios " :key="id">
+                <input class="ml-8" type="checkbox" v-model="selectedPortfolios" :value="id"
+                    :disabled="selectedPortfolios.length >= 2 && !selectedPortfolios.includes(id)"
+                    @change="handlePortfolioComparison">
                 {{ id }}
             </label>
             <div class="grid grid-cols-2 gap-4 mt-3 mx-8">
-                <div class="border-2 border-blue-950 p-3 rounded-lg text-sm" v-for="id of selectedPortfolios" :key="id">
+                <div class="border-2 border-blue-950 p-3 rounded-lg text-sm" v-for=" id  of  selectedPortfolios " :key="id">
                     <div class="flex items-center">
                         <div>
                             <p class="font-semibold">{{ id }}</p>
@@ -118,7 +120,7 @@
                 </div>
                 <div v-if="selectedPortfolios.length > 0" class="col-span-2 white-card">
                     <p class="font-semibold mt-1 mb-4">
-                        Portfolio Performance Comparison for Year 
+                        Portfolio Performance Comparison for Year
                         <span class="font-bold text-lg">{{ currentYear }}</span>
                     </p>
                     <LineChart :dataset="selectedDataset" />
@@ -129,148 +131,169 @@
 </template>
 
 <script setup>
-    import DonutChart from '@/components/charts/DonutChart.vue';
-    import PortfolioButton from '@/components/PortfolioButton.vue';
-    import { defineProps, ref, onMounted, computed, watch } from 'vue';
-    import LineChart from '@/components/charts/LineChart.vue';
-    import { useUserStore } from "@/stores/useUserStore";
-    import { storeToRefs } from 'pinia';
-    // import ChoroplethMap from "@/components/charts/ChoroplethMap.vue";
-    import MapChart from 'vue-map-chart'
-    import axios from "../axiosConfig";
-    import { useAuth0 } from '@auth0/auth0-vue';    
-    const { user, isAuthenticated } = useAuth0();
+import DonutChart from '@/components/charts/DonutChart.vue';
+import PortfolioButton from '@/components/PortfolioButton.vue';
+import { defineProps, ref, onMounted, computed, watch } from 'vue';
+import LineChart from '@/components/charts/LineChart.vue';
+import { useUserStore } from "@/stores/useUserStore";
+import { storeToRefs } from 'pinia';
+import MapChart from 'vue-map-chart'
+import axios from "../axiosConfig";
+import { useAuth0 } from '@auth0/auth0-vue';
+const { user, isAuthenticated } = useAuth0();
+import getCountryISO2 from "country-iso-3-to-2";
 
-    const store = useUserStore();
-    const {
-        loginUser
-    } = storeToRefs(store);
+const store = useUserStore();
+const {
+    loginUser
+} = storeToRefs(store);
 
-    const isCompare = ref(false);
-    const isHover = ref(false);
-    const selectedPortfolios = ref([]);
-    const top3Portfolios = ref({});
-    const dataset = ref({});
-    const qtrDataset = ref({})
-    const selectedDataset = ref({});
-    const currentYear = ref("");
-    const currentMonth = ref("");
-    const selectedOption = ref("");
-    const earliestDate = ref("");
+const isCompare = ref(false);
+const isHover = ref(false);
+const selectedPortfolios = ref([]);
+const top3Portfolios = ref({});
+const countryCounter = ref({});
+const dataset = ref({});
+const qtrDataset = ref({})
+const selectedDataset = ref({});
+const currentYear = ref("");
+const currentMonth = ref("");
+const selectedOption = ref("");
+const earliestDate = ref("");
 
-    const options = ["monthly", "quarterly", "all"];
-    selectedOption.value = options[2];
+const options = ["monthly", "quarterly", "all"];
+selectedOption.value = options[2];
 
-    currentYear.value = new Date().getFullYear();
-    currentMonth.value = new Date().getMonth() + 1;
+currentYear.value = new Date().getFullYear();
+currentMonth.value = new Date().getMonth() + 1;
 
-    onMounted(async () => {
-        if (isAuthenticated) {
-            try {
-                const response = await axios.get(`http://localhost:5000/portfolio/getportfolios/${user.value.sub}`);
-                response.data.sort((a, b) => b.portfolioValue - a.portfolioValue);
-                const portfolios = response.data;
-                const performingPortfolios = portfolios.slice(0, 3);
-                for (let portfolio of performingPortfolios) {
-                    top3Portfolios.value[portfolio.portfolioName] = {
-                        portfolioId: portfolio.portfolioId,
-                        portfolioName: portfolio.portfolioName,
-                        portfolioValue: portfolio.portfolioValue,
-                        unrealisedPnL: portfolio.unrealisedPnL,
-                        dateCreated: portfolio.dateCreated,
-                        capital: portfolio.capital,
-                    };
-                }
-                selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
-                let dates = [];
-                for (let portfolio of portfolios) {
-                    for (let [key, value] of Object.entries(portfolio.portStock)) {
-                        for (let transaction of value) {
-                            let [day, month, year] = transaction.dateBought.split('/');
-                            let dateBought = new Date(`${year}-${month}-${day}`);
-                            dates.push(dateBought);
-                        }
+onMounted(async () => {
+    if (isAuthenticated) {
+        try {
+            const response = await axios.get(`http://localhost:5000/portfolio/getportfolios/${user.value.sub}`);
+            response.data.sort((a, b) => b.portfolioValue - a.portfolioValue);
+            const portfolios = response.data;
+            const performingPortfolios = portfolios.slice(0, 3);
+            for (let portfolio of performingPortfolios) {
+                top3Portfolios.value[portfolio.portfolioName] = {
+                    portfolioId: portfolio.portfolioId,
+                    portfolioName: portfolio.portfolioName,
+                    portfolioValue: portfolio.portfolioValue,
+                    unrealisedPnL: portfolio.unrealisedPnL,
+                    dateCreated: portfolio.dateCreated,
+                    capital: portfolio.capital,
+                };
+            }
+
+
+            selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
+            let dates = [];
+            // let countryCounter = {};
+            for (let portfolio of portfolios) {
+                for (let [key, value] of Object.entries(portfolio.portStock)) {
+
+                    const stockName = key;
+                    const country = 'USA'
+                    const country_2digits = getCountryISO2(country);
+                    const qty = value[0]['quantity']
+
+                    //call redis here
+
+                    if (country_2digits in countryCounter.value) {
+                        console.log(countryCounter.value);
+                        countryCounter.value[country_2digits] += (qty)
+                    } else {
+                        console.log(countryCounter.value);
+                        countryCounter.value[country_2digits] = qty
+                    }
+
+                    console.log(countryCounter.value)
+                    for (let transaction of value) {
+                        let [day, month, year] = transaction.dateBought.split('/');
+                        let dateBought = new Date(`${year}-${month}-${day}`);
+                        dates.push(dateBought);
                     }
                 }
-                earliestDate.value = new Date(Math.min(...dates)).toISOString();
-                let earliestYear = new Date(earliestDate.value).getFullYear();
-                for (let year=earliestYear; year<=currentYear.value; year++) {
-                    dataset.value[year] = {};
-                    for (let portfolio of portfolios) {
-                        if (!dataset.value[year][portfolio.portfolioName]) {
-                            dataset.value[year][portfolio.portfolioName] = {
-                                monthly: [],
-                                quarterly: [],
-                                yearly: 0,
-                            };
-                        }
-                        let yearTotal = 0;
-                        let totalvalue = [];
-                        let qtrValue = [];
-                        totalvalue = new Array(12).fill(0);
-                        qtrValue = new Array(4).fill(0);
-                        for (let i = 1; i <= 12; i++) {
-                            for (let [key, value] of Object.entries(portfolio.portStock)) {
-                                try {
-                                    const response = await axios.get(
-                                        `http://localhost:5000/stockprice/getmonthlypricebydate/${key}?month=${i.toString().padStart(2, '0')}&year=${year}`
-                                    );
-                                    let lastDayOfMonth = response.data["stockDate"];
-                                    let monthStockPrice = response.data["4. close"];
-                                    for (let transaction of value) {
-                                        let [day, month, year] = transaction.dateBought.split('/');
-                                        let dateBought = new Date(`${year}-${month}-${day}`);
-                                        dateBought = dateBought.toISOString();
-                                        if (dateBought <= lastDayOfMonth) {
-                                            yearTotal += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
-                                            totalvalue[i - 1] += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
-                                        }
+            }
+            earliestDate.value = new Date(Math.min(...dates)).toISOString();
+            let earliestYear = new Date(earliestDate.value).getFullYear();
+            for (let year = earliestYear; year <= currentYear.value; year++) {
+                dataset.value[year] = {};
+                for (let portfolio of portfolios) {
+                    if (!dataset.value[year][portfolio.portfolioName]) {
+                        dataset.value[year][portfolio.portfolioName] = {
+                            monthly: [],
+                            quarterly: [],
+                            yearly: 0,
+                        };
+                    }
+                    let yearTotal = 0;
+                    let totalvalue = [];
+                    let qtrValue = [];
+                    totalvalue = new Array(12).fill(0);
+                    qtrValue = new Array(4).fill(0);
+                    for (let i = 1; i <= 12; i++) {
+                        for (let [key, value] of Object.entries(portfolio.portStock)) {
+                            try {
+                                const response = await axios.get(
+                                    `http://localhost:5000/stockprice/getmonthlypricebydate/${key}?month=${i.toString().padStart(2, '0')}&year=${year}`
+                                );
+                                let lastDayOfMonth = response.data["stockDate"];
+                                let monthStockPrice = response.data["4. close"];
+                                for (let transaction of value) {
+                                    let [day, month, year] = transaction.dateBought.split('/');
+                                    let dateBought = new Date(`${year}-${month}-${day}`);
+                                    dateBought = dateBought.toISOString();
+                                    if (dateBought <= lastDayOfMonth) {
+                                        yearTotal += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
+                                        totalvalue[i - 1] += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
                                     }
                                 }
-                                catch(error) {
-                                    console.log(error);
-                                }
                             }
-                            if (i % 3 == 0) {
-                                let qtrIdx = Math.floor(i / 3) - 1;
-                                let startIdx = qtrIdx * 3;
-                                let endIdx = i - 1;
-                                qtrValue[qtrIdx] = totalvalue.slice(startIdx, endIdx + 1).reduce((acc, val) => acc + val, 0);
+                            catch (error) {
+                                console.log(error);
                             }
                         }
-                        dataset.value[year][portfolio.portfolioName].monthly = [...totalvalue];
-                        dataset.value[year][portfolio.portfolioName].quarterly = [...qtrValue];
-                        dataset.value[year][portfolio.portfolioName].yearly = yearTotal;
+                        if (i % 3 == 0) {
+                            let qtrIdx = Math.floor(i / 3) - 1;
+                            let startIdx = qtrIdx * 3;
+                            let endIdx = i - 1;
+                            qtrValue[qtrIdx] = totalvalue.slice(startIdx, endIdx + 1).reduce((acc, val) => acc + val, 0);
+                        }
                     }
+                    dataset.value[year][portfolio.portfolioName].monthly = [...totalvalue];
+                    dataset.value[year][portfolio.portfolioName].quarterly = [...qtrValue];
+                    dataset.value[year][portfolio.portfolioName].yearly = yearTotal;
                 }
-                console.log(dataset.value)
-                handlePortfolioComparison();
-            } catch (error) {
-                console.error(error.message);
             }
+            console.log(dataset.value)
+            handlePortfolioComparison();
+        } catch (error) {
+            console.error(error.message);
         }
-    });
+    }
+});
 
-    function handlePortfolioComparison() {
-        if (Object.keys(top3Portfolios.value).length > 0 && selectedPortfolios.value.length == 0) {
-            selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
-        }
-        selectedDataset.value = {};
-        for (let portfolioName of selectedPortfolios.value) {
-            for (let [key, value] of Object.entries(dataset.value)) {
-                if (portfolioName == key) {
-                    selectedDataset.value[key] = value;
-                }
+function handlePortfolioComparison() {
+    if (Object.keys(top3Portfolios.value).length > 0 && selectedPortfolios.value.length == 0) {
+        selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
+    }
+    selectedDataset.value = {};
+    for (let portfolioName of selectedPortfolios.value) {
+        for (let [key, value] of Object.entries(dataset.value)) {
+            if (portfolioName == key) {
+                selectedDataset.value[key] = value;
             }
         }
     }
+}
 
-    watch(selectedPortfolios, () => {
-        handlePortfolioComparison();
-    });
+watch(selectedPortfolios, () => {
+    handlePortfolioComparison();
+});
 
-    function back() {
-        isCompare.value = false;
-        isHover.value = false;
-    }
+function back() {
+    isCompare.value = false;
+    isHover.value = false;
+}
 </script>
