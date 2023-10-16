@@ -33,7 +33,7 @@
                     </thead>
                     <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker">
                         <tr class="border-b border-navy-950" v-if="stockInfo[stockTicker]">
-                            <td colspan="6" class="font-semibold text-left">
+                            <td class="font-semibold text-left">
                                 <RouterLink :to="{ name: 'Stock', params: { stockTicker } }">
                                     {{ stockTicker }}
                                     <span
@@ -43,8 +43,16 @@
                                     <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
                                 </RouterLink>
                             </td>
+                            <td>{{ transactions[transactions.length - 1].dateBought }}</td>
+                            <td>{{ transactions[transactions.length - 1].quantity }}</td>
+                            <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
+                            <td>{{ transactions[transactions.length - 1].stockBoughtPrice.toFixed(2) }}</td>
+                            <td
+                                :class="getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'">
+                                {{ Math.abs(getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice)) }}
+                            </td>
                         </tr>
-                        <tr v-for="info in transactions" v-if="stockInfo[stockTicker]">
+                        <!-- <tr v-for="info in transactions" v-if="stockInfo[stockTicker]">
                             <td></td>
                             <td>{{ info.dateBought }}</td>
                             <td>{{ info.quantity }}</td>
@@ -54,8 +62,8 @@
                                 :class="getPnL(info.quantity, stockInfo[stockTicker].eod, info.stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'">
                                 {{ Math.abs(getPnL(info.quantity, stockInfo[stockTicker].eod, info.stockBoughtPrice)) }}
                             </td>
-                        </tr>
-                    </tbody> -->
+                        </tr> -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -98,8 +106,6 @@ export default {
                 const portStock = response.data.portStock;
                 this.portfolioStocks = portStock;
 
-                console.log(portStock)
-
                 let stocks = Object.keys(response.data.portStock);
                 let eodSum = 0;
                 let ytdSum = 0;
@@ -120,11 +126,14 @@ export default {
                     this.stockInfo[stock].eod = eodPrice;
                     this.stockInfo[stock].ytd = ytdPrice;
 
-                    for (let i = 0; i < portStock[stock].length; i++) {
+                    eodSum += portStock[stock][portStock[stock].length - 1].quantity * eodPrice;
+                    ytdSum += portStock[stock][portStock[stock].length - 1].quantity * ytdPrice;
 
-                        eodSum += portStock[stock][i].quantity * eodPrice;
-                        ytdSum += portStock[stock][i].quantity * ytdPrice;
-                    }
+                    // for (let i = 0; i < portStock[stock].length; i++) {
+
+                    //     eodSum += portStock[stock][i].quantity * eodPrice;
+                    //     ytdSum += portStock[stock][i].quantity * ytdPrice;
+                    // }
                 }
 
                 this.percentChange = (((eodSum - ytdSum) / ytdSum) * 100).toFixed(2);
