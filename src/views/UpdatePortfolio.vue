@@ -15,7 +15,7 @@
       
       <!-- Portfolio Date -->
       <h5 class="mt-8 form-label required">Portfolio Date</h5>
-      <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full" @input="dateVal"/>
+      <input type="month" :max="new Date().toISOString().slice(0, 7)" v-model="pDate" :class="{'invalid': error.date}" class="input-grey w-full" @input="dateVal" disabled/>
       <div class="form-invalid" v-if="error.date">{{ error.date }}</div>
 
       <!-- Capital -->

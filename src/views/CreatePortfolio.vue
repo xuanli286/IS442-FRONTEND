@@ -254,7 +254,10 @@ export default {
         this.modalMsg = "Portfolio has been successfully created!";
         this.pName = null;
         this.pDesc = null;
+        this.pDate = null;
         this.stocks.splice(0);
+        this.isPublic = true;
+        this.isRebalance = true;
         this.budget = 0;
       })
       .catch((error) => {
