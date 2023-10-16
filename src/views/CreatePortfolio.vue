@@ -232,7 +232,7 @@ export default {
     createPortfolio() {
       var allStocks = {};
       for (var stock of this.stocks) {
-        allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate, "allocation": Math.round( (stock.total/this.portfolioTotal*100)  * 100) / 100}]
+        allStocks[stock.name] = [{"stockBoughtPrice": stock.price, "quantity": stock.qty, "dateBought": this.pDate, "allocation": Math.round(((stock.total/this.portfolioTotal*100) + Number.EPSILON)) / 100}]
       }
       const pfData = {
         "portfolioName": this.pName,
