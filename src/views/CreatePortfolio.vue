@@ -58,8 +58,8 @@
     <!-- Modal -->
     <Modal v-model="isModal" width="50%" height="fit-content">
       <div class="text-center">
-        <h3 class="text-navy-950 font-bold mb-5">{{ modalMsg }}</h3>
-        <button class="btn-navy">Go to Overview</button>
+        <h3 class="text-navy-950 font-bold mb-5">{{ modalMsg[0] }}</h3>
+        <button class="btn-navy" @click="handleModal">{{ modalMsg[1] }}</button>
       </div>
     </Modal>
   </div>
@@ -74,6 +74,7 @@ import axios from "../axiosConfig";
 import { useUserStore } from "@/stores/useUserStore";
 import { usePortfolioStore } from "@/stores/usePortfolioStore";
 import NewUserModal from "@/components/NewUserModal.vue";
+import { ref } from 'vue';
 
 export default {
   name: 'CreatePortfolio',
@@ -87,10 +88,12 @@ export default {
   setup() {
     const userID = useUserStore().loginUser.id;
     const isReroute = usePortfolioStore().isReroute;
+    const portfoliosValue = ref(usePortfolioStore().portfoliosValue);
 
     return { 
       userID,
       isReroute,
+      portfoliosValue,
     }
   },
   data(){
@@ -103,7 +106,7 @@ export default {
       budget: 0,
       error: {},
       isModal: false,
-      modalMsg: "",
+      modalMsg: [],
       isPublic: true,
       isRebalance: true,
     }
@@ -128,6 +131,14 @@ export default {
   methods: {
     cancel() {
       window.history.back();
+    },
+    handleModal() {
+      if (this.modalMsg[0] !== "Something went wrong!") {
+        this.$router.push('/home');
+      }
+      else {
+        this.cancel();
+      }
     },
     retrieveStocks() {
       axios.get(`http://localhost:8080/listing_status.csv`)
@@ -245,13 +256,11 @@ export default {
         "portStock": allStocks,
       }
 
-      console.log(pfData);
-
       axios.post(`http://localhost:5000/portfolio/create`, pfData)
       .then((response) => {
         console.log(response.data);
         console.log(pfData);
-        this.modalMsg = "Portfolio has been successfully created!";
+        this.modalMsg[0] = "Portfolio has been successfully created!";
         this.pName = null;
         this.pDesc = null;
         this.pDate = null;
@@ -259,10 +268,14 @@ export default {
         this.isPublic = true;
         this.isRebalance = true;
         this.budget = 0;
+        this.modalMsg[1] = "Go to Overview";
+        this.portfoliosValue.push(pfData);
+        this.portfoliosValue.sort((a, b) => b.portfolioValue - a.portfolioValue);
       })
       .catch((error) => {
         console.log(error.message);
-        this.modalMsg = "Something went wrong!"
+        this.modalMsg[0] = "Something went wrong!";
+        this.modalMsg[1] = "Back";
       })
       
       this.isModal = true;

@@ -14,28 +14,22 @@
                         <p class="font-semibold mr-2">Top 3 Performers</p>
                         <i class="fa fa-line-chart" aria-hidden="true"></i>
                     </div>
-                    <div class="grid grid-cols-3 gap-4 mt-5">
+                    <div v-if="isDataLoaded" class="grid grid-cols-3 gap-4 mt-5">
                         <div class="border-2 border-blue-950 p-3 rounded-lg cursor-pointer hover:bg-slate-200"
                             v-for="(portfolio, index) of top3PortfolioIdx" :key="index"
                             @click="handleSelect(top3Portfolios[portfolio])">
                             <div class="flex items-center justify-between">
-                                <p class="font-bold">{{ portfolio }}</p>
+                                <p class="font-bold">{{ top3Portfolios[portfolio].portfolioName }}</p>
                                 <img class="h-6 w-auto" :src="require(`@/assets/${index}.png`)" alt="">
                             </div>
                             <p class="text-gray-500 text-xs">Date Created: {{ (new
-                                Date(top3Portfolios[portfolio].dateCreated)).toLocaleString(undefined, {
-                                    year: 'numeric', month: 'numeric',
-                                    day: 'numeric'
+                                Date(top3Portfolios[portfolio].dateCreated + '-01')).toLocaleString(undefined, {
+                                    year: 'numeric', month: 'long'
                                 }) }}</p>
                             <p class="text-sm font-medium mt-10">Portfolio Value</p>
                             <p class="font-bold flex items-center">
                                 <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">USD</span>
-                                {{ top3Portfolios[portfolio].portfolioValue.toLocaleString('en-US', {
-                                    style: 'decimal',
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                })
-                                }}
+                                ${{ top3Portfolios[portfolio].portfolioValue.toFixed(2) }}
                             </p>
                         </div>
                     </div>
@@ -57,8 +51,7 @@
                         <input type="radio" :value="option" v-model="selectedOption" />
                         {{ option.charAt(0).toUpperCase() + option.slice(1) }}
                     </label>
-                    <LineChart v-if="isDataLoaded" class="mt-4" :dataset="dataset" :display="selectedOption"
-                        :date="earliestDate" />
+                    <LineChart v-if="isDataLoaded" class="mt-4" :dataset="dataset" :display="selectedOption" :date="earliestDate" />
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
@@ -94,19 +87,17 @@ const portStore = usePortfolioStore();
 const {
     selectedPortfolio,
     portfoliosValue,
+    top3Portfolios,
 } = storeToRefs(portStore);
 
 const top3PortfolioIdx = ref([]);
-const top3Portfolios = ref({});
 const dataset = ref({});
-const qtrDataset = ref({})
 const currentYear = ref("");
 const currentMonth = ref("");
 const selectedOption = ref("");
 const earliestDate = ref("");
 const isDataLoaded = ref(false);
 const countryCounter = ref({ 'US': 0 });
-
 
 const options = ["monthly", "quarterly"];
 selectedOption.value = options[0];
@@ -118,28 +109,19 @@ function handleSelect(portfolio) {
     selectedPortfolio.value = portfolio;
 }
 
+watch(portfoliosValue, (newPortfoliosValue) => {
+    top3Portfolios.value = newPortfoliosValue.slice(0, 3);
+});
+
 onMounted(async () => {
     if (isAuthenticated) {
         portfoliosValue.value.sort((a, b) => b.portfolioValue - a.portfolioValue);
         const portfolios = portfoliosValue.value;
-        const performingPortfolios = portfolios.slice(0, 3);
-        for (let portfolio of performingPortfolios) {
-            top3Portfolios.value[portfolio.portfolioName] = {
-                portfolioId: portfolio.portfolioId,
-                portfolioName: portfolio.portfolioName,
-                portfolioValue: portfolio.portfolioValue,
-                portfolioDescription: portfolio.portfolioDescription,
-                unrealisedPnL: portfolio.unrealisedPnL,
-                dateCreated: portfolio.dateCreated,
-                capital: portfolio.capital,
-            };
-        }
-
-
+        top3Portfolios.value = portfolios.slice(0, 3);
+        top3PortfolioIdx.value = Object.keys(top3Portfolios.value);
         let dates = [];
         for (let portfolio of portfolios) {
             for (let [key, value] of Object.entries(portfolio.portStock)) {
-
                 const stockName = key;
                 const country = 'USA'
                 const country_2digits = getCountryISO2(country);
@@ -147,96 +129,88 @@ onMounted(async () => {
                 //call redis here
 
                 if (country_2digits in countryCounter.value) {
-                    console.log(countryCounter.value);
                     countryCounter.value[country_2digits] += (qty)
                 } else {
-                    console.log(countryCounter.value);
                     countryCounter.value[country_2digits] = qty
                 }
 
-                top3PortfolioIdx.value = Object.keys(top3Portfolios.value);
-                let dates = [];
-                for (let portfolio of portfolios) {
-                    for (let [key, value] of Object.entries(portfolio.portStock)) {
-                        for (let transaction of value) {
-                            let [day, month, year] = transaction.dateBought.split('/');
-                            let dateBought = new Date(`${year}-${month}-${day}`);
-                            dates.push(dateBought);
-                        }
-                    }
+                for (let transaction of value) {
+                    let [day, month, year] = transaction.dateBought.split('/');
+                    let dateBought = new Date(`${year}-${month}-${day}`);
+                    dates.push(dateBought);
                 }
-                earliestDate.value = new Date(Math.min(...dates)).toISOString();
-                let earliestYear = new Date(earliestDate.value).getFullYear();
-                for (let year = earliestYear; year <= currentYear.value; year++) {
-                    dataset.value[year] = {};
-                    for (let portfolio of portfolios) {
-                        if (!dataset.value[year][portfolio.portfolioName]) {
-                            dataset.value[year][portfolio.portfolioName] = {
-                                monthly: [],
-                                quarterly: [],
-                                yearly: 0,
-                            };
-                        }
-                        let yearTotal = 0;
-                        let totalvalue = [];
-                        let qtrValue = [];
-                        let totaltooltip = [];
-                        let qtrtooltip = [];
-                        let stocks = {};
-                        totalvalue = new Array(12).fill(null);
-                        totaltooltip = new Array(12).fill(null);
-                        qtrValue = new Array(4).fill(null);
-                        qtrtooltip = new Array(4).fill(null);
-                        for (let i = 1; i <= 12; i++) {
-                            let result = '';
-                            let isBought = false;
-                            for (let [key, value] of Object.entries(portfolio.portStock)) {
-                                try {
-                                    const response = await axios.get(
-                                        `http://localhost:5000/stockprice/getmonthlypricebydate/${key}?month=${i.toString().padStart(2, '0')}&year=${year}`
-                                    );
-                                    let lastDayOfMonth = response.data["stockDate"];
-                                    let monthStockPrice = response.data["4. close"];
-                                    for (let transaction of value) {
-                                        let [day, month, year] = transaction.dateBought.split('/');
-                                        let dateBought = new Date(`${year}-${month}-${day}`);
-                                        dateBought = dateBought.toISOString();
-                                        if (dateBought <= lastDayOfMonth) {
-                                            isBought = true;
-                                            yearTotal += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
-                                            totalvalue[i - 1] += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
-                                            stocks[key] = transaction.quantity;
-                                        }
-                                    }
-                                }
-                                catch (error) {
-                                    console.log(error);
-                                }
-                            }
-                            if (i % 3 == 0 && isBought) {
-                                let qtrIdx = Math.floor(i / 3) - 1;
-                                let startIdx = qtrIdx * 3;
-                                let endIdx = i - 1;
-                                let qtrResult = '';
-                                qtrValue[qtrIdx] = totalvalue.slice(startIdx, endIdx + 1).reduce((acc, val) => acc + val, 0);
-                                for (let stock in stocks) {
-                                    qtrResult += `${stock}: ${stocks[stock]}\n`;
-                                }
-                                qtrtooltip[qtrIdx] = qtrResult;
-                            }
-                            for (let stock in stocks) {
-                                result += `${stock}: ${stocks[stock]}\n`;
-                            }
-                            totaltooltip[i - 1] = result;
-                        }
-                        dataset.value[year][portfolio.portfolioName].monthly = { tooltip: totaltooltip, value: [...totalvalue] };
-                        dataset.value[year][portfolio.portfolioName].quarterly = { tooltip: qtrtooltip, value: [...qtrValue] };
-                        dataset.value[year][portfolio.portfolioName].yearly = yearTotal;
-                    }
-                }
-                isDataLoaded.value = true;
             }
         }
+        earliestDate.value = new Date(Math.min(...dates)).toISOString();
+        let earliestYear = new Date(earliestDate.value).getFullYear();
+        for (let year = earliestYear; year <= currentYear.value; year++) {
+            dataset.value[year] = {};
+            for (let portfolio of portfolios) {
+                if (!dataset.value[year][portfolio.portfolioName]) {
+                    dataset.value[year][portfolio.portfolioName] = {
+                        monthly: [],
+                        quarterly: [],
+                        yearly: 0,
+                        };
+                    }
+                    let yearTotal = 0;
+                    let totalvalue = [];
+                    let qtrValue = [];
+                    let totaltooltip = [];
+                    let qtrtooltip = [];
+                    let stocks = {};
+                    totalvalue = new Array(12).fill(null);
+                    totaltooltip = new Array(12).fill(null);
+                    qtrValue = new Array(4).fill(null);
+                    qtrtooltip = new Array(4).fill(null);
+                    for (let i = 1; i <= 12; i++) {
+                        let result = '';
+                        let isBought = false;
+                        for (let [key, value] of Object.entries(portfolio.portStock)) {
+                            try {
+                                const response = await axios.get(
+                                    `http://localhost:5000/stockprice/getmonthlypricebydate/${key}?month=${i.toString().padStart(2, '0')}&year=${year}`
+                                );
+                                let lastDayOfMonth = response.data["stockDate"];
+                                let monthStockPrice = response.data["4. close"];
+                                for (let transaction of value) {
+                                    let [day, month, year] = transaction.dateBought.split('/');
+                                    let dateBought = new Date(`${year}-${month}-${day}`);
+                                    dateBought = dateBought.toISOString();
+                                    if (dateBought <= lastDayOfMonth) {
+                                        isBought = true;
+                                        yearTotal += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
+                                        totalvalue[i - 1] += (monthStockPrice - transaction.stockBoughtPrice) * transaction.quantity;
+                                        stocks[key] = transaction.quantity;
+                                    }
+                                }
+                            }
+                            catch (error) {
+                                console.log(error);
+                            }
+                        }
+                        if (i % 3 == 0 && isBought) {
+                            let qtrIdx = Math.floor(i / 3) - 1;
+                            let startIdx = qtrIdx * 3;
+                            let endIdx = i - 1;
+                            let qtrResult = '';
+                            qtrValue[qtrIdx] = totalvalue.slice(startIdx, endIdx + 1).reduce((acc, val) => acc + val, 0);
+                            for (let stock in stocks) {
+                                qtrResult += `${stock}: ${stocks[stock]}\n`;
+                            }
+                            qtrtooltip[qtrIdx] = qtrResult;
+                        }
+                        for (let stock in stocks) {
+                            result += `${stock}: ${stocks[stock]}\n`;
+                        }
+                        totaltooltip[i - 1] = result;
+                    }
+                    dataset.value[year][portfolio.portfolioName].monthly = { tooltip: totaltooltip, value: [...totalvalue] };
+                    dataset.value[year][portfolio.portfolioName].quarterly = { tooltip: qtrtooltip, value: [...qtrValue] };
+                    dataset.value[year][portfolio.portfolioName].yearly = yearTotal;
+                }
+            }
+            isDataLoaded.value = true;
     }
 });
 </script>
