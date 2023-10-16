@@ -62,8 +62,8 @@
                 </div>
                 <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
-                    <MapChart :countryData="{ 'US': 10, 'CA': 6 }" highColor="#192E47" lowColor="#5CA7FF"
-                        countryStrokeColor="#909090" defaultCountryFillColor="#DADADA" />
+                    <MapChart :countryData="{ 'US': 4, 'CA': 7, 'GB': 8, 'IE': 14, 'ES': 21 }" highColor="#192E47"
+                        lowColor="#5CA7FF" countryStrokeColor="#909090" defaultCountryFillColor="#FFFFFF" />
                 </div>
             </div>
         </div>
@@ -81,6 +81,7 @@ import { storeToRefs } from 'pinia';
 import MapChart from 'vue-map-chart'
 import axios from "../axiosConfig";
 import { useAuth0 } from '@auth0/auth0-vue';
+import getCountryISO2 from 'country-iso-3-to-2';
 
 const { user, isAuthenticated } = useAuth0();
 
@@ -119,6 +120,7 @@ function handleSelect(portfolio) {
 onMounted(async () => {
     if (isAuthenticated) {
         portfoliosValue.value.sort((a, b) => b.portfolioValue - a.portfolioValue);
+        const portfolios = portfoliosValue.value;
         const performingPortfolios = portfolios.slice(0, 3);
         for (let portfolio of performingPortfolios) {
             top3Portfolios.value[portfolio.portfolioName] = {
@@ -133,7 +135,7 @@ onMounted(async () => {
         }
 
 
-        selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
+        // selectedPortfolios.value = Object.keys(top3Portfolios.value).slice(0, 2);
         let dates = [];
         // let countryCounter = {};
         for (let portfolio of portfolios) {
