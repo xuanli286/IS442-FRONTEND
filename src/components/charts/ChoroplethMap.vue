@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <canvas id="choroplethCanvas">test</canvas>
     </div>
@@ -54,4 +54,4 @@ export default {
 };
 </script>
 
-  
+   -->
