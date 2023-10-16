@@ -93,8 +93,6 @@ import axios from "../axiosConfig";
                     const portStock = response.data.portStock;
                     this.portfolioStocks = portStock;
 
-                    console.log(portStock)
-
                     let stocks = Object.keys(response.data.portStock);
                     let eodSum = 0;
                     let ytdSum = 0;

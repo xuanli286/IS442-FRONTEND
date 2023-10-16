@@ -1,6 +1,9 @@
 <template>
   <div class="px-8 sm:px-12 py-11">
-    <h3 class="text-white mb-8">Create Portfolio</h3>
+    <div class="flex items-center">
+      <h3 class="text-white mb-8">Create Portfolio</h3>
+      <NewUserModal class="z-50"/>
+    </div>
     <div class="white-card">
       <!-- Basic Information -->
       <h3 class="text-navy-950 mb-8 font-bold">Basic Information</h3>
@@ -63,6 +66,8 @@ import ToggleButton from '../components/ToggleButton.vue'
 import Modal from '../components/Modal.vue'
 import axios from "../axiosConfig";
 import { useUserStore } from "@/stores/useUserStore";
+import { usePortfolioStore } from "@/stores/usePortfolioStore";
+import NewUserModal from "@/components/NewUserModal.vue";
 
 export default {
   name: 'CreatePortfolio',
@@ -71,11 +76,16 @@ export default {
     CapitalInput,
     ToggleButton,
     Modal,
+    NewUserModal,
   },
   setup() {
     const userID = useUserStore().loginUser.id;
+    const isReroute = usePortfolioStore().isReroute;
 
-    return { userID }
+    return { 
+      userID,
+      isReroute,
+    }
   },
   data(){
     return {
