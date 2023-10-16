@@ -18,7 +18,7 @@ export default {
   },
   setup(props, context) {
     const updateValue = (event) => {
-      context.emit('update:modelValue', Number(event.target.value));
+      context.emit('update:modelValue', event.target.value ? Number(event.target.value) : null);
     }
 
     return { updateValue }

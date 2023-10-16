@@ -31,8 +31,8 @@
                             <th>P&L <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
                         </tr>
                     </thead>
-                    <!-- <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker">
-                        <tr class="border-b border-navy-950">
+                    <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker">
+                        <tr class="border-b border-navy-950" v-if="stockInfo[stockTicker]">
                             <td colspan="6" class="font-semibold text-left">
                                 <RouterLink :to="{ name: 'Stock', params: { stockTicker } }">
                                     {{ stockTicker }}
@@ -44,15 +44,16 @@
                                 </RouterLink>
                             </td>
                         </tr>
-                        <tr v-for="info in transactions">
+                        <tr v-for="info in transactions" v-if="stockInfo[stockTicker]">
                             <td></td>
                             <td>{{ info.dateBought }}</td>
                             <td>{{ info.quantity }}</td>
-                            <td>{{(stockInfo[stockTicker].eod).toFixed(2)}}</td>
+                            <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
                             <td>{{ info.stockBoughtPrice.toFixed(2) }}</td>
                             <td
                                 :class="getPnL(info.quantity, stockInfo[stockTicker].eod, info.stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'">
-                                {{ Math.abs(getPnL(info.quantity, stockInfo[stockTicker].eod, info.stockBoughtPrice)) }}</td>
+                                {{ Math.abs(getPnL(info.quantity, stockInfo[stockTicker].eod, info.stockBoughtPrice)) }}
+                            </td>
                         </tr>
                     </tbody> -->
                 </table>
@@ -139,9 +140,61 @@ export default {
     watch: {
         portfolio: "getPortfolioData",
 
+
+    },
+    methods: {
+
+        async getPortfolioData() {
+            try {
+                const response = await axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`);
+                const portStock = response.data.portStock;
+                this.portfolioStocks = portStock;
+
+                let stocks = Object.keys(response.data.portStock);
+                let eodSum = 0;
+                let ytdSum = 0;
+
+                for (let stock of stocks) {
+                    this.stockInfo[stock] = { symbol: "", sector: "", eod: 0, ytd: 0 };
+
+                    const stockOverviewResponse = await axios.get(`http://localhost:5000/stock/${stock}/companyOverview`);
+                    this.stockInfo[stock].symbol = stockOverviewResponse.data.country;
+                    this.stockInfo[stock].sector = stockOverviewResponse.data.sector;
+
+                    const stockPriceResponse = await axios.get(`http://localhost:5000/stockprice/dailyprice/${stock}`);
+                    const stockPriceList = stockPriceResponse.data.stockPriceList;
+
+                    let eodPrice = stockPriceList[0]["4. close"];
+                    let ytdPrice = stockPriceList[1]["4. close"];
+
+                    this.stockInfo[stock].eod = eodPrice;
+                    this.stockInfo[stock].ytd = ytdPrice;
+
+                    for (let i = 0; i < portStock[stock].length; i++) {
+
+                        eodSum += portStock[stock][i].quantity * eodPrice;
+                        ytdSum += portStock[stock][i].quantity * ytdPrice;
+                    }
+                }
+
+                this.percentChange = (((eodSum - ytdSum) / ytdSum) * 100).toFixed(2);
+
+            } catch (error) {
+                console.error("An error occurred:", error);
+            }
+        },
+        getPnL(qty, eod, boughtPrice) {
+            return ((eod - boughtPrice) * qty).toFixed(2);
+        },
+    },
+    watch: {
+        portfolio: "getPortfolioData",
+
     }
 
 }
+
+
 </script>
 
 <style scoped>

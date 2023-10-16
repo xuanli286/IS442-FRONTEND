@@ -28,24 +28,14 @@
           </div>
         <hr/>
         </li>
-        <li class="option" @click="handleProfile">
-          <i class="bi bi-person-circle pr-2"></i>
-          My Profile
-        </li>
-        <RouterLink to="/home">
-        <li class="option">
-          <i class="bi bi-briefcase-fill pr-2"></i>
-          My Portfolios
-        </li>
-        </RouterLink>
-        <RouterLink to="/logs">
-        <li class="option">
-          <i class="bi bi-file-earmark-text pr-2"></i>
-          Logs
-        </li>
-        </RouterLink>
+        <template v-for="item of navItems">
+          <li class="option" :class="{ 'bg-gray-200': $route.path == item.path, 'hover:bg-gray-50': $route.path != item.path}" @click="handleRedirect(item.path)">
+            <i :class="['bi', item.icon, 'pr-2']"></i>
+            {{ item.name }}
+          </li>
+        </template>
         <hr/>
-        <li class="option" @click="handleLogout">
+        <li class="option hover:bg-gray-50" @click="handleLogout">
           <i class="bi bi-box-arrow-right pr-2"></i>
           Log out
         </li>
@@ -77,10 +67,6 @@ const handleLogout = () => {
   })
 }
 
-const handleProfile = () => {
-  router.push({path: '/profile'});
-}
-
 const handleLogo = () => {
   if (isAuthenticated.value) {
     router.push({path: '/home'});
@@ -97,6 +83,12 @@ export default {
   data() {
     return {
       isActive: false,
+      navItems: [
+        {name: "My Profile", icon: "bi-person-circle", path: "/profile"},
+        {name: "My Portfolios", icon: "bi-briefcase-fill", path: "/home"},
+        {name: "Community", icon: "bi-people-fill", path: "/community"},
+        {name: "Logs", icon: "bi-file-earmark-text", path: "/logs"},
+      ],
     }
   },
   mounted() {
@@ -109,7 +101,11 @@ export default {
   methods: {
     displayProfileMenu() {
       this.isActive = !this.isActive;
-    }
+    },
+    handleRedirect(redirectPath) {
+      this.$router.push({path: redirectPath});
+      this.isActive = false;
+    },
   },
 }
 </script>
@@ -158,7 +154,7 @@ export default {
     shadow-lg
     overflow-hidden
     max-h-0;
-    transition: max-height 0.2s ease-in-out, padding 0.2s ease-in-out, border 0.2s ease-in-out;
+    transition: max-height 0.1s ease-in-out, padding 0.1s ease-in-out, border 0.1s ease-in-out;
   }
   .dropdown.active {
     @apply
@@ -170,7 +166,6 @@ export default {
   .option {
     @apply
     p-4
-    hover:bg-gray-100
     cursor-pointer
     rounded-md
   }

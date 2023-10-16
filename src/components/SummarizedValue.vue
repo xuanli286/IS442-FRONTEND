@@ -2,7 +2,7 @@
     <div class="white-card grid grid-rows-2 grid-cols-4 gap-[5%] text-center mb-5">
         <div class="flex justify-between col-span-4 ">
             <p v-if="isOverview" class="font-semibold text-blue-950">Portfolio Overview</p>
-            <p><span class="font-semibold">Currency:</span> SGD</p>
+            <p><span class="font-semibold">Currency:</span> USD</p>
         </div>
         <div class="flex justify-between col-span-4">
             <div class="flex items-center">

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import CreatePortfolio from "../views/CreatePortfolio.vue";
 import UpdatePortfolio from "../views/UpdatePortfolio.vue";
+import Community from "../views/Community.vue";
 import CommunityPortfolio from "../views/CommunityPortfolio.vue";
 import UserLogs from "../views/UserLogs.vue";
 import HomePage from "../views/Home.vue";
@@ -90,6 +91,11 @@ const routes = [
   },
   {
     path: '/community',
+    name: Community,
+    component: Community
+  },
+  {
+    path: '/community/portfolio',
     name: CommunityPortfolio,
     component: CommunityPortfolio
   },

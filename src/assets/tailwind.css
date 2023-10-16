@@ -17,7 +17,7 @@
 }
 
 /* grey input classes */
-input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-grey {
+input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-grey, input[type="month"].input-grey {
     @apply
     bg-gray-200
     rounded-xl
@@ -25,21 +25,8 @@ input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-g
     border-navy-950
     p-3
     text-navy-950
-}
+    placeholder:text-navy-800
 
-input[type="number"].input-grey {
-    @apply
-    bg-gray-200
-    rounded-xl
-    border-2
-    border-navy-950
-    p-3
-    text-navy-950
-}
-
-input[type="text"]::placeholder.input-grey, textarea::placeholder.input-grey, input[type="number"]::placeholder.input-grey {
-    @apply
-    text-navy-800
 }
 
 .input-grey.invalid {
