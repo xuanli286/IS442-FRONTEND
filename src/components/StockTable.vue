@@ -266,15 +266,17 @@ export default {
     },
     getPrices() {
       for (let i=0; i<this.stocks.length; i++) {
-        axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${this.stocks[i].name}?month=${this.date.split("-")[1]}&year=${this.date.split("-")[0]}`)
-        .then((response) => {
-          console.log(response.data)
-          this.stocks[i].price = this.date ? response.data["4. close"] : "-";
+        if (this.stocks[i].name) {
+          axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${this.stocks[i].name}?month=${this.date.split("-")[1]}&year=${this.date.split("-")[0]}`)
+          .then((response) => {
+            console.log(response.data)
+            this.stocks[i].price = this.date ? response.data["4. close"] : "-";
 
-        })
-        .catch((error) => {
-          console.log(error.message);
-        })
+          })
+          .catch((error) => {
+            console.log(error.message);
+          })
+        }
       }
     },
   },
