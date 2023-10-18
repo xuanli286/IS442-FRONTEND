@@ -34,11 +34,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-span-1 white-card flex flex-col items-center">
+                <div class="col-span-1 white-card grid grid-cols-1">
                     <p class="font-semibold mt-1 mr-auto">
                         Market Exposure
                     </p>
-                    <div class="my-auto">
+                    <div>
                         <DonutChart :isOverview="true" />
                     </div>
                 </div>

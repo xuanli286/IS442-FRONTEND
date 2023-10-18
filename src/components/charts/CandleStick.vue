@@ -1,8 +1,9 @@
 <template>
-  <div class="white-card text-xs md:text-sm">
+  <div class="text-xs md:text-sm">
     <div class="grid grid-cols-3 mb-5 items-center">
       <div class="relative sm:hidden">
         <button
+        ref="toggle"
         @click="toggleDropdown"
         class="btn sep md:px-3 w-24"
         >
@@ -10,8 +11,8 @@
           <i class="bi bi-chevron-down transition ml-2 text-white" :class="{ 'chevDown': isOpen }"></i>
         </button>
 
-        <div v-if="isOpen" class="timeDrop absolute w-24 top-6 p-2 mt-2 z-10">
-            <ul>
+        <div v-if="isOpen" class="timeDrop absolute w-24 top-8 p-2 mt-2 z-10">
+            <ul ref="dropdown">
                 <li @click="selectTimeLabel(timeLabel)" 
                     class="option" 
                     v-for="(val, timeLabel) in selectedTimeLabel" :key="timeLabel"
@@ -29,14 +30,15 @@
       
       <div class="flex justify-center items-center relative">
         <button 
+          ref="toggleDate"
           class="btn sep px-0.5 md:px-3 hover:bg-white hover:text-navy-950" 
           @click="toggleDateRange"
         >
           {{ defaultPlaceholder }}
         </button>
-        
-        <div class="overlay sm:top-20 lg:top-10" v-show="showDateRange" @click="closeOverlay">
-          <div class="timeDrop">
+
+        <div v-if="showDateRange" class="timeDrop absolute top-8 lg:top-10" >
+          <div ref="dropdownDate">
             <div class="my-5 mx-8">
               <div class="flex items-center mb-3">
                 <input type="date" :min="startDate" :max="endDate" v-model="sDate" class="border-2 rounded-lg border-navy-950 p-1 md:p-2 text-xs md:text-sm">
@@ -195,6 +197,7 @@ export default {
         datasets: [ 
           { 
             data: [
+              // format
               // {
               //   x: new Date("2022-06-01").setHours(0,0,0,0),
               //   o: 312.3,
@@ -203,46 +206,6 @@ export default {
               //   c: 312.79,
               //   s: [312.3, 312.79]
               // },
-              // {
-              //   x: new Date("2022-06-02").setHours(0,0,0,0),
-              //   o: 1.10,
-              //   h: 1.35,
-              //   l: 1.00,
-              //   c: 1.20,
-              //   s: [1.10, 1.20]
-              // },
-              // {
-              //   x: new Date("2022-06-03").setHours(0,0,0,0),
-              //   o: 1.20,
-              //   h: 1.50,
-              //   l: 1.20,
-              //   c: 1.50,
-              //   s: [1.20, 1.50]
-              // },
-              // {
-              //   x: new Date("2022-06-04").setHours(0,0,0,0),
-              //   o: 1.50,
-              //   h: 1.80,
-              //   l: 1.20,
-              //   c: 1.40,
-              //   s: [1.50, 1.40]
-              // },
-              // {
-              //   x: new Date("2022-06-05").setHours(0,0,0,0),
-              //   o: 1.40,
-              //   h: 2.00,
-              //   l: 1.30,
-              //   c: 1.75,
-              //   s: [1.40, 1.75]
-              // },
-              // {
-              //   x: new Date("2022-06-08").setHours(0,0,0,0),
-              //   o: 1.75,
-              //   h: 3.00,
-              //   l: 1.20,
-              //   c: 2.40,
-              //   s: [1.75, 2.40]
-              // }
             ],   
             backgroundColor: (ctx) => {
 
@@ -362,6 +325,18 @@ export default {
     this.fetchStockData();
 
   },
+  mounted() {
+    document.addEventListener('click', (event) => {
+      if (this.$refs.toggle && this.$refs.dropdown && !this.$refs.toggle.contains(event.target) && !this.$refs.dropdown.contains(event.target)) {
+          this.isOpen = false;
+      }
+    }),
+    document.addEventListener('click', (event) => {
+      if (this.$refs.toggleDate && this.$refs.dropdownDate && !this.$refs.toggleDate.contains(event.target) && !this.$refs.dropdownDate.contains(event.target)) {
+          this.showDateRange = false;
+      }
+    })
+  },
   methods: {
     resetZoomChart() {
       this.$refs.myChart.chart.resetZoom()
@@ -373,7 +348,6 @@ export default {
       } else {
         this.timeRange = selectedTimeRange
       }
-      // this.fetchStockData()
     },
     clearDate() {
       this.sDate = "",
@@ -399,18 +373,12 @@ export default {
     toggleDateRange() {
       this.showDateRange = !this.showDateRange;
     },
-    closeOverlay(event) {
-      if (event.target === event.currentTarget) {
-        this.showDateRange = false;
-      }
-    },
     toggleDropdown() {
       this.isOpen = !this.isOpen;
     },
     selectTimeLabel(label) {
       this.timeRange = label;
       this.isOpen = false;
-      // You can perform any other actions based on the selected time label here
     },
     formattedDate(chosenDate) {
       return `${chosenDate.getFullYear()}-${String(chosenDate.getMonth() + 1).padStart(2,'0')}-${String(chosenDate.getDate()).padStart(2,'0')}`
@@ -465,7 +433,8 @@ export default {
     },
   },
   watch: {
-    timeRange: 'fetchStockData'
+    timeRange: 'fetchStockData',
+    stockTicker: 'fetchStockData'
   }
 }
 </script>
@@ -498,18 +467,6 @@ export default {
   font-medium 
   py-2 
   px-3
-}
-
-.overlay {
-  @apply
-  flex 
-  justify-center 
-  items-center 
-  h-full 
-  z-10 
-  w-full 
-  fixed 
-  top-16
 }
 
 .option {
