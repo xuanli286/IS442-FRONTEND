@@ -35,10 +35,7 @@
     })
 
     function handleEvent() {
-        if (props.type == 'd') {
-            // TO-DO
-        }
-        else if (props.type == 'c') {
+        if (props.type == 'c') {
             router.push({path: '/create'});
         } else if (props.type == 'e') {
             router.push({

@@ -141,6 +141,7 @@ export default {
     handleModal() {
       if (this.modalMsg[0] !== "Something went wrong!") {
         this.$router.push('/home');
+        window.scrollTo(0, 0);
       }
       else {
         this.cancel();
