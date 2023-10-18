@@ -153,6 +153,7 @@
                 }
 
                 this.chartData.labels = []
+                this.chartData.datasets[0].data = []
        
                 axios.get(url)
                 .then(response => {
