@@ -47,14 +47,14 @@
 
               <td>{{ stock.price }}</td>
 
-              <td>
+              <td class="min-w-[140px]">
                 <button v-if="stock.qty>1" class="float-left" @click="stock.qty-=1">
                   <i class="bi bi-dash"></i>
                 </button>
                 <button v-else class="float-left text-gray-400" disabled>
                   <i class="bi bi-dash"></i>
                 </button>
-                {{ stock.qty }}
+                  <input type="number" class="cursor-only" v-model="stock.qty" min="0" max="999" @blur="qtyInput(idx)"/>
                 <button class="float-right" @click="stock.qty+=1">
                   <i class="bi bi-plus"></i>
                 </button>
@@ -195,6 +195,11 @@ export default {
         .catch((error) => {
           console.log(error.message);
         })
+      }
+    },
+    qtyInput(idx) {
+      if (!this.stocks[idx].qty || this.stocks[idx].qty <= 0) {
+        this.stocks[idx].qty = 1;
       }
     },
     addRow() {
@@ -384,5 +389,23 @@ table.navy-1 .border-effect {
   @apply
   font-semibold
   text-red-500 !important
+}
+
+.cursor-only {
+  @apply
+  border-none
+  outline-none
+  bg-transparent
+  text-current
+  text-base
+  p-0
+  text-center
+  focus:caret-black
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
