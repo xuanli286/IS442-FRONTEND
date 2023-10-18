@@ -111,18 +111,12 @@ export default {
                     cashAndCashEquivalentsAtCarryingValue:
                         "Cash & Cash Equivalent",
                     shortTermInvestments: "Other Short-Term Investment",
-                    // currentNetReceivables : "Net Receivables",
                     inventory: "Inventory",
                     otherCurrentAssets: "Other Current Assets",
                     totalNonCurrentAssets: "Total Non Current Assets",
-                    // goodwill : "Goodwill",
-                    // intangibleAssetsExcludingGoodwill : "Other Intangible Assets",
                     totalLiabilities: "Total Liabilities",
                     totalCurrentLiabilities: "Total Current Liabilities",
-                    // shortTermDebt : "Current Debt",
-                    // currentAccountsPayable : "Accounts Payable",
                     totalNonCurrentLiabilities: "Total Non-Current Liabilities",
-                    // longTermDebtNoncurrent : "Long-Term Debt",
                     otherNonCurrentLiabilities: "Other Non-Current Liabilities",
                     totalShareholderEquity: "Total Stockholder Equity",
                     commonStock: "Common Stock",
@@ -191,6 +185,8 @@ export default {
         loadFinancials() {
             this.formattedDates = [];
 
+            console.log(this.stock)
+
             axios
                 .get(
                     `http://localhost:5000/stockprice/${this.financial}/${this.stock}`
@@ -224,7 +220,8 @@ export default {
     },
     watch: {
         selectedView: "loadFinancials",
-        financial: "loadFinancials"
+        financial: "loadFinancials",
+        stock: "loadFinancials"
     },
 };
 </script>

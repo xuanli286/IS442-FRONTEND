@@ -1,5 +1,5 @@
 <template>
-    <div class="white-card mb-5">
+    <div class="white-card">
         <div class="flex items-center mb-4">
             <h4>My Portfolio</h4>
             <span class="inline-flex items-center justify-center w-8 h-8 ml-2 bg-gray-300 rounded-full font-semibold">

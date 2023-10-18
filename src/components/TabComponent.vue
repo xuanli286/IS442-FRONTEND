@@ -50,21 +50,31 @@ import axios from "../axiosConfig";
       },
       data() {
         return {
-          activeTab: 'tab2',
+          activeTab: 'tab1',
           stockInfo: {}
         };
       },
       created() {
 
-        axios.get(`http://localhost:5000/stock/${this.stock}/companyOverview`)
-        .then(response => {
-          this.stockInfo = response.data
-        })
-        .catch(error => {
-            console.error(error)
-        });
+        this.fetchStockData();
 
+      },
+      methods: {
+        fetchStockData() {
+          
+          axios.get(`http://localhost:5000/stock/${this.stock}/companyOverview`)
+          .then(response => {
+            this.stockInfo = response.data
+          })
+          .catch(error => {
+              console.error(error)
+          });
+        }
+      },
+      watch: {
+        stock: "fetchStockData"
       }
+        
         
     }
 </script>
