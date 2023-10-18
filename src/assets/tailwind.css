@@ -69,6 +69,7 @@ input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-g
     p-3
     rounded-xl
     text-center
+    hover:bg-navy-800
 }
 
 .btn-navy-dense {
@@ -80,6 +81,7 @@ input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-g
     py-2
     rounded-xl
     text-center
+    hover:bg-navy-800
 }
 
 /* white buttons */
@@ -103,6 +105,7 @@ input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-g
     py-2
     rounded-xl
     text-center
+    hover:bg-gray-100
 }
 
 /* grey button */
@@ -114,4 +117,5 @@ input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-g
     p-3
     rounded-xl
     text-center
+    hover:bg-[#b3bbc9]
 }
