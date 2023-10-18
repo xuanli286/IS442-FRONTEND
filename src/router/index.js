@@ -15,55 +15,6 @@ import { useUserStore } from "@/stores/useUserStore";
 import { storeToRefs } from "pinia";
 import axios from "axios";
 
-
-function guardMyroute(to, from, next) {
-  const { user, isAuthenticated } = useAuth0();
-
-  const store = useUserStore();
-  const {
-      loginUser,
-  } = storeToRefs(store);
-
-
- 
-  if (isAuthenticated.value) {
-   
-
-    const data = {
-      name: user.value.given_name || user.value.family_name ? user.value.name : user.value.nickname,
-      email: user.value.email,
-      id: user.value.sub,
-      picture: user.value.picture,
-      updatedAt: user.value['updated_at'],
-      totalCapitalAvailable: 10000,
-    };
-    axios.get(`http://localhost:5000/customer/${data.id}`)
-    .then((response) => {
-      loginUser.value = response.data.customerData;
-      localStorage.setItem('token', response.data.token)
-      
-      console.log(response.data.token);
-      next();
-    })
-    .catch((error) => {
-      if (error.message.includes('404')) {
-        axios.post(`http://localhost:5000/customer/`, data)
-          .then((response) => {
-            loginUser.value = data;
-            localStorage.setItem('token', response.data.token)
-           
-            
-          })
-          .catch((error) => {
-            console.log(error.message);
-          })
-      }
-    })
-  } else {
-    next();
-  }
-}
-
 const routes = [
   {
     path: '/',
@@ -74,7 +25,6 @@ const routes = [
     path: '/home',
     name: HomePage,
     component: HomePage,
-    beforeEnter: guardMyroute,
   },
   {
     path: '/verify',
@@ -84,37 +34,37 @@ const routes = [
   {
     path: '/create',
     name: CreatePortfolio,
-    component: CreatePortfolio
+    component: CreatePortfolio,
   },
   {
     path: '/update',
     name: UpdatePortfolio,
-    component: UpdatePortfolio
+    component: UpdatePortfolio,
   },
   {
     path: '/community',
     name: Community,
-    component: Community
+    component: Community,
   },
   {
     path: '/community/portfolio',
     name: CommunityPortfolio,
-    component: CommunityPortfolio
+    component: CommunityPortfolio,
   },
   {
     path: '/logs',
     name: UserLogs,
-    component: UserLogs
+    component: UserLogs,
   },
   {
     path: '/profile',
     name: MyProfile,
-    component: MyProfile
+    component: MyProfile,
   },
   {
     path: '/stock/:stockTicker',
     name: 'Stock',
-    component: Stock
+    component: Stock,
   },
 ]
 
