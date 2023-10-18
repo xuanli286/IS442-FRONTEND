@@ -59,6 +59,8 @@ function guardMyroute(to, from, next) {
           })
       }
     })
+  } else {
+    next();
   }
 }
 

@@ -83,7 +83,6 @@ async function retrievePortfolios() {
 }
 
 onMounted(async () => {
-  console.log(router)
   if (route.query.reload) {
     router.push('/home');
   }
