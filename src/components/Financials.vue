@@ -202,7 +202,9 @@ export default {
                         let day = fiscalDate[2];
                         let month = fiscalDate[1];
                         let year = fiscalDate[0];
-                        this.formattedDates.push(`${day}/${month}/${year}`);
+                        this.formattedDates.push(new Date(year, month-1, day).toLocaleString(undefined, {
+                        year: 'numeric', month: 'long'
+                    }));
 
                         if (this.selectedFinancials == "incomestatement") {
                             this.viewReports[i].operatingExpenses =

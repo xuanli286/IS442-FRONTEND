@@ -11,7 +11,9 @@
       <RouterLink :to="`/community/portfolio?pID=${p.portfolioId}`">
         <div class="p-8">
           <div class="font-bold mb-2">{{ p.portfolioName }}</div>
-          <div class="text-sm mb-7">Created by: {{ p.username }}, {{ p.dateCreated }}</div>
+          <div class="text-sm mb-7">Created by: {{ p.username }}, {{ new Date(p.dateCreated).toLocaleString(undefined, {
+                        year: 'numeric', month: 'long'
+                    }) }}</div>
           <div class="">Portfolio Value: ${{ p.portfolioValue }}</div>
         </div>
       </RouterLink>

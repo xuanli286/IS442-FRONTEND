@@ -73,7 +73,7 @@ const chartData = computed(() => {
 
   if (props.display == "monthly") {
     while (currentDatePointer <= new Date(currentYear, 11, 31)) {
-      let month = currentDatePointer.toLocaleString('default', { month: 'short' });
+      let month = currentDatePointer.toLocaleString('default', { month: 'long' });
       let year = currentDatePointer.getFullYear();
       let monthYearString = `${month} ${year}`;
       labels.push(monthYearString);
