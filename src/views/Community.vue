@@ -18,7 +18,7 @@
     </div>
 
     <!-- Pagination -->
-    <Pagination class="mb-10 float-right" :maxPage="Math.ceil(filteredData.length/5)" v-model="page"/>
+    <Pagination class="mb-10 float-right" :maxPage="Math.max(1, Math.ceil(filteredData.length/5))" v-model="page"/>
 
     <!-- Modal -->
     <Modal v-model="isModal" width="50%" height="fit-content">
