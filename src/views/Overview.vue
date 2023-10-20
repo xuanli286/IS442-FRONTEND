@@ -3,38 +3,50 @@
         <div>
             <div class="grid grid-cols-3 gap-4">
                 <div class="col-span-1 white-card">
-                    <p class="font-semibold mt-1">Overall Performance</p>
-                    <p class="mt-8 font-medium">Compound Annual Return</p>
-                    <p class="mt-4 font-medium">Dividends Received</p>
-                    <p class="mt-4 font-medium">Beta</p>
-                    <p class="mt-4 font-medium">Sharpe Ratio</p>
-                </div>
-                <div class="col-span-2 white-card">
                     <div class="flex items-center">
-                        <p class="font-semibold mr-2">Top 3 Performers</p>
+                        <p class="font-semibold mr-2">Portfolio Ranking</p>
                         <i class="fa fa-line-chart" aria-hidden="true"></i>
                     </div>
-                    <div v-if="isDataLoaded" class="grid grid-cols-3 gap-4 mt-5">
-                        <div class="border-2 border-blue-950 p-3 rounded-lg cursor-pointer hover:bg-slate-200"
-                            v-for="(portfolio, index) of top3PortfolioIdx" :key="index"
-                            @click="handleSelect(top3Portfolios[portfolio])">
-                            <div class="flex items-center justify-between">
-                                <p class="font-bold">{{ top3Portfolios[portfolio].portfolioName }}</p>
-                                <img class="h-6 w-auto" :src="require(`@/assets/${index}.png`)" alt="">
+                    <div v-if="isDataLoaded" class="mt-5">
+                        <div class="grid grid-cols-7 gap-1 text-graybrown p-2 text-xs font-medium mb-1">
+                            <div class="col-span-1">RANK</div>
+                            <div class="col-span-2 mr-4">PORTFOLIO NAME</div>
+                            <div class="col-span-2 ml-2">DATE CREATED</div>
+                            <div class="col-span-2">PORTFOLIO VALUE</div>
+                        </div>
+                        <div class="grid grid-cols-7 border-b border-grey-500 gap-1 text-sm p-3 cursor-help hover:bg-slate-200 hover:border hover:border-slate-300 hover:rounded-md" 
+                            v-for="(portfolio, index) of Object.keys(portfoliosValue)" :key="index"
+                            @click="handleSelect(portfoliosValue[portfolio])"
+                        >
+                            <div class="col-span-1">
+                                <i v-if="index == 0 || index == 1 || index == 2" class="fa-solid fa-crown" :class="index==0 ? 'text-gold' : index==1 ? 'text-silver' : 'text-bronze'"></i>
+                                {{ index + 1 }}
                             </div>
-                            <p class="text-gray-500 text-xs">Date Created: {{ (new
-                                Date(top3Portfolios[portfolio].dateCreated + '-01')).toLocaleString(undefined, {
+                            <div class="col-span-2 mr-4">{{ portfoliosValue[portfolio].portfolioName }}</div>
+                            <div class="col-span-2 ml-2">{{ (new
+                                Date(portfoliosValue[portfolio].dateCreated + '-01')).toLocaleString(undefined, {
                                     year: 'numeric', month: 'long'
-                                }) }}</p>
-                            <p class="text-sm font-medium mt-10">Portfolio Value</p>
-                            <p class="font-bold flex items-center">
-                                <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">USD</span>
-                                ${{ top3Portfolios[portfolio].portfolioValue.toFixed(2) }}
-                            </p>
+                                }) }}
+                            </div>
+                            <div class="col-span-2">
+                                <p class="font-bold flex items-center">
+                                    <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">USD</span>
+                                    ${{ portfoliosValue[portfolio].portfolioValue.toFixed(2) }}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-span-1 white-card grid grid-cols-1">
+                <div class="col-span-2 white-card">
+                    <p class="font-semibold mt-1 mb-3">
+                        Portfolio Performance
+                    </p>
+                    <button v-for="option in options" :key="option" @click="selectedOption = option" class="btn mx-2 pb-1 text-sm font-medium" :class="selectedOption==option ? 'border-b-4 border-navy-950' : ''">
+                        {{ option.charAt(0).toUpperCase() + option.slice(1) }}
+                    </button>
+                    <LineChart v-if="isDataLoaded" class="mt-6" :dataset="dataset" :display="selectedOption" :date="earliestDate" />
+                </div>
+                <div class="col-span-1 white-card">
                     <p class="font-semibold mt-1 mr-auto">
                         Market Exposure
                     </p>
@@ -43,19 +55,9 @@
                     </div>
                 </div>
                 <div class="col-span-2 white-card">
-                    <p class="font-semibold mt-1 mb-3">
-                        Portfolio Performance
-                    </p>
-                    <label class="mr-4" v-for="option in options" :key="option">
-                        <input type="radio" :value="option" v-model="selectedOption" />
-                        {{ option.charAt(0).toUpperCase() + option.slice(1) }}
-                    </label>
-                    <LineChart v-if="isDataLoaded" class="mt-4" :dataset="dataset" :display="selectedOption" :date="earliestDate" />
-                </div>
-                <div class="col-span-3 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
-                    <MapChart :countryData=countryCounter highColor="#192E47" lowColor="#4b87cc"
-                        countryStrokeColor="#909090" defaultCountryFillColor="#FFFFFF" />
+                    <MapChart class="cursor-pointer" :countryData=countryCounter highColor="#192E47" lowColor="#4b87cc"
+                        countryStrokeColor="#192e47" defaultCountryFillColor="#FFFFFF"/>
                 </div>
             </div>
         </div>
@@ -74,6 +76,7 @@ import MapChart from 'vue-map-chart'
 import axios from "../axiosConfig";
 import { useAuth0 } from '@auth0/auth0-vue';
 import getCountryISO2 from 'country-iso-3-to-2';
+import { current } from 'tailwindcss/colors';
 
 const { user, isAuthenticated } = useAuth0();
 
@@ -86,10 +89,8 @@ const portStore = usePortfolioStore();
 const {
     selectedPortfolio,
     portfoliosValue,
-    top3Portfolios,
 } = storeToRefs(portStore);
 
-const top3PortfolioIdx = ref([]);
 const dataset = ref({});
 const currentYear = ref("");
 const currentMonth = ref("");
@@ -109,18 +110,22 @@ function handleSelect(portfolio) {
 }
 
 watch(portfoliosValue, (newPortfoliosValue) => {
-    top3Portfolios.value = newPortfoliosValue.slice(0, 3);
+    console.log(newPortfoliosValue)
+    portfoliosValue.value = newPortfoliosValue;
 });
 
 onMounted(async () => {
     if (isAuthenticated) {
         portfoliosValue.value.sort((a, b) => b.portfolioValue - a.portfolioValue);
         const portfolios = portfoliosValue.value;
-        top3Portfolios.value = portfolios.slice(0, 3);
-        top3PortfolioIdx.value = Object.keys(top3Portfolios.value);
         let dates = [];
         let idx = {};
         for (let portfolio of portfolios) {
+            idx[portfolio.portfolioName] = {};
+            for (let key of Object.keys(portfolio.portStock)) {
+                // index, count
+                idx[portfolio.portfolioName][key] = [0, 0];
+            }
             for (let [key, value] of Object.entries(portfolio.portStock)) {
                 const stockName = key;
                 const country = 'USA'
@@ -138,11 +143,6 @@ onMounted(async () => {
                     let [day, month, year] = transaction.dateBought.split('/');
                     let dateBought = new Date(`${year}-${month}-${day}`);
                     dates.push(dateBought);
-                }
-            }
-            for (let key of Object.keys(portfolio.portStock)) {
-                if (!idx[key]) {
-                    idx[key] = 0;
                 }
             }
         }
@@ -170,6 +170,7 @@ onMounted(async () => {
                 qtrtooltip = new Array(4).fill(null);
                 for (let i = 1; i <= 12; i++) {
                     let result = '';
+                    let isBought = false;
                     for (let [key, value] of Object.entries(portfolio.portStock)) {
                         try {
                             const response = await axios.get(
@@ -177,24 +178,38 @@ onMounted(async () => {
                             );
                             let lastDayOfMonth = response.data["stockDate"];
                             let monthStockPrice = response.data["4. close"];
+                            let [boughtYear, month] = value[0].dateBought.split('-');
+                            let dateBought = new Date(`${boughtYear}-${month}`);
+                            dateBought = dateBought.toISOString();
                             if (portfolio.rebalancing) {
-                                console.log(idx[key], i, year)
-                                totalvalue[i - 1] += ((monthStockPrice - value[idx[key]].stockBoughtPrice) * value[idx[key]].quantity);
-                                stocks[key] = value[idx[key]].quantity;
-                                if (i % 3 == 0) {
-                                    idx[key]++;
+                                if (dateBought <= lastDayOfMonth) {
+                                    isBought = true;
+                                    if (idx[portfolio.portfolioName][key][1] % 3 == 0 && (!(i == parseInt(month, 10) && year == parseInt(boughtYear)))) {
+                                        idx[portfolio.portfolioName][key][0]++;
+                                    }
+                                    if (idx[portfolio.portfolioName][key][0] >= value.length) {
+                                        idx[portfolio.portfolioName][key][0] = 0;
+                                    }
+                                    let rebalance = value[idx[portfolio.portfolioName][key][0]];
+                                    console.log(i, parseInt(boughtYear, 10), portfolio.portfolioName, key, year, idx[portfolio.portfolioName].count, rebalance.stockBoughtPrice, monthStockPrice, dateBought)
+                                    totalvalue[i - 1] += ((monthStockPrice - rebalance.stockBoughtPrice) * rebalance.quantity);
+                                    stocks[key] = rebalance.quantity;
+                                    idx[portfolio.portfolioName][key][1]++;
                                 }
                             }
                             else {
-                                totalvalue[i - 1] += (monthStockPrice - value[0].stockBoughtPrice) * value[0].quantity;
-                                stocks[key] = value[0].quantity;
+                                if (dateBought <= lastDayOfMonth) {
+                                    isBought = true;
+                                    totalvalue[i - 1] += (monthStockPrice - value[0].stockBoughtPrice) * value[0].quantity;
+                                    stocks[key] = value[0].quantity;
+                                }
                             }
                         }
                         catch (error) {
                             console.log(error);
                         }
                     }
-                    if (i % 3 == 0) {
+                    if (i % 3 == 0 && isBought) {
                         let qtrIdx = Math.floor(i / 3) - 1;
                         let startIdx = qtrIdx * 3;
                         let endIdx = i - 1;
@@ -215,7 +230,6 @@ onMounted(async () => {
                 dataset.value[year][portfolio.portfolioName].yearly = yearTotal;
             }
         }
-        console.log(dataset.value)
         isDataLoaded.value = true;
     }
 });

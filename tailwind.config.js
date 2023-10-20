@@ -30,6 +30,9 @@ module.exports = {
           DEFAULT: colors.black,
           50: "#373737",
         },
+        gold: '#FFD700',
+        silver: '#C0C0C0',
+        bronze: '#CD7F32',
       },
       fontFamily: {
         mono: ["Consolas"],
