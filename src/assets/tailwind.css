@@ -105,7 +105,11 @@ input[type="text"].input-grey, textarea.input-grey, input[type="number"].input-g
     py-2
     rounded-xl
     text-center
-    hover:bg-gray-100
+    disabled:text-gray-400
+}
+.btn-white:not(:disabled):hover {
+    @apply
+    bg-gray-100
 }
 
 /* grey button */

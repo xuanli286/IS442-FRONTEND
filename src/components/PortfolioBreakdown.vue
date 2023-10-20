@@ -15,7 +15,11 @@
                         <i class="bi bi-arrow-down" :hidden="percentChange >= 0"></i>{{ percentChange }}%
                     </h5>
                 </div>
-                <p class="text-xs font-medium mb-4"><b>Date Created:</b> {{ portfolio.dateCreated }}</p>
+                <p class="text-xs font-medium mb-4"><b>Date Created:</b> 
+                    {{ new Date(portfolio.dateCreated).toLocaleString(undefined, {
+                        year: 'numeric', month: 'long'
+                    }) }}
+                </p>
                 <p class="text-sm font-medium mb-6"><b>Description:</b> {{ portfolio.portfolioDescription }}</p>
             </div>
             <div class="overflow-y-auto max-h-80">
@@ -43,7 +47,9 @@
                                     <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
                                 </RouterLink>
                             </td>
-                            <td>{{ transactions[0].dateBought }}</td>
+                            <td>{{ new Date(transactions[0].dateBought).toLocaleString(undefined, {
+                                    year: 'numeric', month: 'long'
+                                }) }}</td>
                             <td>{{ transactions[transactions.length - 1].quantity }}</td>
                             <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
                             <td>{{ transactions[transactions.length - 1].stockBoughtPrice.toFixed(2) }}</td>

@@ -81,12 +81,12 @@ const getPnl = async (stockKey, item) => {
     const stockPriceList = eodResponse.data.stockPriceList;
     const eodPrice = stockPriceList[0]['4. close'];
     const ytdPrice = stockPriceList[1]['4. close'];
-    console.log(ytdPrice)
-    console.log(eodPrice)
-    console.log(item.quantity)
+    // console.log(ytdPrice)
+    // console.log(eodPrice)
+    // console.log(item.quantity)
 
     portfolioData.dailyPnL += (eodPrice - ytdPrice) * item.quantity;
-    console.log(portfolioData.dailyPnL)
+    // console.log(portfolioData.dailyPnL)
 }
 
 const getCapital = async () => {

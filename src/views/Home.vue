@@ -43,10 +43,11 @@ import Overview from "@/views/Overview.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { usePortfolioStore } from "@/stores/usePortfolioStore";
 import axios from "axios";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const {user, isAuthenticated} = useAuth0();
 const router = useRouter();
+const route = useRoute();
 
 const isSelected = ref(false);
 
@@ -82,6 +83,10 @@ async function retrievePortfolios() {
 }
 
 onMounted(async () => {
+  if (route.query.reload) {
+    router.push('/home');
+  }
+
   if (isAuthenticated) {
     retrievePortfolios();
   }
@@ -102,13 +107,13 @@ async function deletePortfolio() {
   axios.delete(`http://localhost:5000/portfolio/delete/${selectedPortfolio.value.portfolioId}`)
   .then(async (response) => {
     console.log(response.data);
-    await retrievePortfolios();
 
     modalMsg.value = "Portfolio deleted!";
     isConfirm.value = false;
     isStatus.value = true;
 
-    selectedPortfolio.value = {portfolioName: 'Overview'}
+    isReroute.value = false;
+    router.push('/home?reload=true');
   })
   .catch((error) => {
     console.log(error.message);

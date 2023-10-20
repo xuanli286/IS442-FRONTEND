@@ -37,27 +37,32 @@
                         <th>Info</th>
                         <th>Status</th>
                     </tr>
-                    <tr v-for="log of filteredData.slice( (page-1)*6, page*6 )">
-                        <td>{{ formatDate(log.dateTime) }}</td>
-                        <td>{{ log.action }}</td>
-                        <td>{{ log.info }}</td>
-                        <td>
-                            <div
-                                class="badge"
-                                :class="{
-                                    'bg-[#28C191]': log.success,
-                                    'bg-[#FE4D35]': !log.success,
-                                }"
-                            >
-                                {{ log.success ? "Success" : "Failure" }}
-                            </div>
-                        </td>
+                    <template v-if="filteredData.length != 0">
+                        <tr v-for="log of filteredData.slice( (page-1)*6, page*6 )">
+                            <td>{{ formatDate(log.dateTime) }}</td>
+                            <td>{{ log.action }}</td>
+                            <td>{{ formatInfo(log.info) }}</td>
+                            <td>
+                                <div
+                                    class="badge"
+                                    :class="{
+                                        'bg-[#28C191]': log.success,
+                                        'bg-[#FE4D35]': !log.success,
+                                    }"
+                                >
+                                    {{ log.success ? "Success" : "Failure" }}
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                    <tr v-else>
+                        <td colspan="4">No logs available.</td>
                     </tr>
                 </table>             
             </div>
         </div>
 
-        <Pagination class="mb-10 mt-7 float-right" :maxPage="Math.ceil(filteredData.length/6)" v-model="page"/>
+        <Pagination class="mb-10 mt-7 float-right" :maxPage="Math.max(1, Math.ceil(filteredData.length/6))" v-model="page"/>
 
     </div>
 </template>
@@ -136,6 +141,13 @@ export default {
         },
     },
     methods: {
+        formatInfo(info) {
+            if (info.startsWith("Added x") || info.startsWith("Deleted x")) {
+                const value = info.match(/x(.*?)\s/)[1];
+                return info.replace(value, Number(value).toFixed(2));
+            }
+            return info;
+        },
         formatDate(dateTime) {
             if (!dateTime) return "";
             const date = new Date(dateTime);
