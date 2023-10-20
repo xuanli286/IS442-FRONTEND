@@ -69,15 +69,7 @@
                                         v-for="(item, index) in indexes"
                                         :key="index"
                                     >
-                                        {{
-                                            (
-                                                parseInt(
-                                                    viewReports[item][breakdown]
-                                                ) / 1000
-                                            ).toLocaleString("en-US", {
-                                                maximumFractionDigits: 0,
-                                            })
-                                        }}
+                                        {{formatNumber(viewReports[item][breakdown]) }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -182,6 +174,13 @@ export default {
                 this.financial = financials
             }
         },
+        formatNumber(x) {
+            if (isNaN(x)) {
+                return "-"
+            } else {
+                return (parseInt(x)/1000).toLocaleString();
+            }
+        },
         loadFinancials() {
             this.formattedDates = [];
 
@@ -197,14 +196,14 @@ export default {
 
                     this.viewReports = viewResponse;
 
+                    const options = {
+                        year: 'numeric', 
+                        month: 'short'
+                    }
+
                     for (let i = 0; i < 4; i++) {
-                        let fiscalDate = viewResponse[i].fiscalDateEnding.split("-");
-                        let day = fiscalDate[2];
-                        let month = fiscalDate[1];
-                        let year = fiscalDate[0];
-                        this.formattedDates.push(new Date(year, month-1, day).toLocaleString(undefined, {
-                        year: 'numeric', month: 'long'
-                    }));
+                        let fiscalDate = new Date(viewResponse[i].fiscalDateEnding);
+                        this.formattedDates.push(fiscalDate.toLocaleDateString("en-GB", options));
 
                         if (this.selectedFinancials == "incomestatement") {
                             this.viewReports[i].operatingExpenses =
