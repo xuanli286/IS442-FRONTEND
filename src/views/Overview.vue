@@ -8,13 +8,17 @@
                         <i class="fa fa-line-chart" aria-hidden="true"></i>
                     </div>
                     <div v-if="isDataLoaded" class="mt-5">
-                        <div class="grid grid-cols-7 gap-1 text-graybrown p-2 text-xs font-medium mb-1">
+                        <div class="grid grid-cols-8 gap-1 text-graybrown p-2 text-xs font-medium mb-1">
                             <div class="col-span-1">RANK</div>
-                            <div class="col-span-2 mr-4">PORTFOLIO NAME</div>
-                            <div class="col-span-2 ml-2">DATE CREATED</div>
-                            <div class="col-span-2">PORTFOLIO VALUE</div>
+                            <div class="col-span-2">NAME</div>
+                            <div class="col-span-2">DATE CREATED</div>
+                            <div class="col-span-2">
+                                VALUE
+                                <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">USD</span>
+                            </div>
+                            <div class="col-span-1">REBALANCE</div>
                         </div>
-                        <div class="grid grid-cols-7 border-b border-grey-500 gap-1 text-sm p-3 cursor-help hover:bg-slate-200 hover:border hover:border-slate-300 hover:rounded-md" 
+                        <div class="grid grid-cols-8 break-all items-center border-b border-grey-500 gap-2 text-sm p-3 cursor-help hover:bg-slate-200 hover:border hover:border-slate-300 hover:rounded-md" 
                             v-for="(portfolio, index) of Object.keys(portfoliosValue)" :key="index"
                             @click="handleSelect(portfoliosValue[portfolio])"
                         >
@@ -22,17 +26,20 @@
                                 <i v-if="index == 0 || index == 1 || index == 2" class="fa-solid fa-crown" :class="index==0 ? 'text-gold' : index==1 ? 'text-silver' : 'text-bronze'"></i>
                                 {{ index + 1 }}
                             </div>
-                            <div class="col-span-2 mr-4">{{ portfoliosValue[portfolio].portfolioName }}</div>
-                            <div class="col-span-2 ml-2">{{ (new
+                            <div class="col-span-2">{{ portfoliosValue[portfolio].portfolioName }}</div>
+                            <div class="col-span-2 text-xs">{{ (new
                                 Date(portfoliosValue[portfolio].dateCreated + '-01')).toLocaleString(undefined, {
                                     year: 'numeric', month: 'long'
                                 }) }}
                             </div>
                             <div class="col-span-2">
-                                <p class="font-bold flex items-center">
-                                    <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">USD</span>
+                                <p class="font-semibold flex items-center">
                                     ${{ portfoliosValue[portfolio].portfolioValue.toFixed(2) }}
                                 </p>
+                            </div>
+                            <div class="col-span-1">
+                                <p v-if="portfoliosValue[portfolio].rebalancing">Yes</p>
+                                <p v-else>No</p>
                             </div>
                         </div>
                     </div>
@@ -110,7 +117,6 @@ function handleSelect(portfolio) {
 }
 
 watch(portfoliosValue, (newPortfoliosValue) => {
-    console.log(newPortfoliosValue)
     portfoliosValue.value = newPortfoliosValue;
 });
 
@@ -191,7 +197,6 @@ onMounted(async () => {
                                         idx[portfolio.portfolioName][key][0] = 0;
                                     }
                                     let rebalance = value[idx[portfolio.portfolioName][key][0]];
-                                    console.log(i, parseInt(boughtYear, 10), portfolio.portfolioName, key, year, idx[portfolio.portfolioName].count, rebalance.stockBoughtPrice, monthStockPrice, dateBought)
                                     totalvalue[i - 1] += ((monthStockPrice - rebalance.stockBoughtPrice) * rebalance.quantity);
                                     stocks[key] = rebalance.quantity;
                                     idx[portfolio.portfolioName][key][1]++;
