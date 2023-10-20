@@ -43,7 +43,7 @@
                                     <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
                                 </RouterLink>
                             </td>
-                            <td>{{ transactions[transactions.length - 1].dateBought }}</td>
+                            <td>{{ transactions[0].dateBought }}</td>
                             <td>{{ transactions[transactions.length - 1].quantity }}</td>
                             <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
                             <td>{{ transactions[transactions.length - 1].stockBoughtPrice.toFixed(2) }}</td>
