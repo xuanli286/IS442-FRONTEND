@@ -275,6 +275,7 @@ export default {
                 size : 15,
             },
             boxPadding : 5,
+            intersect: false,
             callbacks: {
               afterTitle: (ctx) => {
                 if (ctx[0].raw.o <= ctx[0].raw.c) {
