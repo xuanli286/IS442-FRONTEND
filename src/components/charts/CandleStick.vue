@@ -254,6 +254,11 @@ export default {
           },
           y: {
             beginAtZero: false,
+            ticks: {
+              callback: function(value, index, ticks) {
+                return "$" + value.toFixed(2)
+              }
+            }
           },
         },
         borderWidth: 1,
