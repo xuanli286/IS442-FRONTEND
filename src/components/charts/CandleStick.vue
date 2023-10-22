@@ -160,7 +160,6 @@ const crosshair = {
 
       ctx.fillText(tooltip.dataPoints[0].label, x.getPixelForValue(tooltip.dataPoints[0].raw.x), top + height + 15)
 
-
       chart.canvas.style.cursor = 'crosshair'
     } else {
       chart.canvas.style.cursor = 'default'
@@ -229,7 +228,7 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         parsing: {
-          xAxisKey: "x",
+          // xAxisKey: "x",
           yAxisKey: "s"
         },
         layout: {
@@ -240,17 +239,17 @@ export default {
         },
         scales: {
           x: {
-            type: "timeseries",
-            time: {
-              unit: "day",
-              tooltipFormat: 'dd MMM, yyyy'
-            },
+            // type: "timeseries",
+            // time: {
+            //   unit: "day",
+            //   tooltipFormat: 'dd MMM, yyyy'
+            // },
             grid: {
               display: false
             },
-            ticks: {
-              display: false
-            },
+            // ticks: {
+            //   display: false
+            // },
           },
           y: {
             beginAtZero: false,
@@ -317,7 +316,7 @@ export default {
           },
         },
       },
-      plugins: [candlewick, crosshair, customScale],
+      plugins: [candlewick, crosshair],
     }
   },
   created() {
@@ -339,6 +338,7 @@ export default {
   },
   methods: {
     resetZoomChart() {
+      this.clearDate()
       this.$refs.myChart.chart.resetZoom()
     },
     selectedTimeRange(selectedTimeRange) {
@@ -352,16 +352,38 @@ export default {
     clearDate() {
       this.sDate = "",
       this.eDate = ""
-      this.$refs.myChart.chart.options.scales.x.min = this.startDate;
-      this.$refs.myChart.chart.options.scales.x.max = this.endDate;
+      this.$refs.myChart.chart.options.scales.x.min = this.chartData.labels[this.chartData.labels.length - 8]
+      this.$refs.myChart.chart.options.scales.x.max = this.chartData.labels[-1]
       this.$refs.myChart.chart.update(); // Update the chart
       this.showDateRange = false;
       this.defaultPlaceholder = "Select Date Range"
 
     },
+    findClosestDate(selectedDate) {
+
+      console.log(selectedDate)
+      const selectedTimestamp = new Date(selectedDate).getTime();
+
+      console.log(selectedTimestamp)
+
+      let closestDate = this.chartData.datasets[0].data[0].x;
+      let minDiff = Math.abs(selectedTimestamp - closestDate);
+
+      for (const date of this.chartData.datasets[0].data) {
+
+        const diff = Math.abs(selectedTimestamp - date.x);
+
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestDate = date.x;
+        }
+      }
+
+      return new Date(closestDate).toLocaleDateString("en-GB");
+    },
     updateChart() {
-      this.$refs.myChart.chart.options.scales.x.min = this.sDate;
-      this.$refs.myChart.chart.options.scales.x.max = this.eDate;
+      this.$refs.myChart.chart.options.scales.x.min = this.findClosestDate(this.sDate);
+      this.$refs.myChart.chart.options.scales.x.max = this.findClosestDate(this.eDate);
       this.$refs.myChart.chart.update(); // Update the chart
       this.showDateRange = false;
       
@@ -388,29 +410,29 @@ export default {
       this.loaded = false;
 
       // console.log(this.timeRange)
+      this.chartData.labels = []
+      this.chartData.datasets[0].data = []
 
       axios.get(`http://localhost:5000/stockprice/${this.timeRange}/${this.stockTicker}`)
       .then(response => {
 
         const stockPriceList = response.data.stockPriceList;
 
-        let idx = Math.min(9, stockPriceList.length - 1)
-
         const stDate = new Date(stockPriceList[stockPriceList.length - 1].stockDate)
         const eDate = new Date(stockPriceList[0].stockDate)
-        const startingDate = new Date(stockPriceList[idx].stockDate)
 
         this.startDate = this.formattedDate(stDate)
         this.endDate = this.formattedDate(eDate)
 
-        this.chartOptions.scales.x.min = this.formattedDate(startingDate)
-        this.chartOptions.scales.x.max = this.formattedDate(eDate)
-
         // need to reconstruct chartData
+
+        const minimum_y = []
 
         for(let i= 0; i < stockPriceList.length; i++) {
 
           let stockPriceObj = {}
+
+          this.chartData.labels.push(new Date(stockPriceList[i].stockDate).toLocaleDateString("en-GB"))
 
           stockPriceObj.x = new Date(stockPriceList[i].stockDate).setHours(0,0,0,0)
           stockPriceObj.o = stockPriceList[i]["1. open"]
@@ -421,7 +443,18 @@ export default {
 
           this.chartData.datasets[0].data[i] = stockPriceObj
 
+          minimum_y.push(stockPriceList[i]["3. low"])
+
         }
+
+        this.chartData.labels.reverse()
+
+        // console.log(this.chartData.labels)
+
+        this.chartOptions.scales.x.min = this.chartData.labels[this.chartData.labels.length - 8]
+        this.chartOptions.scales.x.max = this.chartData.labels[this.chartData.labels.length -1]
+
+        this.chartOptions.scales.y.min = Math.min(...minimum_y)
 
         this.loaded = true     
           
