@@ -127,6 +127,7 @@ const crosshair = {
       ctx.setLineDash([3,3]);
       ctx.lineWidth = 2;
       ctx.strokeStyle = "#192e47";
+      ctx.fillStyle = "#192e47"
 
       function lines(startX, startY, endX, endY) {
         ctx.beginPath();
