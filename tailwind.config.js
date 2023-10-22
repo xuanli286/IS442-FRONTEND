@@ -39,6 +39,9 @@ module.exports = {
         inter: ['Inter', 'sans-serif'],
         montserrat: ['Montserrat', 'sans-serif'],
       },
+      fontSize: {
+        xxs: ['10px'],
+      },
     }
   },
   variants: {

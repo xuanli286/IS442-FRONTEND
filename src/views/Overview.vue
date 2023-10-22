@@ -8,17 +8,14 @@
                         <i class="fa fa-line-chart" aria-hidden="true"></i>
                     </div>
                     <div v-if="isDataLoaded" class="mt-5">
-                        <div class="grid grid-cols-8 gap-1 text-graybrown p-2 text-xs font-medium mb-1">
-                            <div class="col-span-1">RANK</div>
-                            <div class="col-span-2">NAME</div>
-                            <div class="col-span-2">DATE CREATED</div>
-                            <div class="col-span-2">
-                                VALUE
-                                <span class="bg-blue-600 text-white rounded-full p-1 text-xs mr-1">USD</span>
-                            </div>
-                            <div class="col-span-1">REBALANCE</div>
+                        <div class="grid grid-cols-8 gap-1 text-graybrown text-xxs font-medium mb-1">
+                            <div class="col-span-1">Rank</div>
+                            <div class="col-span-2">Name</div>
+                            <div class="col-span-2">Date Created</div>
+                            <div class="col-span-2">Value</div>
+                            <div class="col-span-1">Rebalance</div>
                         </div>
-                        <div class="grid grid-cols-8 break-all items-center border-b border-grey-500 gap-2 text-sm p-3 cursor-help hover:bg-slate-200 hover:border hover:border-slate-300 hover:rounded-md" 
+                        <div class="grid grid-cols-8 break-all items-center border-b border-grey-500 gap-1 text-xs py-3 cursor-help hover:bg-slate-200 hover:border hover:border-slate-300 hover:rounded-md" 
                             v-for="(portfolio, index) of Object.keys(portfoliosValue)" :key="index"
                             @click="handleSelect(portfoliosValue[portfolio])"
                         >
@@ -27,7 +24,7 @@
                                 {{ index + 1 }}
                             </div>
                             <div class="col-span-2">{{ portfoliosValue[portfolio].portfolioName }}</div>
-                            <div class="col-span-2 text-xs">{{ (new
+                            <div class="col-span-2 text-xxs">{{ (new
                                 Date(portfoliosValue[portfolio].dateCreated + '-01')).toLocaleString(undefined, {
                                     year: 'numeric', month: 'long'
                                 }) }}
@@ -57,7 +54,7 @@
                     <p class="font-semibold mt-1 mr-auto">
                         Market Exposure
                     </p>
-                    <div>
+                    <div class="flex items-center justify-center h-full">
                         <DonutChart :isOverview="true" />
                     </div>
                 </div>
