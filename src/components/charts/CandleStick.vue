@@ -68,28 +68,11 @@
 <script>
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeSeriesScale } from 'chart.js'
-import 'chartjs-adapter-date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import axios from "../../axiosConfig";
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, TimeSeriesScale, zoomPlugin);
 
-const customScale = {
-  id: "customScale",
-  afterDatasetsDraw(chart, args, options) {
-    const {ctx, data, tooltip, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
-
-    ctx.save()
-
-    for (let i = 0; i < data.datasets[0].data.length; i++) {
-      ctx.textAlign = "center";
-      ctx.font = "12px sans-serif"
-      ctx.fillStyle = "#192e47"
-      ctx.fillText(new Date(data.datasets[0].data[i].x).toLocaleDateString("en-GB"), x.getPixelForValue(data.datasets[0].data[i].x), bottom + 25)
-    }
-
-  }
-}
 
 const candlewick = {
   id: "candlewick",
@@ -104,8 +87,10 @@ const candlewick = {
     const xMin = x.min;
     const xMax = x.max;
 
+
     for (let i = 0; i < data.datasets[0].data.length; i++) {
       const xCoord = x.getValueForPixel(meta.data[i].x);
+
       if (xCoord >= xMin && xCoord <= xMax) {
         ctx.beginPath();
         ctx.moveTo(meta.data[i].x, meta.data[i].y);
@@ -153,19 +138,12 @@ const crosshair = {
       ctx.beginPath();
       ctx.fillRect(0, y.getPixelForValue(tooltip.dataPoints[0].raw.c) - 12, left, 24)
 
-      // crosshair label x-axis
-      ctx.beginPath();
-      const textWidth = ctx.measureText(tooltip.dataPoints[0].raw.x).width + 10
-      ctx.fillRect(x.getPixelForValue(tooltip.dataPoints[0].raw.x) - (textWidth/2), top + height + 5, textWidth, 24)
-
       ctx.fillStyle = "white";
       ctx.font = "bold 12px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(tooltip.dataPoints[0].raw.c, left/2, y.getPixelForValue(tooltip.dataPoints[0].raw.c))
+      ctx.fillText("$" + tooltip.dataPoints[0].raw.c, left/2, y.getPixelForValue(tooltip.dataPoints[0].raw.c))
       
-      ctx.fillText(tooltip.dataPoints[0].label, x.getPixelForValue(tooltip.dataPoints[0].raw.x), top + height + 15)
-
       chart.canvas.style.cursor = 'crosshair'
     } else {
       chart.canvas.style.cursor = 'default'
@@ -196,22 +174,17 @@ export default {
         weeklyprice: "Weekly",
         monthlyprice: "Monthly"
       },
+      dateOptions: {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      },
       isOpen: false,
       showDateRange: false,
       chartData: {
         datasets: [ 
           { 
-            data: [
-              // format
-              // {
-              //   x: new Date("2022-06-01").setHours(0,0,0,0),
-              //   o: 312.3,
-              //   h: 314.299,
-              //   l: 309.69,
-              //   c: 312.79,
-              //   s: [312.3, 312.79]
-              // },
-            ],   
+            data: [],   
             backgroundColor: (ctx) => {
 
               const {raw: {o, c}} = ctx
@@ -234,31 +207,31 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         parsing: {
-          // xAxisKey: "x",
           yAxisKey: "s"
-        },
-        layout: {
-          padding: {
-            bottom: 25,
-            left: 10,
-          }
         },
         scales: {
           x: {
-            // type: "timeseries",
-            // time: {
-            //   unit: "day",
-            //   tooltipFormat: 'dd MMM, yyyy'
-            // },
             grid: {
               display: false
             },
-            // ticks: {
-            //   display: false
-            // },
+            title: {
+              display: true,
+              text: 'Dates',
+              font: {
+                weight: 'bold',
+              }
+            },
           },
           y: {
             beginAtZero: false,
+            // grace: 20,
+            title: {
+              display: true,
+              text: 'Price (in USD)',
+              font: {
+                weight: 'bold',
+              }
+            },
             ticks: {
               callback: function(value, index, ticks) {
                 return "$" + value.toFixed(2)
@@ -364,7 +337,7 @@ export default {
     clearDate() {
       this.sDate = "",
       this.eDate = ""
-      this.$refs.myChart.chart.options.scales.x.min = this.chartData.labels[this.chartData.labels.length - 8]
+      this.$refs.myChart.chart.options.scales.x.min = this.chartData.labels[this.chartData.labels.length - 38]
       this.$refs.myChart.chart.options.scales.x.max = this.chartData.labels[-1]
       this.$refs.myChart.chart.update(); // Update the chart
       this.showDateRange = false;
@@ -391,18 +364,15 @@ export default {
         }
       }
 
-      return new Date(closestDate).toLocaleDateString("en-GB");
+      return new Date(closestDate).toLocaleDateString("en-GB", this.dateOptions);
     },
     updateChart() {
       this.$refs.myChart.chart.options.scales.x.min = this.findClosestDate(this.sDate);
       this.$refs.myChart.chart.options.scales.x.max = this.findClosestDate(this.eDate);
       this.$refs.myChart.chart.update(); // Update the chart
       this.showDateRange = false;
-      
-      let formatsDate = this.sDate.split("-")
-      let formateDate = this.eDate.split("-")
 
-      this.defaultPlaceholder = `${formatsDate[2]}/${formatsDate[1]}/${formatsDate[0]} - ${formateDate[2]}/${formateDate[1]}/${formateDate[0]}`
+      this.defaultPlaceholder = `${new Date(this.sDate).toLocaleDateString("en-GB", this.dateOptions)} - ${new Date(this.eDate).toLocaleDateString("en-GB", this.dateOptions)}`
     },
     toggleDateRange() {
       this.showDateRange = !this.showDateRange;
@@ -444,7 +414,7 @@ export default {
 
           let stockPriceObj = {}
 
-          this.chartData.labels.push(new Date(stockPriceList[i].stockDate).toLocaleDateString("en-GB"))
+          this.chartData.labels.push(new Date(stockPriceList[i].stockDate).toLocaleDateString("en-GB", this.dateOptions))
 
           stockPriceObj.x = new Date(stockPriceList[i].stockDate).setHours(0,0,0,0)
           stockPriceObj.o = stockPriceList[i]["1. open"]
@@ -461,9 +431,7 @@ export default {
 
         this.chartData.labels.reverse()
 
-        // console.log(this.chartData.labels)
-
-        this.chartOptions.scales.x.min = this.chartData.labels[this.chartData.labels.length - 8]
+        this.chartOptions.scales.x.min = this.chartData.labels[this.chartData.labels.length - 38]
         this.chartOptions.scales.x.max = this.chartData.labels[this.chartData.labels.length -1]
 
         this.chartOptions.scales.y.min = Math.min(...minimum_y)
