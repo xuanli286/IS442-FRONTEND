@@ -94,25 +94,32 @@ const customScale = {
 const candlewick = {
   id: "candlewick",
   beforeDatasetsDraw(chart) {
-    const {ctx, data, scales: {x, y}} = chart;
+    const { ctx, data, scales: { x, y } } = chart;
+    const meta = chart.getDatasetMeta(0);
 
     ctx.save();
     ctx.lineWidth = 2;
-    ctx.strokeStyle= '#373737';
+    ctx.strokeStyle = '#373737';
+
+    const xMin = x.min;
+    const xMax = x.max;
 
     for (let i = 0; i < data.datasets[0].data.length; i++) {
-      ctx.beginPath();
-      ctx.moveTo(chart.getDatasetMeta(0).data[i].x, chart.getDatasetMeta(0).data[i].y);
-      ctx.lineTo(chart.getDatasetMeta(0).data[i].x, y.getPixelForValue(data.datasets[0].data[i].h));
-      ctx.stroke();
+      const xCoord = x.getValueForPixel(meta.data[i].x);
+      if (xCoord >= xMin && xCoord <= xMax) {
+        ctx.beginPath();
+        ctx.moveTo(meta.data[i].x, meta.data[i].y);
+        ctx.lineTo(meta.data[i].x, y.getPixelForValue(data.datasets[0].data[i].h));
+        ctx.stroke();
 
-      ctx.beginPath();
-      ctx.moveTo(chart.getDatasetMeta(0).data[i].x, chart.getDatasetMeta(0).data[i].y);
-      ctx.lineTo(chart.getDatasetMeta(0).data[i].x, y.getPixelForValue(data.datasets[0].data[i].l));
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(meta.data[i].x, meta.data[i].y);
+        ctx.lineTo(meta.data[i].x, y.getPixelForValue(data.datasets[0].data[i].l));
+        ctx.stroke();
+      }
     }
   }
-}
+};
 
 const crosshair = {
   id: "crosshair",
@@ -157,8 +164,6 @@ const crosshair = {
       ctx.textBaseline = "middle";
       ctx.fillText(tooltip.dataPoints[0].raw.c, left/2, y.getPixelForValue(tooltip.dataPoints[0].raw.c))
       
-      // console.log(tooltip.dataPoints[0].label)
-
       ctx.fillText(tooltip.dataPoints[0].label, x.getPixelForValue(tooltip.dataPoints[0].raw.x), top + height + 15)
 
       chart.canvas.style.cursor = 'crosshair'
