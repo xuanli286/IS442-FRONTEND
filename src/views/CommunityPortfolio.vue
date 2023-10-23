@@ -20,7 +20,7 @@
 import axios from "../axiosConfig";
 import { ref } from "vue";
 import SummarizedValue from '../components/SummarizedValue.vue';
-import Portfolio from "../components/Portfolio.vue";
+import Portfolio from "../views/Portfolio.vue";
 
 export default {
     name: "CommunityPortfolio",

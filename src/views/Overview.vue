@@ -1,7 +1,7 @@
 <template>
     <div class="text-blue-950">
         <div>
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-y-3 md:gap-3 mb-5">
                 <div class="col-span-1 white-card">
                     <div class="flex items-center">
                         <p class="font-semibold mr-2">Portfolio Ranking</p>
@@ -50,13 +50,11 @@
                     </button>
                     <LineChart v-if="isDataLoaded" class="mt-6" :dataset="dataset" :display="selectedOption" :date="earliestDate" />
                 </div>
-                <div class="col-span-1 white-card">
-                    <p class="font-semibold mt-1 mr-auto">
+                <div class="white-card grid grid-cols-1">
+                    <p class="font-semibold text-navy-950">
                         Market Exposure
                     </p>
-                    <div class="flex items-center justify-center h-full">
-                        <DonutChart :isOverview="true" />
-                    </div>
+                    <DonutChart :isOverview="true"/>
                 </div>
                 <div class="col-span-2 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>

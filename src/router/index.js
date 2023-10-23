@@ -9,7 +9,6 @@ import HomePage from "../views/Home.vue";
 import LandingPage from "@/views/Landing.vue";
 import MyProfile from "@/views/MyProfile.vue";
 import VerifyEmail from "@/views/VerifyEmail.vue";
-import Stock from "@/views/Stock.vue";
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useUserStore } from "@/stores/useUserStore";
 import { storeToRefs } from "pinia";
@@ -60,12 +59,7 @@ const routes = [
     path: '/profile',
     name: MyProfile,
     component: MyProfile,
-  },
-  {
-    path: '/stock/:stockTicker',
-    name: 'Stock',
-    component: Stock,
-  },
+  }
 ]
 
 const router = createRouter({

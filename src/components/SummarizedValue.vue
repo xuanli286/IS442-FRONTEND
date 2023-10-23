@@ -5,34 +5,44 @@
             <p><span class="font-semibold">Currency:</span> USD</p>
         </div>
         <div class="flex justify-between col-span-4">
-            <div class="flex items-center">
-                <div><i class="fa-solid fa-chart-pie fa-xl mr-5"></i></div>
+
+            <div class="md:inline-flex items-center justify-center">
+                <div>
+                    <i class="fa-solid fa-chart-pie fa-xl mb-5 md:mr-5 md:mb-0"></i>
+                </div>
                 <div>
                     <p class="text-graybrown">Portfolio Value</p>
                     <p class="font-bold text-navy-950"> ${{ Math.abs(portfolioData.totalEOD).toFixed(2) }}</p>
                 </div>
             </div>
-            <div class="flex items-center ">
-                <div><i class="fa-solid fa-scale-unbalanced-flip fa-xl mr-5"></i></div>
+
+            <div class="md:inline-flex items-center justify-center">
+                <div>
+                    <i class="fa-solid fa-scale-unbalanced-flip fa-xl mb-5 md:mr-5 md:mb-0"></i>
+                </div>
                 <div>
                     <p class="text-graybrown">Total P&L</p>
-                    <p class="font-bold" :class="portfolioData.unrealisedPnL < 0 ? 'text-red-500' : 'text-green-500'">
-                        ${{ Math.abs(portfolioData.unrealisedPnL).toFixed(2) }}</p>
+                    <p class="font-bold" :class="portfolioData.unrealisedPnL < 0 ? 'text-red-500' : 'text-green-500'"> ${{ Math.abs(portfolioData.unrealisedPnL).toFixed(2) }}</p>
                 </div>
             </div>
-            <div class="flex items-center">
-                <div><i class="fa-solid fa-piggy-bank fa-xl mr-5"></i></div>
+
+            <div class="md:inline-flex items-center justify-center">
+                <div>
+                    <i class="fa-solid fa-piggy-bank fa-xl mb-5 md:mr-5 md:mb-0"></i>
+                </div>
                 <div>
                     <p class="text-graybrown">Buying Power</p>
                     <p class="font-bold">${{ Math.abs(buyingPower).toFixed(2) }}</p>
                 </div>
             </div>
-            <div class="flex items-center">
-                <div><i class="fa-solid fa-calendar-check fa-xl mr-5"></i></div>
+
+            <div class="md:inline-flex items-center justify-center">
+                <div>
+                    <i class="fa-solid fa-calendar-check fa-xl mb-5 md:mr-5 md:mb-0"></i>
+                </div>
                 <div>
                     <p class="text-graybrown">Daily P&L</p>
-                    <p class="font-bold" :class="portfolioData.dailyPnL < 0 ? 'text-red-500' : 'text-green-500'">
-                        ${{ Math.abs(portfolioData.dailyPnL).toFixed(2) }}</p>
+                    <p class="font-bold" :class="portfolioData.dailyPnL < 0 ? 'text-red-500' : 'text-green-500'"> ${{ Math.abs(portfolioData.dailyPnL).toFixed(2) }}</p>
                 </div>
             </div>
         </div>
