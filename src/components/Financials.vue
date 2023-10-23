@@ -38,7 +38,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="breakdown in breakdowns[financial]">
+                            <tr v-for="breakdown in breakdowns[financial]" :key="breakdown">
                                 <td
                                     class="max-w-[230px] truncate ... md:max-w-full"
                                     :class="[
@@ -184,14 +184,11 @@ export default {
         loadFinancials() {
             this.formattedDates = [];
 
-            console.log(this.stock)
-
             axios
                 .get(
                     `http://localhost:5000/stockprice/${this.financial}/${this.stock}`
                 )
                 .then((response) => {
-                    console.log(response.data.annualReports);
                     const viewResponse = response.data[this.selectedView];
 
                     this.viewReports = viewResponse;

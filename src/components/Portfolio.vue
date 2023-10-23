@@ -27,10 +27,10 @@
                     </ul>
                 </div>
             </div>
-            <CandleStick :stockTicker="stockTicker"/>
+            <CandleStick v-if="loaded" :stockTicker="stockTicker"/>
         </div>
     </div>
-    <TabComponent :stock="stockTicker"/>
+    <TabComponent v-if="loaded" :stock="stockTicker"/>
 
 </template>
 
@@ -59,7 +59,8 @@ export default {
         return {
             isOpen: false,
             stocks: [],
-            stockTicker: ""
+            stockTicker: "",
+            loaded: false,
         }
     },
     mounted() {
@@ -88,6 +89,7 @@ export default {
             this.stocks = Object.keys(response.data.portStock);
 
             this.stockTicker = this.stocks[0]
+            this.loaded = true;
             
         })
         .catch((error) => {
