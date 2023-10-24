@@ -87,14 +87,13 @@ const candlewick = {
     const xMin = x.min;
     const xMax = x.max;
     let yMax = y.max;
+    let dataArr = [];
 
     for (let i = 0; i < data.datasets[0].data.length; i++) {
       const xCoord = x.getValueForPixel(meta.data[i].x);
-
       if (xCoord >= xMin && xCoord <= xMax) {
-        if (data.datasets[0].data[i].h > yMax) {
-          yMax = data.datasets[0].data[i].h;
-        }
+        dataArr.push(data.datasets[0].data[i].h)
+        yMax = Math.max(...dataArr)
         ctx.beginPath();
         ctx.moveTo(meta.data[i].x, meta.data[i].y);
         ctx.lineTo(meta.data[i].x, y.getPixelForValue(data.datasets[0].data[i].h));
