@@ -22,22 +22,26 @@
                 </p>
                 <p class="text-sm font-medium mb-6"><b>Description:</b> {{ portfolio.portfolioDescription }}</p>
             </div>
-            <div class="overflow-y-auto max-h-80">
+            <div class="overflow-y-auto max-h-96">
                 <table class="w-full text-center text-xs lg:text-base">
-                    <thead class="border-b-2 border-navy-950">
+                    <thead class="sticky top-0 bg-white" style="box-shadow: 0 2px 0 0 #192e47">
                         <tr>
                             <th class="text-left">Stock Ticker <br class="lg:hidden"><span
                                     class="text-xs lg:text-sm font-medium">(Symbol | Sector)</span></th>
                             <th>Date Bought</th>
+                            <th>Quantity</th>
                             <th>Position</th>
                             <th>Current Price <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
                             <th>Bought Price <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
+                            <th>Allocation<br class="lg:hidden"><span class="text-xs lg:text-base">(%)</span></th>
+                            <th>Quantity Change<br class="lg:hidden"><span class="text-xs lg:text-base">(%)</span></th>
                             <th>P&L <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
                         </tr>
                     </thead>
-                    <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker">
-                        <tr class="border-b border-navy-950" v-if="stockInfo[stockTicker]">
-                            <td class="font-semibold text-left">
+                    <div class="mb-[2px]"></div>
+                    <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker" class="border-b border-navy-950">
+                        <tr v-if="stockInfo[stockTicker]" v-for="(t, idx) in transactions">
+                            <td class="font-semibold text-left" v-if="idx==0">
                                 {{ stockTicker }}
                                 <span
                                     class="inline-flex items-center justify-center px-2 h-6 mx-2 bg-navy-150 rounded-lg text-xs lg:text-sm font-medium">
@@ -45,12 +49,17 @@
                                 </span>
                                 <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
                             </td>
-                            <td>{{ new Date(transactions[0].dateBought).toLocaleString(undefined, {
+                            <td v-else></td>
+                            
+                            <td>{{ new Date(t.dateBought).toLocaleString(undefined, {
                                     year: 'numeric', month: 'long'
                                 }) }}</td>
+                            <td>{{ t.quantity }}</td>
                             <td>{{ transactions[transactions.length - 1].quantity }}</td>
                             <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
-                            <td>{{ transactions[transactions.length - 1].stockBoughtPrice.toFixed(2) }}</td>
+                            <td>{{ t.stockBoughtPrice.toFixed(2) }}</td>
+                            <td>{{ t.allocation }}</td>
+                            <td>{{ getQtyChange(transactions, idx) }}</td> <!---->
                             <td
                                 :class="getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'">
                                 {{ Math.abs(getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice)) }}
@@ -145,6 +154,7 @@ export default {
                 const response = await axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`);
                 const portStock = response.data.portStock;
                 this.portfolioStocks = portStock;
+                console.log(portStock)
 
                 let stocks = Object.keys(response.data.portStock);
                 let eodSum = 0;
@@ -181,6 +191,12 @@ export default {
         },
         getPnL(qty, eod, boughtPrice) {
             return ((eod - boughtPrice) * qty).toFixed(2);
+        },
+        getQtyChange(trans, idx) {
+            if (idx >= 1) {
+                return ( (( trans[idx].quantity - trans[idx-1].quantity )/trans[idx-1].quantity) * 100 ).toFixed(2);
+            }
+            return '-'
         },
     },
     watch: {
