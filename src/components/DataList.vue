@@ -58,7 +58,6 @@ export default {
     handleBlur(event) {
       if (this.$refs.dropdown && !this.$refs.dropdown.contains(event.relatedTarget)) {
         this.isActive = false;
-        // console.log(event.relatedTarget)
 
         if (this.$refs.close && this.$refs.close.contains(event.relatedTarget)) {
           this.clear();

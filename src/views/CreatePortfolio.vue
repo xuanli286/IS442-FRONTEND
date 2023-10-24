@@ -272,8 +272,6 @@ export default {
 
       axios.post(`http://localhost:5000/portfolio/create`, pfData)
       .then((response) => {
-        console.log(response.data);
-        console.log(pfData);
         this.modalMsg[0] = "Portfolio has been successfully created!";
         this.pName = null;
         this.pDesc = null;

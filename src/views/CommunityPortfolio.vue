@@ -52,7 +52,6 @@ export default {
                     axios.get(`http://localhost:5000/customer/${response.data.userId}`)
                     .then((response) => {
                         this.creator = response.data.customerData.name;
-                        console.log(this.pfData);
                     })
                     .catch((error) => {
                         this.creator = this.pfData.userId;

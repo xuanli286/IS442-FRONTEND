@@ -349,10 +349,7 @@ export default {
     },
     findClosestDate(selectedDate) {
 
-      console.log(selectedDate)
       const selectedTimestamp = new Date(selectedDate).getTime();
-
-      console.log(selectedTimestamp)
 
       let closestDate = this.chartData.datasets[0].data[0].x;
       let minDiff = Math.abs(selectedTimestamp - closestDate);
@@ -393,8 +390,6 @@ export default {
     fetchStockData() {
 
       this.loaded = false;
-
-      // console.log(this.timeRange)
       this.chartData.labels = []
       this.chartData.datasets[0].data = []
 

@@ -7,7 +7,7 @@
       <button class="btn-outline-white font-bold" @click="isModal=true">Filter</button>
       <div class="hidden md:block"></div>
     </div>
-    <div class="bg-white rounded-md mb-10 hover:shadow-xl transition-transform transform hover:scale-[1.01]" v-for="(p, idx) of filteredData.slice( (page-1)*5, page*5 )">
+    <div class="bg-white rounded-md mb-10 hover:shadow-xl transition-transform transform hover:scale-[1.01]" v-for="(p, idx) of filteredData.slice( (page-1)*5, page*5 )" :key="idx">
       <RouterLink :to="`/community/portfolio?pID=${p.portfolioId}`">
         <div class="p-8">
           <div class="font-bold mb-2">{{ p.portfolioName }}</div>
@@ -25,7 +25,7 @@
     <!-- Modal -->
     <Modal v-model="isModal" width="50%" height="fit-content">
       <h3 class="text-navy-950 mb-8">Sort By</h3>
-      <div v-for="(condition, ppty, idx) in conditions" class="mb-2">
+      <div v-for="(condition, ppty, idx) in conditions" class="mb-2" :key="idx">
         <label>
           <input type="radio" v-model="option" name="sortby" :value="ppty"> {{ condition.name }}
         </label>
@@ -70,6 +70,7 @@ export default {
   computed: {
     filteredData() {
       var result = JSON.parse(JSON.stringify(this.portfolios));
+      result = result.sort((a, b) => a.portfolioName.toLowerCase().localeCompare(b.portfolioName.toLowerCase()));
       
       if (this.query) {
         result = this.portfolios.filter((item) => ( item.portfolioName.toLowerCase().includes(this.query.toLowerCase()) || item.username.toLowerCase().includes(this.query.toLowerCase())));
@@ -103,7 +104,6 @@ export default {
       .catch((error) => {
         console.log(error.message);
       })
-      console.log(this.portfolios);
     },
     clearConditions() {
       this.option = "";

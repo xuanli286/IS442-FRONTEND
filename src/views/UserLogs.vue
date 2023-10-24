@@ -38,7 +38,7 @@
                         <th>Status</th>
                     </tr>
                     <template v-if="filteredData.length != 0">
-                        <tr v-for="log of filteredData.slice( (page-1)*6, page*6 )">
+                        <tr v-for="log of filteredData.slice( (page-1)*6, page*6 )" :key="log">
                             <td>{{ formatDate(log.dateTime) }}</td>
                             <td>{{ log.action }}</td>
                             <td>{{ formatInfo(log.info) }}</td>
@@ -81,20 +81,11 @@ export default {
     setup() {
         const userID = useUserStore().loginUser.id;
         const testData = ref([]);
-        console.log(userID);
 
         axios
             .get(`http://localhost:5000/accesslog/getlogs/${userID}`)
             .then((response) => {
-                console.log(response.data);
                 testData.value = response.data;
-
-                // action: "CREATE";
-                // dateTime: "2023-10-05T00:04:00.009722300";
-                // info: "Created Portfolio";
-                // ipAddress: "0:0:0:0:0:0:0:1";
-                // success: true;
-                // userId: "google-oauth2|117368012179621015773";
             })
             .catch((error) => {
                 console.log(error.message);

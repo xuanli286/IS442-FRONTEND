@@ -106,12 +106,9 @@ function handleSelect(portfolio) {
 async function deletePortfolio() {
   axios.delete(`http://localhost:5000/portfolio/delete/${selectedPortfolio.value.portfolioId}`)
   .then(async (response) => {
-    console.log(response.data);
-
     modalMsg.value = "Portfolio deleted!";
     isConfirm.value = false;
     isStatus.value = true;
-
     isReroute.value = false;
     router.push('/home?reload=true');
   })

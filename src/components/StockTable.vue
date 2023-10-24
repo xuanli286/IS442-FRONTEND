@@ -220,7 +220,6 @@ export default {
     },
     deleteRow(idx) {
       this.stocks.splice(idx, 1);
-      console.log(this.stocks);
     },
     newStock(idx) {
       let stock = this.stocks[idx];
@@ -252,7 +251,6 @@ export default {
         if (this.date) {
           axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${stock.name}?month=${this.date.split("-")[1]}&year=${this.date.split("-")[0]}`)
           .then((response) => {
-            console.log(response.data)
             stock.price = this.date ? response.data["4. close"] : "-";
 
           })
@@ -268,14 +266,12 @@ export default {
         stock.empty = true;
       }
 
-      console.log(this.stocks);
     },
     getPrices() {
       for (let i=0; i<this.stocks.length; i++) {
         if (this.stocks[i].name) {
           axios.get(`http://localhost:5000/stockprice/getmonthlypricebydate/${this.stocks[i].name}?month=${this.date.split("-")[1]}&year=${this.date.split("-")[0]}`)
           .then((response) => {
-            console.log(response.data)
             this.stocks[i].price = this.date ? response.data["4. close"] : "-";
 
           })

@@ -53,7 +53,6 @@ watch(isLoading, (newIsLoading, oldIsLoading) => {
         loginUser.value = response.data.customerData;
         localStorage.setItem('token', response.data.token)
         
-        console.log(response.data.token);
         display.value = true;
       })
       .catch((error) => {

@@ -10,5 +10,4 @@
 <script setup>
   import { useAuth0 } from '@auth0/auth0-vue';
   const { user, isAuthenticated } = useAuth0();
-  console.log(user)
 </script>

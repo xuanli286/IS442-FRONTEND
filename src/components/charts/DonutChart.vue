@@ -115,17 +115,10 @@
                             boxPadding : 2,
                             callbacks: {
                                 label: function(context) {
-
-                                    // console.log(context.dataset.data)
-                                    
                                     const totalSum = context.dataset.data.reduce((total, datapoint) => {
                                         return total + datapoint;
                                     });
-
-                                    // console.log(totalSum);
-
                                     const indiv = (context.parsed / totalSum * 100).toFixed(2);
-                                    // console.log(indiv)
                                     return `${indiv}%`;
                                 }
                                 

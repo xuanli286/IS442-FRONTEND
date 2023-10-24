@@ -82,7 +82,6 @@
             loginUser.value.totalCapitalAvailable += depositAmount.value;
             depositAmount.value = "";
             isActive.value = false;
-            console.log(response.data)
         })
         .catch((error) => {
             console.log(error.message);

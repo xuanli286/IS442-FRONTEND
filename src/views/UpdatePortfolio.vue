@@ -144,9 +144,8 @@ export default {
           this.isPublic = response.data.public;
           this.isRebalance = response.data.rebalancing;
           this.stockData = response.data.portStock;
-          console.log(response.data)
         } else {
-          console.log("who u");
+          console.log("Invalid User");
         }
       })
       .catch((error) => {
@@ -267,12 +266,9 @@ export default {
         "rebalancing": this.isRebalance,
         "portStock": allStocks,
       }
-
-      console.log(newPf);
       
       axios.post(`http://localhost:5000/portfolio/updateportfolio`, newPf)
       .then((response) => {
-        console.log(response.data);
         this.modalMsg[0] = "Portfolio has been successfully updated!";
         this.modalMsg[1] = "Go to Overview";
         

@@ -40,31 +40,33 @@
                     </thead>
                     <div class="mb-[2px]"></div>
                     <tbody v-for="(transactions, stockTicker) in portfolioStocks" :key="stockTicker" class="border-b border-navy-950">
-                        <tr v-if="stockInfo[stockTicker]" v-for="(t, idx) in transactions">
-                            <td class="font-semibold text-left" v-if="idx==0">
-                                {{ stockTicker }}
-                                <span
-                                    class="inline-flex items-center justify-center px-2 h-6 mx-2 bg-navy-150 rounded-lg text-xs lg:text-sm font-medium">
-                                    {{ stockInfo[stockTicker].symbol }}
-                                </span>
-                                <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
-                            </td>
-                            <td v-else></td>
+                        <template v-if="stockInfo[stockTicker]">
+                            <tr v-for="(t, idx) in transactions" :key="idx">
+                                <td class="font-semibold text-left" v-if="idx==0">
+                                    {{ stockTicker }}
+                                    <span
+                                        class="inline-flex items-center justify-center px-2 h-6 mx-2 bg-navy-150 rounded-lg text-xs lg:text-sm font-medium">
+                                        {{ stockInfo[stockTicker].symbol }}
+                                    </span>
+                                    <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
+                                </td>
+                                <td v-else></td>
                             
-                            <td>{{ new Date(t.dateBought).toLocaleString(undefined, {
-                                    year: 'numeric', month: 'long'
-                                }) }}</td>
-                            <td>{{ t.quantity }}</td>
-                            <td>{{ transactions[transactions.length - 1].quantity }}</td>
-                            <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
-                            <td>{{ t.stockBoughtPrice.toFixed(2) }}</td>
-                            <td>{{ t.allocation }}</td>
-                            <td>{{ getQtyChange(transactions, idx) }}</td> <!---->
-                            <td
-                                :class="getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'">
-                                {{ Math.abs(getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice)) }}
-                            </td>
-                        </tr>
+                                <td>{{ new Date(t.dateBought).toLocaleString(undefined, {
+                                        year: 'numeric', month: 'long'
+                                    }) }}</td>
+                                <td>{{ t.quantity }}</td>
+                                <td>{{ transactions[transactions.length - 1].quantity }}</td>
+                                <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
+                                <td>{{ t.stockBoughtPrice.toFixed(2) }}</td>
+                                <td>{{ t.allocation }}</td>
+                                <td>{{ getQtyChange(transactions, idx) }}</td> <!---->
+                                <td
+                                    :class="getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'">
+                                    {{ Math.abs(getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice)) }}
+                                </td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
@@ -154,7 +156,6 @@ export default {
                 const response = await axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`);
                 const portStock = response.data.portStock;
                 this.portfolioStocks = portStock;
-                console.log(portStock)
 
                 let stocks = Object.keys(response.data.portStock);
                 let eodSum = 0;
