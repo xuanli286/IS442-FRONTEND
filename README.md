@@ -1,27 +1,27 @@
-<h2 id="top">Table of Contents</h2>
+## Table of Contents
 <ol>
     <li>
-        <a href="#about">About the Project</a>
+        <a href="#about-the-project">About the Project</a>
     </li>
     <li>
         <a href="#features">Features</a>
     </li>
     <li>
-        <a href="#built">Built with</a>
+        <a href="#built-with">Built with</a>
         <ul>
             <li>
-                <a href="#fe">Frontend</a>
+                <a href="#frontend">Frontend</a>
             </li>
             <li>
-                <a href="#be">Backend</a>
+                <a href="#backend">Backend</a>
             </li>
         </ul>
     </li>
     <li>
-        <a href="#start">Getting Started</a>
+        <a href="#getting-started">Getting Started</a>
         <ul>
             <li>
-                <a href="#prereq">Prerequisites</a>
+                <a href="#prerequisites">Prerequisites</a>
             </li>
             <li>
                 <a href="#usage">Usage</a>
@@ -29,19 +29,19 @@
         </ul>
     </li>
     <li>
-        <a href="#ack">Acknowledgements</a>
+        <a href="#acknowledgements">Acknowledgements</a>
     </li>
 </ol>
 
 
-<h2 id="about">About the Project</h2>
+## About the Project
 <p>
     Our application aims to help investment advisors and finance professionals analyze investment portfolios' performance and make informed investment decisions.
 </p>
-<p style="text-align:right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 
-<h2 id="features">Features</h2>
+## Features
 <ol>
     <li>Create, update and delete your portfolios</li>
     <li>View your profile information</li>
@@ -75,12 +75,12 @@
     </li>
 </ol>
 
-<p style="text-align:right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 
-<h2 id="built">Built with</h2>
+## Built with
 
-<h3 id="fe">Frontend</h3>
+### Frontend
 <ul>
     <li>
         <a href="https://vuejs.org">Vue.js</a>
@@ -93,7 +93,7 @@
     </li>
 </ul>
 
-<h3 id="be">Backend</h3>
+### Backend
 <ul>
     <li>
         <a href="https://www.java.com/en/">Java</a>
@@ -112,12 +112,12 @@
     </li>
 </ul>
 
-<p style="text-align:right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 
-<h2 id="start">Getting Started</h2>
+## Getting Started
 
-<h3 id="prereq">Prerequisites</h3>
+### Prerequisites
 <ul>
     <li>
         <a href="https://nodejs.org/en">Node.js 18.17.1</a>
@@ -130,7 +130,7 @@
     </li>
 </ul>
 
-<h3 id="usage">Usage</h3>
+### Usage
 
 1. Open the IS442-FRONTEND folder
 2. Install required dependencies
@@ -151,10 +151,10 @@ npm run serve
 mvn spring-boot:run
 ```
 
-<p style="text-align:right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
 
 
-<h2 id="ack">Acknowledgements</h2>
+## Acknowledgements
 <ul>
     <li>Sioh Rui En, Regine</li>
     <li>Tan Li Xuan, Germaine</li>
@@ -164,4 +164,4 @@ mvn spring-boot:run
     <li>Low Xuanli</li>
 </ul>
 
-<p style="text-align:right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
