@@ -48,7 +48,7 @@
                                     <span class="text-xs lg:text-sm">{{ stockInfo[stockTicker].sector }}</span>
                                 </td>
                                 <td class="text-left font-semibold" v-else-if="idx == 1">
-                                    Current Price: {{ (stockInfo[stockTicker].eod).toFixed(2) }}
+                                    Current Price: ${{ (stockInfo[stockTicker].eod).toFixed(2) }}
                                 </td>
                                 <td class="text-left font-semibold" v-else-if="idx == 2">
                                     Allocation: {{ (t.allocation * 100).toFixed(1) }}%
@@ -68,7 +68,7 @@
                             </tr>
                             <tr v-if="transactions.length == 1">
                                 <td class="text-left font-semibold">
-                                    Current Price: {{ (stockInfo[stockTicker].eod).toFixed(2) }}
+                                    Current Price: ${{ (stockInfo[stockTicker].eod).toFixed(2) }}
                                 </td>
                             </tr>
                             <tr v-if="transactions.length == 1">
