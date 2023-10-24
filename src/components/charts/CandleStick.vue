@@ -93,7 +93,7 @@ const candlewick = {
       const xCoord = x.getValueForPixel(meta.data[i].x);
       if (xCoord >= xMin && xCoord <= xMax) {
         dataArr.push(data.datasets[0].data[i].h)
-        yMax = Math.max(...dataArr)
+        yMax = Math.ceil(Math.max(...dataArr) / 5) * 5
         ctx.beginPath();
         ctx.moveTo(meta.data[i].x, meta.data[i].y);
         ctx.lineTo(meta.data[i].x, y.getPixelForValue(data.datasets[0].data[i].h));
@@ -103,9 +103,9 @@ const candlewick = {
         ctx.moveTo(meta.data[i].x, meta.data[i].y);
         ctx.lineTo(meta.data[i].x, y.getPixelForValue(data.datasets[0].data[i].l));
         ctx.stroke();
+        chart.options.scales.y.max = yMax;
       }
     }
-    chart.options.scales.y.max = Math.ceil(yMax / 100) * 100;
   }
 };
 
@@ -238,7 +238,8 @@ export default {
             ticks: {
               callback: function(value, index, ticks) {
                 return "$" + value.toFixed(2)
-              }
+              },
+              stepSize: 5,
             }
           },
         },
@@ -432,8 +433,7 @@ export default {
         this.chartOptions.scales.x.min = this.chartData.labels[this.chartData.labels.length - 38]
         this.chartOptions.scales.x.max = this.chartData.labels[this.chartData.labels.length -1]
 
-        this.chartOptions.scales.y.min = Math.floor(Math.min(...minimum_y) / 100) * 100;
-
+        this.chartOptions.scales.y.min = Math.floor(Math.min(...minimum_y) / 5) * 5;
         this.loaded = true     
           
       })
