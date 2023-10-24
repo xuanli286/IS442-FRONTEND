@@ -79,24 +79,30 @@ export default {
             this.isOpen = false; // Close the dropdown
             this.stockTicker = stock;
         },
+        fetchStocks() {
+            axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`)
+            .then((response) => {
+
+                this.stocks = Object.keys(response.data.portStock).sort();
+
+                this.stockTicker = this.stocks[0]
+                this.loaded = true;
+                
+            })
+            .catch((error) => {
+                console.log(error.message);
+            })
+        }
 
     },
-    created() {
+    mounted() {
 
-        axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`)
-        .then((response) => {
-
-            this.stocks = Object.keys(response.data.portStock);
-
-            this.stockTicker = this.stocks[0]
-            this.loaded = true;
-            
-        })
-        .catch((error) => {
-            console.log(error.message);
-        })
+        this.fetchStocks();
 
     },
+    watch: {
+        portfolio: "fetchStocks"
+    }
 
 }
 </script>

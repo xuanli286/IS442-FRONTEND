@@ -30,7 +30,6 @@
                                     class="text-xs lg:text-sm font-medium">(Symbol | Sector)</span></th>
                             <th>Date Bought</th>
                             <th>Quantity</th>
-                            <th>Position</th>
                             <th>Current Price <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
                             <th>Bought Price <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
                             <th>Allocation<br class="lg:hidden"><span class="text-xs lg:text-base">(%)</span></th>
@@ -56,13 +55,13 @@
                                         year: 'numeric', month: 'long'
                                     }) }}</td>
                                 <td>{{ t.quantity }}</td>
-                                <td>{{ transactions[transactions.length - 1].quantity }}</td>
                                 <td>{{ (stockInfo[stockTicker].eod).toFixed(2) }}</td>
                                 <td>{{ t.stockBoughtPrice.toFixed(2) }}</td>
                                 <td>{{ t.allocation }}</td>
-                                <td>{{ getQtyChange(transactions, idx) }}</td> <!---->
+                                <td>{{ getQtyChange(transactions, idx) }}</td>
                                 <td
-                                    :class="getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'">
+                                    :class="getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'"
+                                >
                                     {{ Math.abs(getPnL(transactions[transactions.length - 1].quantity, stockInfo[stockTicker].eod, transactions[transactions.length - 1].stockBoughtPrice)) }}
                                 </td>
                             </tr>
@@ -108,56 +107,22 @@ export default {
             try {
                 const response = await axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`);
                 const portStock = response.data.portStock;
-                this.portfolioStocks = portStock;
 
-                let stocks = Object.keys(response.data.portStock);
-                let eodSum = 0;
-                let ytdSum = 0;
+                const sorted = Object.keys(portStock)
+                    .sort()
+                    .reduce((accumulator, key) => {
+                        accumulator[key] = portStock[key];
 
-                for (let stock of stocks) {
-                    this.stockInfo[stock] = { symbol: "", sector: "", eod: 0, ytd: 0 };
+                        return accumulator;
+                    }, {});
 
-                    const stockOverviewResponse = await axios.get(`http://localhost:5000/stock/${stock}/companyOverview`);
-                    this.stockInfo[stock].symbol = stockOverviewResponse.data.country;
-                    this.stockInfo[stock].sector = stockOverviewResponse.data.sector;
+                this.portfolioStocks = {}
 
-                    const stockPriceResponse = await axios.get(`http://localhost:5000/stockprice/dailyprice/${stock}`);
-                    const stockPriceList = stockPriceResponse.data.stockPriceList;
-
-                    let eodPrice = stockPriceList[0]["4. close"];
-                    let ytdPrice = stockPriceList[1]["4. close"];
-
-                    this.stockInfo[stock].eod = eodPrice;
-                    this.stockInfo[stock].ytd = ytdPrice;
-
-                    eodSum += portStock[stock][portStock[stock].length - 1].quantity * eodPrice;
-                    ytdSum += portStock[stock][portStock[stock].length - 1].quantity * ytdPrice;
+                for (const stock in sorted) {
+                    this.portfolioStocks[stock] = sorted[stock].reverse()
                 }
 
-                this.percentChange = (((eodSum - ytdSum) / ytdSum) * 100).toFixed(2);
-
-            } catch (error) {
-                console.error("An error occurred:", error);
-            }
-        },
-        getPnL(qty, eod, boughtPrice) {
-            return ((eod - boughtPrice) * qty).toFixed(2);
-        },
-    },
-    watch: {
-        portfolio: "getPortfolioData",
-
-
-    },
-    methods: {
-
-        async getPortfolioData() {
-            try {
-                const response = await axios.get(`http://localhost:5000/portfolio/${this.portfolio.portfolioId}`);
-                const portStock = response.data.portStock;
-                this.portfolioStocks = portStock;
-
-                let stocks = Object.keys(response.data.portStock);
+                let stocks = Object.keys(portStock);
                 let eodSum = 0;
                 let ytdSum = 0;
 
@@ -168,20 +133,18 @@ export default {
                     this.stockInfo[stock].symbol = stockOverviewResponse.data.country;
                     this.stockInfo[stock].sector = stockOverviewResponse.data.sector;
 
-                    const stockPriceResponse = await axios.get(`http://localhost:5000/stockprice/dailyprice/${stock}`);
+                    const stockPriceResponse = await axios.get(`http://localhost:5000/stockprice/monthlyprice/${stock}`);
                     const stockPriceList = stockPriceResponse.data.stockPriceList;
 
                     let eodPrice = stockPriceList[0]["4. close"];
+
                     let ytdPrice = stockPriceList[1]["4. close"];
 
                     this.stockInfo[stock].eod = eodPrice;
                     this.stockInfo[stock].ytd = ytdPrice;
 
-                    for (let i = 0; i < portStock[stock].length; i++) {
-
-                        eodSum += portStock[stock][i].quantity * eodPrice;
-                        ytdSum += portStock[stock][i].quantity * ytdPrice;
-                    }
+                    eodSum += portStock[stock][0].quantity * eodPrice;
+                    ytdSum += portStock[stock][0].quantity * ytdPrice;
                 }
 
                 this.percentChange = (((eodSum - ytdSum) / ytdSum) * 100).toFixed(2);
@@ -194,16 +157,16 @@ export default {
             return ((eod - boughtPrice) * qty).toFixed(2);
         },
         getQtyChange(trans, idx) {
-            if (idx >= 1) {
-                return ( (( trans[idx].quantity - trans[idx-1].quantity )/trans[idx-1].quantity) * 100 ).toFixed(2);
+
+            if (idx <= trans.length - 2) {
+                return ( (( trans[idx].quantity - trans[idx+1].quantity )/trans[idx+1].quantity) * 100 ).toFixed(2);
             }
             return '-'
         },
     },
     watch: {
         portfolio: "getPortfolioData",
-
-    }
+    },
 
 }
 
@@ -216,7 +179,7 @@ h4 {
 }
 
 td {
-    @apply py-1
+    @apply py-1 text-sm
 }
 
 th {
