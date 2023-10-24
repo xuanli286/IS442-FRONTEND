@@ -76,6 +76,11 @@
                                     Allocation: {{ (transactions[0].allocation * 100).toFixed(2) }}%
                                 </td>
                             </tr>
+                            <tr v-if="transactions.length == 2">
+                                <td class="text-left font-semibold">
+                                    Allocation: {{ (transactions[0].allocation * 100).toFixed(2) }}%
+                                </td>
+                            </tr>
                         </template>
                     </tbody>
                 </table>
