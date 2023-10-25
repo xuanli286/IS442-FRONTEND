@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/xuanli286/IS442-FRONTEND/d1a854cdcf681d22a726a4a4a6a22649b4135cb8/public/gs-logo.svg" alt="Logo" width="40%">
+</div>
+
 ## Table of Contents
 <ol>
     <li>
