@@ -2,8 +2,7 @@
   <div class="flex flex-col min-h-screen">
     <Header />
     <div class="grow bg-navy-950" v-if="(!isLoading && display) || access.includes(route.path)">
-      <RouterView :key="$route.fullPath" v-if="$route.fullPath=='/home'"/>
-      <RouterView v-else/>
+      <RouterView :key="$route.fullPath"/>
     </div>
     <div class="flex grow bg-navy-950 justify-center items-center flex-col" v-else>
       <div class="loading-animation mb-5"></div>
@@ -61,8 +60,8 @@ watch(isLoading, (newIsLoading, oldIsLoading) => {
             .then((response) => {
               loginUser.value = data;
               localStorage.setItem('token', response.data.token)
-              
-              
+
+              display.value = true;
             })
             .catch((error) => {
               console.log(error.message);
