@@ -32,7 +32,6 @@
                             <th>Quantity</th>
                             <th>Bought Price <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
                             <th>Quantity Change<br class="lg:hidden"><span class="text-xs lg:text-base">(%)</span></th>
-                            <th>P&L <br class="lg:hidden"><span class="text-xs lg:text-base">($)</span></th>
                         </tr>
                     </thead>
                     <div class="mb-[2px]"></div>
@@ -60,11 +59,6 @@
                                 <td>{{ t.quantity }}</td>
                                 <td>{{ t.stockBoughtPrice.toFixed(2) }}</td>
                                 <td>{{ getQtyChange(transactions, idx) }}</td>
-                                <td
-                                    :class="getPnL(t.quantity, stockInfo[stockTicker].stockPrices[t.dateBought], t.stockBoughtPrice) < 0 ? 'text-red-500' : 'text-green-500'"
-                                >
-                                    {{ Math.abs(getPnL(t.quantity, stockInfo[stockTicker].stockPrices[t.dateBought], t.stockBoughtPrice)) }}
-                                </td>
                             </tr>
                             <tr v-if="transactions.length == 1">
                                 <td class="text-left font-semibold">
@@ -138,14 +132,12 @@ export default {
                     this.portfolioStocks[stock] = sorted[stock].reverse()
                 }
 
-                console.log(portStock)
-
                 let stocks = Object.keys(portStock);
                 let eodSum = 0;
                 let ytdSum = 0;
 
                 for (let stock of stocks) {
-                    this.stockInfo[stock] = { symbol: "", sector: "", eod: 0, ytd: 0, stockPrices: {} };
+                    this.stockInfo[stock] = { symbol: "", sector: "", eod: 0, stockPrices: {} };
 
                     const stockOverviewResponse = await axios.get(`http://localhost:5000/stock/${stock}/companyOverview`);
                     this.stockInfo[stock].symbol = stockOverviewResponse.data.country;
@@ -167,7 +159,6 @@ export default {
                     let ytdPrice = stockPriceList[1]["4. close"];
 
                     this.stockInfo[stock].eod = eodPrice;
-                    this.stockInfo[stock].ytd = ytdPrice;
 
                     eodSum += portStock[stock][0].quantity * eodPrice;
                     ytdSum += portStock[stock][0].quantity * ytdPrice;
@@ -175,15 +166,9 @@ export default {
 
                 this.percentChange = (((eodSum - ytdSum) / ytdSum) * 100).toFixed(2);
 
-                // console.log(this.stockInfo)
-
             } catch (error) {
                 console.error("An error occurred:", error);
             }
-        },
-        getPnL(qty, eod, boughtPrice) {
-
-            return ((eod - boughtPrice) * qty).toFixed(2);
         },
         getQtyChange(trans, idx) {
 
