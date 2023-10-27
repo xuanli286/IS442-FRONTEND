@@ -35,10 +35,10 @@
       <h3 class="text-navy-950 mb-8 font-bold">Portfolio Settings</h3>
 
       <h5 class="mt-8 form-label">Rebalancing</h5>
-      <ToggleButton v-model="isRebalance" left="On" right="Off"/>
+      <ToggleButton v-model="isRebalance" left="On" right="Off" :isDisabled="true"/>
 
       <h5 class="mt-8 form-label">Visibility</h5>
-      <ToggleButton v-model="isPublic" left="Public" right="Private"/>
+      <ToggleButton v-model="isPublic" left="Public" right="Private" :isDisabled="true"/>
 
       <!-- Balance -->
       <h5 class="text-navy-950 my-8 font-bold">Remaining Balance: ${{ Math.round( (budget - portfolioTotal)  * 100) / 100 }}</h5>
