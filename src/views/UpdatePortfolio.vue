@@ -271,6 +271,7 @@ export default {
       .then((response) => {
         this.modalMsg[0] = "Portfolio has been successfully updated!";
         this.modalMsg[1] = "Go to Overview";
+        this.isModal = true;
         
         // get updated portfolio
         this.populate();
@@ -279,9 +280,8 @@ export default {
         console.log(error.message);
         this.modalMsg[0] = "Something went wrong!";
         this.modalMsg[1] = "Back";
+        this.isModal = true;
       })
-
-      this.isModal = true;
     },
   },
 }

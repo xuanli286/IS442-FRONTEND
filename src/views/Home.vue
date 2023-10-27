@@ -110,7 +110,7 @@ async function deletePortfolio() {
     isConfirm.value = false;
     isStatus.value = true;
     isReroute.value = false;
-    router.push('/home?reload=true');
+    retrievePortfolios();
   })
   .catch((error) => {
     console.log(error.message);

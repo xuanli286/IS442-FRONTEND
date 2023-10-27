@@ -29,7 +29,7 @@
                                     year: 'numeric', month: 'long'
                                 }) }}
                             </div>
-                            <div class="col-span-2">
+                            <div class="col-span-2" v-if="portfoliosValue[portfolio].portfolioValue">
                                 <p class="font-semibold flex items-center">
                                     ${{ portfoliosValue[portfolio].portfolioValue.toFixed(2) }}
                                 </p>

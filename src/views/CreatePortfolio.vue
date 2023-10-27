@@ -283,14 +283,14 @@ export default {
         this.modalMsg[1] = "Go to Overview";
         this.portfoliosValue.push(pfData);
         this.portfoliosValue.sort((a, b) => b.portfolioValue - a.portfolioValue);
+        this.isModal = true;
       })
       .catch((error) => {
         console.log(error.message);
         this.modalMsg[0] = "Something went wrong!";
         this.modalMsg[1] = "Back";
+        this.isModal = true;
       })
-      
-      this.isModal = true;
     },
   },
 }
