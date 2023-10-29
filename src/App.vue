@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <Header />
-    <div class="grow bg-navy-950" v-if="(!isLoading && display) || access.includes(route.path)">
+    <div class="grow bg-navy-950" v-if="displayRouterView">
       <RouterView />
     </div>
     <div class="flex grow bg-navy-950 justify-center items-center flex-col" v-else>
@@ -16,64 +16,7 @@
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 
-import axios from "axios";
-import { useUserStore } from "@/stores/useUserStore";
-import { ref, watch, onMounted } from "vue";
-import { storeToRefs } from "pinia";
-import { useAuth0 } from "@auth0/auth0-vue";
-import { useRoute, useRouter } from "vue-router";
-
-const { user, isAuthenticated, isLoading } = useAuth0();
-const route = useRoute();
-const router = useRouter();
-
-const store = useUserStore();
-const {
-    loginUser,
-} = storeToRefs(store);
-
-const display = ref(false);
-
-const access = ["/", "/verify"];
-
-watch(isLoading, (newIsLoading, oldIsLoading) => {
-  if (!newIsLoading && !(access.includes(route.path))) {
-    if (isAuthenticated.value) {
-      const data = {
-        name: user.value.given_name || user.value.family_name ? user.value.name : user.value.nickname,
-        email: user.value.email,
-        id: user.value.sub,
-        picture: user.value.picture,
-        updatedAt: user.value['updated_at'],
-        totalCapitalAvailable: 10000,
-      };
-      axios.get(`http://localhost:5000/customer/${data.id}`)
-      .then((response) => {
-        loginUser.value = response.data.customerData;
-        localStorage.setItem('token', response.data.token)
-        
-        display.value = true;
-      })
-      .catch((error) => {
-        if (error.message.includes('404')) {
-          axios.post(`http://localhost:5000/customer/`, data)
-            .then((response) => {
-              loginUser.value = data;
-              localStorage.setItem('token', response.data.token)
-
-              display.value = true;
-            })
-            .catch((error) => {
-              console.log(error.message);
-            })
-        }
-      })
-    } else {
-      router.push("/");
-    }
-  }
-});
-
+import { displayRouterView } from '@/router/index.js'
 </script>
 
 <style scoped>
