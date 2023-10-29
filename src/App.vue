@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <Header />
-    <div class="grow bg-navy-950" v-if="(!isLoading && display) || access.includes(route.path)">
+    <div class="grow bg-navy-950" v-if="(!isLoading) || access.includes(route.path)">
       <RouterView :key="$route.fullPath"/>
     </div>
     <div class="flex grow bg-navy-950 justify-center items-center flex-col" v-else>
@@ -52,7 +52,7 @@ watch(isLoading, (newIsLoading, oldIsLoading) => {
         loginUser.value = response.data.customerData;
         localStorage.setItem('token', response.data.token)
         
-        display.value = true;
+        // display.value = true;
       })
       .catch((error) => {
         if (error.message.includes('404')) {
@@ -61,7 +61,8 @@ watch(isLoading, (newIsLoading, oldIsLoading) => {
               loginUser.value = data;
               localStorage.setItem('token', response.data.token)
 
-              display.value = true;
+              // display.value = true;
+              console.log(loginUser.value);
             })
             .catch((error) => {
               console.log(error.message);
