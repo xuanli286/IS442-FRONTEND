@@ -51,7 +51,7 @@
       <!-- Create/cancel buttons -->
       <div class="grid grid-cols-3 gap-[5%] sm:gap-12">
         <button class="btn-grey" @click="cancel">Cancel</button>
-        <button class="btn-navy col-span-2" @click="validate">Create Porfolio</button>
+        <button class="btn-navy col-span-2" @click="validate">Create Portfolio</button>
       </div>
     </div>
     
