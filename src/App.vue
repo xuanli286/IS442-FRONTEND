@@ -2,7 +2,7 @@
   <div class="flex flex-col min-h-screen">
     <Header />
     <div class="grow bg-navy-950" v-if="(!isLoading && display) || access.includes(route.path)">
-      <RouterView :key="$route.fullPath"/>
+      <RouterView />
     </div>
     <div class="flex grow bg-navy-950 justify-center items-center flex-col" v-else>
       <div class="loading-animation mb-5"></div>
@@ -37,7 +37,7 @@ const display = ref(false);
 const access = ["/", "/verify"];
 
 watch(isLoading, (newIsLoading, oldIsLoading) => {
-  if (!newIsLoading & !(route.path in access)) {
+  if (!newIsLoading && !(access.includes(route.path))) {
     if (isAuthenticated.value) {
       const data = {
         name: user.value.given_name || user.value.family_name ? user.value.name : user.value.nickname,
