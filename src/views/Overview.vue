@@ -15,12 +15,12 @@
                             <div class="col-span-2">Value</div>
                             <div class="col-span-1">Rebalance</div>
                         </div>
-                        <div class="grid grid-cols-8 break-all items-center border-b border-grey-500 gap-1 text-xs py-3 cursor-help hover:bg-slate-200 hover:border hover:border-slate-300 hover:rounded-md" 
+                        <div class="grid grid-cols-8 break-all items-center border-b border-grey-500 gap-1 text-xs py-3 cursor-help hover:bg-slate-200 hover:border hover:border-slate-300 hover:rounded-md"
                             v-for="(portfolio, index) of Object.keys(portfoliosValue)" :key="index"
-                            @click="handleSelect(portfoliosValue[portfolio])"
-                        >
+                            @click="handleSelect(portfoliosValue[portfolio])">
                             <div class="col-span-1">
-                                <i v-if="index == 0 || index == 1 || index == 2" class="fa-solid fa-crown" :class="index==0 ? 'text-gold' : index==1 ? 'text-silver' : 'text-bronze'"></i>
+                                <i v-if="index == 0 || index == 1 || index == 2" class="fa-solid fa-crown"
+                                    :class="index == 0 ? 'text-gold' : index == 1 ? 'text-silver' : 'text-bronze'"></i>
                                 {{ index + 1 }}
                             </div>
                             <div class="col-span-2">{{ portfoliosValue[portfolio].portfolioName }}</div>
@@ -45,21 +45,24 @@
                     <p class="font-semibold mt-1 mb-3">
                         Portfolio Performance
                     </p>
-                    <button v-for="option in options" :key="option" @click="selectedOption = option" class="btn mx-2 pb-1 text-sm font-medium" :class="selectedOption==option ? 'border-b-4 border-navy-950' : ''">
+                    <button v-for="option in options" :key="option" @click="selectedOption = option"
+                        class="btn mx-2 pb-1 text-sm font-medium"
+                        :class="selectedOption == option ? 'border-b-4 border-navy-950' : ''">
                         {{ option.charAt(0).toUpperCase() + option.slice(1) }}
                     </button>
-                    <LineChart v-if="isDataLoaded" class="mt-6" :dataset="dataset" :display="selectedOption" :date="earliestDate" />
+                    <LineChart v-if="isDataLoaded" class="mt-6" :dataset="dataset" :display="selectedOption"
+                        :date="earliestDate" />
                 </div>
                 <div class="white-card grid grid-cols-1">
                     <p class="font-semibold text-navy-950">
                         Market Exposure
                     </p>
-                    <DonutChart :isOverview="true"/>
+                    <DonutChart :isOverview="true" />
                 </div>
                 <div class="col-span-2 white-card">
                     <p class="font-semibold mt-1">Country Exposure</p>
                     <MapChart class="cursor-pointer" :countryData=countryCounter highColor="#192E47" lowColor="#4b87cc"
-                        countryStrokeColor="#192e47" defaultCountryFillColor="#FFFFFF"/>
+                        countryStrokeColor="#192e47" defaultCountryFillColor="#FFFFFF" />
                 </div>
             </div>
         </div>
@@ -123,16 +126,16 @@ onMounted(async () => {
         let idx = {};
         for (let portfolio of portfolios) {
             idx[portfolio.portfolioName] = {};
+
             for (let key of Object.keys(portfolio.portStock)) {
-                // index, count
                 idx[portfolio.portfolioName][key] = [0, 0];
             }
             for (let [key, value] of Object.entries(portfolio.portStock)) {
                 const stockName = key;
-                const country = 'USA'
+                const stockOverviewResponse = await axios.get(`http://localhost:5000/stock/${key}/companyOverview`);
+                const country = stockOverviewResponse.data.country;
                 const country_2digits = getCountryISO2(country);
-                const qty = value[0]['quantity']
-                //call redis here
+                const qty = value.slice(-1)[0].quantity;
 
                 if (country_2digits in countryCounter.value) {
                     countryCounter.value[country_2digits] += (qty)
