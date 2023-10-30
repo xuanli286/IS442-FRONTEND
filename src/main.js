@@ -12,11 +12,11 @@ const app = createApp(App)
     .use(router)
     .use(pinia)
     .use(createAuth0({
-        domain: "dev-hzksj8468hgj4q5f.us.auth0.com",
-        clientId: "MTW1uaiys729lY3oHQmlHCdvANEkRkgZ",
+        domain: "dev-4pxn4zbtcuoww57l.us.auth0.com",
+        clientId: "vO8XnhCHlQMt0tgztXf16ODRMqm5on7F",
         authorizationParams: {
           redirect_uri: "http://localhost:8080/",
-          audience: "https://dev-hzksj8468hgj4q5f.us.auth0.com/api/v2/",
+          audience: "https://dev-4pxn4zbtcuoww57l.us.auth0.com/api/v2/",
         }
     }))
 app.mount('#app')

@@ -7,7 +7,7 @@
     </div>
     <div v-else class="relative -m-5 z-50">
       <div class="profile" @click="displayProfileMenu" ref="profile">
-        <img class="rounded-full w-10 md:w-12" :src="user.picture || require('@/assets/pfp.png')"/>
+        <img class="rounded-full w-10 md:w-12" :src="user.picture"/>
         <div class="hidden sm:block">
           <div class="text-md md:text-lg font-semibold text-graybrown">
             <p v-if="user.given_name || user.family_name">{{ user.name}}</p>
