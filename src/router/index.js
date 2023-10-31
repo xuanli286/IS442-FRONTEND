@@ -58,6 +58,7 @@ function guardMyRoute(to, from, next) {
       .then((response) => {
         loginUser.value = response.data.customerData;
         localStorage.setItem('token', response.data.token)
+        console.log(response.data.token)
         
         displayRouterView.value = true;
       })

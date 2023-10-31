@@ -42,7 +42,7 @@ import Modal from '@/components/Modal.vue'
 import Overview from "@/views/Overview.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { usePortfolioStore } from "@/stores/usePortfolioStore";
-import axios from "axios";
+import axios from "../axiosConfig";
 import { useRoute, useRouter } from "vue-router";
 
 const {user, isAuthenticated} = useAuth0();
