@@ -18,7 +18,7 @@
               <td v-else-if="haveEmpty" style="background-color:transparent;padding:5px!important"></td>
 
               <td style="padding:5px!important" class="relative">
-                <DataList :empty="stock.empty" :items="items" v-model="stock.name" @change="newStock(idx)" />
+                <DataList :empty="stock.empty" :items="items.filter((item) => dupeCheck(item, idx))" v-model="stock.name" @change="newStock(idx)" />
               </td>
             </tr>
           </table>
@@ -169,6 +169,14 @@ export default {
     },
   },
   methods: {
+    dupeCheck(item, idx) {
+      for (var i=0; i<this.stocks.length; i++) {
+        if (this.stocks[i].name == item && i != idx) {
+          return false;
+        }
+      }
+      return true;
+    },
     populate() {
       this.stocks = [];
       
