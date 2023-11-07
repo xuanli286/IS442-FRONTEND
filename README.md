@@ -39,7 +39,7 @@ https://github.com/tanyipeng834/IS442-REST-API 👈
 
 ## About the Project
 <p style="text-align: justify;">
-    Our project's client is <span style="color: #192e47; font-weight: bold">Goldman Sachs</span>, a leading global financial institution. 
+    Our project's client is <b>Goldman Sachs</b>, a leading global financial institution. 
     The objective of our application is to aid investment advisors and finance professionals, like <em>Sarah Goh</em>, in analysing investment portfolios' performance and making informed investment decisions.
 </p>
 <div align="center">
