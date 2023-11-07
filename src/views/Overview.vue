@@ -116,6 +116,7 @@ function handleSelect(portfolio) {
 
 watch(portfoliosValue, (newPortfoliosValue) => {
     portfoliosValue.value = newPortfoliosValue;
+    portfoliosValue.value.sort((a, b) => b.portfolioValue - a.portfolioValue);
 });
 
 onMounted(async () => {
