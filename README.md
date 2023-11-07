@@ -1,12 +1,14 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/xuanli286/IS442-FRONTEND/d1a854cdcf681d22a726a4a4a6a22649b4135cb8/public/gs-logo.svg" alt="Logo" width="30%">
-  <p align="center">
-    This outlines the project codebase for AY2023/2024 Semester 1 IS442 OOP - G1T5
+  <p>
+    This outlines the project code base for AY2023/2024 Semester 1 IS442 OOP - G1T5
+    <br>
+    Kindly refer to this <a href="./G1T5.pptx">slide deck</a> for more information.
   </p>
 </div>
 <br/>
 
-<details>
+<details id="table-of-contents">
     <summary>Table of Contents</summary>
     <ol>
         <li>
@@ -26,6 +28,9 @@
                 </li>
             </ul>
         </li>
+        <li>
+            <a href="#acknowledgements">Acknowledgements</a>
+        </li>
     </ol>
 </details>
 
@@ -41,7 +46,6 @@ https://github.com/tanyipeng834/IS442-REST-API 👈
     <img width="70%" src="./src/assets/persona.png">
 </div>
 <p align="right">(<a href="#table-of-contents">back to top</a>)</p>
-
 
 ## Getting Started
 ### Prerequisites
@@ -63,4 +67,13 @@ npm i
 ```
 npm run serve
 ```
+<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
+
+## Acknowledgements
+* [Low Xuanli](https://github.com/xuanli286)
+* [Mohammad Fadhli Bin Abdul Nassir](https://github.com/mohammadfadhli)
+* [Rachel Sng Yue Wei](https://github.com/rrachea)
+* [Sioh Rui En, Regine](https://github.com/ruigine)
+* [Tan Li Xuan Germaine](https://github.com/germainetan)
+* [Tan Yi Peng](https://github.com/tanyipeng834)
 <p align="right">(<a href="#table-of-contents">back to top</a>)</p>
