@@ -32,8 +32,6 @@
 ## Backend Repository
 https://github.com/tanyipeng834/IS442-REST-API 👈
 
-<p align="right">(<a href="#table-of-contents">back to top</a>)</p>
-
 ## About the Project
 <p style="text-align: justify;">
     Our project's client is <span style="color: #192e47; font-weight: bold">Goldman Sachs</span>, a leading global financial institution. 
