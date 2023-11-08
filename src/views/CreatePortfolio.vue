@@ -150,7 +150,7 @@ export default {
     retrieveStocks() {
       axios.get(`http://localhost:8080/listing_status.csv`)
       .then((response) => {
-        var stockRows = response.data.split("\r\n");
+        var stockRows = response.data.split("\n");
         for (var i=1; i<stockRows.length; i++) {
           this.items.push(stockRows[i].split(",")[0]);
         }
